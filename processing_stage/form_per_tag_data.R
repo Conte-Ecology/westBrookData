@@ -74,7 +74,7 @@ tag_history <- dbGetQuery(link$conn, "SELECT * FROM data_corrected_tag_history;"
 per_tag_history <- split(x=tag_history, f=tag_history[['tag']], drop=FALSE)
 
 assigned_cohorts <- readRDS(
-	file=file.path(processed_data_dir,'cohort_assignment.rds')
+	file=file.path(original_data_dir,'cohort_assignment.rds')
 )
 colnames(assigned_cohorts) <- c('tag','cohort')
 assigned_cohorts[['tag']] <- tolower(assigned_cohorts[['tag']])

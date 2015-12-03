@@ -2,6 +2,7 @@ column_map <- c(
   drainage = "Drainage",
   river = "River",
 	species = "Species",
+  sample = "Sample",
 	cohort = "YOS",
   cohort_min_length = "Min Length",
   cohort_max_length = "Max Length",
