@@ -1,10 +1,10 @@
 do <- list(
 	import_stage = c(
-# 		"import_to_sql.R",
-# 		"form_table_dead.R",
-# 		"form_table_antenna.R",
-# 		"form_table_captures.R",
-# 		"form_table_untagged_captures.R",
+		"import_to_sql.R",
+		"form_table_dead.R",
+		"form_table_antenna.R",
+		"form_table_captures.R",
+		"form_table_untagged_captures.R",
 		
 		"form_table_samples.R",
 		"calculate_season_breaks.R",

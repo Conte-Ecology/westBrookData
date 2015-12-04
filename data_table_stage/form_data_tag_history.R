@@ -5,7 +5,7 @@ recaptures[['status']] <- 'recaptured'
 
 tags <- unique(recaptures[['tag']])
 
-trap_recaptures <- dbGetQuery(link$conn, "SELECT * FROM data_trap_recaptures;")
+trap_recaptures <- dbGetQuery(link$conn, "SELECT * FROM data_trap_captures;")
 trap_recaptures <- trap_recaptures[ trap_recaptures[['tag']] %in% tags,]
 boundary_detections <- dbGetQuery(link$conn, "SELECT * FROM data_boundary_detections;")
 boundary_detections <- boundary_detections[ boundary_detections[['tag']] %in% tags,]
