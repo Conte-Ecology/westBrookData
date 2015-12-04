@@ -31,7 +31,7 @@ sampling[['seasonal']][sampling[['sample_name']] %in%
 
 for (i in 1:nrow(sampling)) {
 	stmt <- paste0(
-		"SELECT distinct(date) FROM tags_recaptures ",
+		"SELECT distinct(date) FROM tags_captures ",
 		"WHERE sample_name = '", sampling[i,'sample_name'], "';"
 	)
 	### FUCKING DATE PARSING!

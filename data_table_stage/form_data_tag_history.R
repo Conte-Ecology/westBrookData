@@ -1,5 +1,5 @@
 recaptures <- dbGetQuery(link$conn, 
-	statement = "SELECT * FROM data_seasonal_recaptures;")
+	statement = "SELECT * FROM data_seasonal_captures;")
 
 recaptures[['status']] <- 'recaptured'
 

@@ -1,10 +1,10 @@
 do <- list(
 	import_stage = c(
-		"import_to_sql.R",
-		"form_table_dead.R",
-		"form_table_antenna.R",
-		"form_table_captures.R",
-		"form_table_untagged_captures.R",
+# 		"import_to_sql.R",
+# 		"form_table_dead.R",
+# 		"form_table_antenna.R",
+# 		"form_table_captures.R",
+# 		"form_table_untagged_captures.R",
 		
 		"form_table_samples.R",
 		"calculate_season_breaks.R",
@@ -15,9 +15,9 @@ do <- list(
 	),
 	
 	data_table_stage = c(
-		"form_data_detections.R",
-		"form_data_emigrations.R",
-		"form_data_recaptures.R",
+		"form_data_antenna.R",
+		"form_data_boundary_detections.R",
+		"form_data_captures.R",
 		"form_data_seasonal.R",
 		"form_data_trap_captures.R",
 		"form_data_smolts.R",

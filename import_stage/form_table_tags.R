@@ -2,13 +2,13 @@ columns <- list(
 	who = c('tag')
 )
 
-recaptures_stub <- paste(
+captures_stub <- paste(
 		"SELECT", paste(unlist(columns), collapse=', '), "FROM"
 	)
 
 queries <- list()
-for ( nom in tag_data_names ) {
-	queries[[nom]] <- paste(recaptures_stub, nom, "WHERE tag IS NOT NULL")
+for ( nom in c('tags_captures','tags_dead','tags_antenna') ) {
+	queries[[nom]] <- paste(captures_stub, nom, "WHERE tag IS NOT NULL")
 }
 
 if (getOption('verbose',FALSE)) print(queries)
@@ -23,16 +23,16 @@ tags[['tag_number']] <- as.numeric(factor(x=tags[['tag']]))
 dbDropTable("tags")
 dbWriteTable(link$conn, 'tags', tags, row.names=FALSE)
 
-get_tags <- function(link) {
-	tags <- dbGetQuery(link$conn, "SELECT * FROM tags ORDER BY tag_number;")
-	tags_f <- factor(x=tags$tag_number, labels=tags$tag)
-	return(tags_f)
-}
-
-tag_to_tag_number <- function(tags, link) {
-	tag_map <- get_tags(link)	
-	tag_mapping <- sapply(tags, function(tag) which(tag_map == tag))
-	tags <- as.numeric(tag_map[tag_mapping])
-	return(tags)
-}
+# get_tags <- function(link) {
+# 	tags <- dbGetQuery(link$conn, "SELECT * FROM tags ORDER BY tag_number;")
+# 	tags_f <- factor(x=tags$tag_number, labels=tags$tag)
+# 	return(tags_f)
+# }
+# 
+# tag_to_tag_number <- function(tags, link) {
+# 	tag_map <- get_tags(link)	
+# 	tag_mapping <- sapply(tags, function(tag) which(tag_map == tag))
+# 	tags <- as.numeric(tag_map[tag_mapping])
+# 	return(tags)
+# }
 

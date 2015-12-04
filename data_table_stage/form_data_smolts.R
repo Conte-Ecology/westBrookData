@@ -1,9 +1,9 @@
-trap_recaptures <-  dbGetQuery(link$conn, 
-	"SELECT * FROM data_trap_recaptures WHERE species = 'ats';")
+trap_captures <-  dbGetQuery(link$conn, 
+	"SELECT * FROM data_trap_captures WHERE species = 'ats';")
 
 smolts <- by(
-	data=trap_recaptures,
-	INDICES=trap_recaptures[,c('tag')],
+	data=trap_captures,
+	INDICES=trap_captures[,c('tag')],
 	FUN=function(dat) {
 		last_date <- max(dat[['detection_date']], na.rm=TRUE)
 		dat <- dat[dat[['detection_date']] == last_date,,drop=FALSE]
