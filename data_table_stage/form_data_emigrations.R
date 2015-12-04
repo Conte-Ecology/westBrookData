@@ -1,4 +1,4 @@
-data <- dbGetQuery(link$conn, "SELECT * FROM data_detections WHERE
+data <- dbGetQuery(link$conn, "SELECT * FROM data_antenna WHERE
 									 detection_date IS NOT NULL;")
 
 boundary_antennas <- c('a1','a2','03','04','05','06','wb above')

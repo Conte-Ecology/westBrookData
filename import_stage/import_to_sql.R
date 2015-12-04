@@ -9,7 +9,7 @@ for (name in c(tag_data_names,"yoy_bins")) {
 	} 
 
 	write.csv(x=data, file=file.path(processed_data_dir,paste0(name,'.csv')), row.names=FALSE)
-	dbWriteTable(conn=link$conn, name=name, value=data,row.names=FALSE,
+	dbWriteTable(conn=link$conn, name=paste0("raw_",name), value=data,row.names=FALSE,
 							 overwrite=TRUE, append=FALSE)
 
 }

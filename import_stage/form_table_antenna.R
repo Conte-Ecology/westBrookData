@@ -7,14 +7,14 @@ columns <- list(
 
 select_stmt <- paste(
 		"SELECT", paste(unlist(columns), collapse=', '), 
-		"FROM", "tags_antenna"
+		"FROM", "raw_tags_antenna"
 	)
 
 if (getOption('verbose',FALSE)) print(queries)
 
-dbDropTable("tags_detected")
+dbDropTable("tags_antenna")
 create_query <- paste0(
-	"CREATE TABLE tags_detected AS ",
+	"CREATE TABLE tags_antenna AS ",
 	"(", select_stmt, ");"
 )
 dbSendQuery(link$conn, create_query)

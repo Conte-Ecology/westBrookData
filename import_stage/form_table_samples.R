@@ -1,5 +1,5 @@
 stmt <- paste0(
-	"SELECT distinct(sample_name) FROM tags_recaptures;"
+	"SELECT distinct(sample_name) FROM tags_captures;"
 )
 sampling <- dbGetQuery(link$conn, stmt)
 sampling[['order']] <- as.numeric(sampling$sample_name)

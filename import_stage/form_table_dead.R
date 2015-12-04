@@ -5,13 +5,11 @@ columns <- list(
 
 select_stmt <- paste(
 		"SELECT", paste(unlist(columns), collapse=', '), 
-		"FROM", "tags_dead"
+		"FROM", "raw_tags_dead"
 	)
-dbDropTable("tags_found")
+dbDropTable("tags_dead")
 create_query <- paste0(
-	"CREATE TABLE tags_found AS ",
+	"CREATE TABLE tags_dead AS ",
 	"(", select_stmt, ");"
 )
 dbSendQuery(link$conn, create_query)
-
-
