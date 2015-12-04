@@ -36,6 +36,6 @@ pl_sampling_points <- ggplot(
 ## season.
 names(season_breaks)[names(season_breaks) == 'start_julian_day'] <- 'end_julian_day'
 
-dbWriteTable(conn=link$conn, name='season_data', value=season_breaks,
+dbWriteTable(conn=link$conn, name='data_season', value=season_breaks,
 						 row.names=FALSE, overwrite=TRUE, append=FALSE)
 

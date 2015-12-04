@@ -1,4 +1,4 @@
-stmt <- paste0( "SELECT * FROM season_data;")
+stmt <- paste0( "SELECT * FROM data_season;")
 season_breaks <- dbGetQuery(link$conn, stmt)
 
 days_of_year_set <- 1:366
@@ -51,7 +51,7 @@ season_breaks <- merge(
 	x=season_breaks, by.x='season', y=day_count, by.y='season_number')
 
 
-dbWriteTable(conn=link$conn, name='season_data', value=season_breaks,
+dbWriteTable(conn=link$conn, name='data_season', value=season_breaks,
 						 row.names=FALSE, overwrite=TRUE, append=FALSE)
 
 
