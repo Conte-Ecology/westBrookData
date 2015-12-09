@@ -15,11 +15,28 @@ wbConnector<-function(){
                     user=usr,
                     password=pass,
                     dbname="westbrook")
-  credentialPath<-file.path(westbrookDir,"temp.rds")
+  credentialPath<-file.path("~/temp.rds")
   saveRDS(credentials,credentialPath)
   #create a database connection with the credentials
-  link<-db_connector(credentialPath)
+  link<-integrator::db_connector(credentialPath)
   file.remove(credentialPath)
-  cat("\014")
-  return(link)
+  
+  cat("\014") #clear console
+  
+  link<<-link
 }
+
+#'Reconnect to the West Brook database
+#'
+#'Tests the connection to the database and runs wbConnect() if the connection has not been established or has expired
+reconnect<-function(){
+  if(!exists("link")){wbConnector()} else {
+    if(class(link)!="db_connector"){wbConnector()} else{
+      if(class(try(dbGetQuery(link$conn,""),silent=T))=="try-error"){
+        wbConnector()
+      }
+    }
+  }
+}
+
+

@@ -45,7 +45,7 @@ do <- list(
 		"form_state_table.R"
 	)
 )
-source('/data/projects/westbrook/code/makeDatabase/shared_data.R')
+source('/data/projects/westbrook/code/westBrookData/makeDatabase/shared_data.R')
 for (stage in names(do)) {
 	for (script in do[[stage]]) {
 		temp <- new.env(parent=shared_data)
@@ -53,7 +53,7 @@ for (stage in names(do)) {
 		with(
 			data=temp,
 			expr= {
-				s <- file.path(westbrookDir,"code/makeDatabase",stage,script)
+				s <- file.path(westbrookDir,"code/westBrookData/makeDatabase",stage,script)
 				cat(s,"\n")
 				source(file=s, local=TRUE)
 			}

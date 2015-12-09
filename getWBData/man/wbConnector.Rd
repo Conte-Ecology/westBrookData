@@ -7,7 +7,7 @@
 wbConnector()
 }
 \value{
-a link to the database
+A link to the database
 }
 \description{
 Creates a link to the West Brook database

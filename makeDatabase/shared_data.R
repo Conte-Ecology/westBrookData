@@ -15,15 +15,14 @@ options(mc.cores=1)
 
 westbrookDir<-"/data/projects/westbrook"
 
-source(file.path(westbrookDir,"code/wbConnector.R"))
+source(file.path(westbrookDir,"code/westBrookData/wbConnector.R"))
 
 shared_data <- local(expr={
   
-  source(file.path(westbrookDir,'code/makeDatabase/batch_rbind.R'))
+  source(file.path(westbrookDir,'code/westBrookData/makeDatabase/batch_rbind.R'))
   
   date.format=c('mdy','mdyR','mdyT') #input for 'orders' in the function parse_date_time that matches input csv date format 
   
-  #link <- db_connector("~/credentials/pgsql-pass-salmonids-local-db.rds")
 	link <- wbConnector()
 
 	dataInDir <- file.path(westbrookDir,'dataIn')
@@ -31,7 +30,7 @@ shared_data <- local(expr={
 	original_data_dir <- file.path(dataInDir,'originalData')
 	adjusted_data_dir <- file.path(dataOutDir,'adjustedData')
 	processed_data_dir <- file.path(dataOutDir,'processedData')
-	standardizeFilesDir<-file.path(westbrookDir,"code/makeDatabase/standardizeFiles")
+	standardizeFilesDir<-file.path(westbrookDir,"code/westBrookData/makeDatabase/standardizeFiles")
   
 	tag_data_names <- c(
 		"tags_antenna", "tags_dead", 
