@@ -19,6 +19,7 @@ names(ed) <- tolower(names(ed))
 
 name_map <- list(
   temperature = 'avg daily temp',  
+  discharge = 'avg daily discharge',
   temperature_source = 'temp source',
   discharge_source = 'discharge source'
 )
