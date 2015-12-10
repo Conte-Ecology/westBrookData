@@ -41,10 +41,10 @@ shared_data <- local(expr={
 	names(standardize_files) <- c(tag_data_names,"yoy_bins")
   
 	dbDropTable<-function(tableName){ #drops the table if it exists before writing the new version, really only matters for the first time the db is created
-	  if(tableName %in% dbGetQuery(link$conn,"SELECT table_name 
+	  if(tableName %in% dbGetQuery(con,"SELECT table_name 
                               FROM information_schema.tables 
                               WHERE table_schema = 'public';")$table_name){
-	    dbSendQuery(link$conn,paste0("DROP TABLE ",tableName,";"))
+	    dbSendQuery(con,paste0("DROP TABLE ",tableName,";"))
 	  }
 	}
 

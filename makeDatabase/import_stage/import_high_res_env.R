@@ -37,13 +37,11 @@ for(n in sheetNamesSolinst){
          )
   setnames(get(name),map(colnames(get(name)),nameMapSolinst))
   get(name)[,dateTime:=parseDateTime(date,time)]
-  assign(name,get(name)[,keepSolinst,with=F])
+  assign(name,get(name)[,keep,with=F])
   
   objectNames<-c(objectNames,as.name(name))
   
 }
-
-solinstData<-do.call(rbind,objectNamesSolinst)
 
 sheetNamesTemp<-c("smolt trap",
                   "Section 6",
@@ -81,7 +79,7 @@ for(n in names(sheetNameMap)){
   
   get(name)[,depth:=NA]
   get(name)[,dateTime:=parseDateTime(date,time)]
-  assign(name,get(name)[,keepTemp,with=F])
+  assign(name,get(name)[,keep,with=F])
 
   
   objectNames<-c(objectNames,as.name(name))
@@ -90,5 +88,5 @@ for(n in names(sheetNameMap)){
 highResEnv<-do.call(rbind,args=as.list(objectNames))
 setkey(highResEnv,river,section,dateTime)
 
-dbWriteTable(con, 'data_high_res_env', highResEnv, row.names=FALSE,
+dbWriteTable(con, 'raw_high_res_env', highResEnv, row.names=FALSE,
              overwrite=TRUE, append=FALSE)
