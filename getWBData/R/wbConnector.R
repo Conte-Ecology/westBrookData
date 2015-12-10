@@ -22,10 +22,12 @@ wbConnector<-function(){
 #'Reconnect to the West Brook database
 #'
 #'Tests the connection to the database and runs wbConnect() if the connection has not been established or has expired
+#'@returns A connection to the West Brook database
+#'@export
 reconnect<-function(){
-  if(!exists("link")){wbConnector()} else {
-    if(class(link$conn)!="PostgreSQLConnection"){wbConnector()} else{
-      if(class(try(dbGetQuery(link$conn,""),silent=T))=="try-error"){
+  if(!exists("con")){wbConnector()} else {
+    if(class(con)!="PostgreSQLConnection"){wbConnector()} else{
+      if(class(try(dbGetQuery(con,""),silent=T))=="try-error"){
         wbConnector()
       }
     }

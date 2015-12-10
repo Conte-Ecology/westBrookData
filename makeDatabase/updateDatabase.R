@@ -1,6 +1,7 @@
 do <- list(
 	import_stage = c(
 		"import_to_sql.R",
+		"import_high_res_env.R",
 		"form_table_dead.R",
 		"form_table_antenna.R",
 		"form_table_captures.R",

@@ -35,7 +35,7 @@ for(n in sheetNamesSolinst){
            read_excel(solinstPath,n)
            )
          )
-  setnames(get(name),map(colnames(get(name)),nameMap))
+  setnames(get(name),map(colnames(get(name)),nameMapSolinst))
   get(name)[,dateTime:=parseDateTime(date,time)]
   assign(name,get(name)[,keepSolinst,with=F])
   

@@ -2,7 +2,7 @@
 library(RPostgreSQL)
 library(lubridate)
 library(getWBData)
-#library(integrator)#available at https://github.com/Conte-Ecology/data-integrator
+library(integrator)#available at https://github.com/Conte-Ecology/data-integrator
 library(parallel)
 library(reshape2)
 library(ggplot2)
@@ -17,15 +17,11 @@ options(mc.cores=1)
 
 westbrookDir<-"/data/projects/westbrook"
 
-source(file.path(westbrookDir,"code/westBrookData/wbConnector.R"))
-
 shared_data <- local(expr={
-  
-  source(file.path(westbrookDir,'code/westBrookData/makeDatabase/batch_rbind.R'))
   
   date.format=c('mdy','mdyR','mdyT') #input for 'orders' in the function parse_date_time that matches input csv date format 
   
-	wbConnector() #creates connection 'con'
+	reconnect() #creates connection 'con'
 
 	dataInDir <- file.path(westbrookDir,'dataIn')
 	dataOutDir <- file.path(westbrookDir,'dataOut')
