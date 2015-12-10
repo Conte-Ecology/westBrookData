@@ -1,11 +1,13 @@
 ## R state:
 library(RPostgreSQL)
 library(lubridate)
-library(integrator)#available at https://github.com/Conte-Ecology/data-integrator
+library(getWBData)
+#library(integrator)#available at https://github.com/Conte-Ecology/data-integrator
 library(parallel)
 library(reshape2)
 library(ggplot2)
 library(data.table)
+library(readxl)
 
 options(stringsAsFactors=FALSE)
 options(check.names=FALSE)
@@ -23,7 +25,7 @@ shared_data <- local(expr={
   
   date.format=c('mdy','mdyR','mdyT') #input for 'orders' in the function parse_date_time that matches input csv date format 
   
-	link <- wbConnector()
+	wbConnector() #creates connection 'con'
 
 	dataInDir <- file.path(westbrookDir,'dataIn')
 	dataOutDir <- file.path(westbrookDir,'dataOut')

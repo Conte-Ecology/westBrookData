@@ -1,4 +1,4 @@
-tag_history <- dbGetQuery(link$conn, statement = "SELECT * FROM data_tag_history;")
+tag_history <- dbGetQuery(con, statement = "SELECT * FROM data_tag_history;")
 
 split_tag_history <- split(x=tag_history, f=tag_history[['tag']], drop=FALSE)
 
@@ -83,6 +83,6 @@ split_tag <- mclapply(
 
 tag_history <- do.call(what=rbind, args=split_tag)
 
-dbWriteTable(link$conn, 'data_tag_history', tag_history, row.names=FALSE,
+dbWriteTable(con, 'data_tag_history', tag_history, row.names=FALSE,
 						 overwrite=TRUE, append=FALSE)
 

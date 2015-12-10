@@ -26,14 +26,14 @@ create_query <- paste0(
 	"CREATE TABLE raw_captures AS ",
 	"(", queries[[1]], ");"
 )
-dbSendQuery(link$conn, create_query)
+dbSendQuery(con, create_query)
 
 for (query in queries[2:length(queries)]) {
 	insert_query <- paste0(
 		"INSERT INTO raw_captures",
 		"(", query, ");"
 	)
-	dbSendQuery(link$conn, insert_query)
+	dbSendQuery(con, insert_query)
 }
 
 dbDropTable('tags_captures')
@@ -42,7 +42,7 @@ create_tagged_fish_table <- paste0(
 	"CREATE TABLE tags_captures AS (SELECT * FROM ",
 	"raw_captures WHERE tag IS NOT NULL);"
 )
-dbSendQuery(link$conn, create_tagged_fish_table)
+dbSendQuery(con, create_tagged_fish_table)
 
 
 

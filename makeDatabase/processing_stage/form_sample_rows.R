@@ -1,11 +1,11 @@
-id_table <- dbGetQuery(link$conn, "SELECT * FROM data_per_tag;")
+id_table <- dbGetQuery(con, "SELECT * FROM data_per_tag;")
 id_tables <- split(x=id_table, f=id_table[['tag']])
 tags <- names(id_tables)
 
 sample_points <- readRDS(file=file.path(processed_data_dir,'sample_points.rds'))
-sampling <- dbGetQuery(link$conn, "SELECT * FROM data_sampling ORDER BY sample_number;")
+sampling <- dbGetQuery(con, "SELECT * FROM data_sampling ORDER BY sample_number;")
 
-tag_history <- dbGetQuery(link$conn, "SELECT * FROM data_corrected_tag_history;")
+tag_history <- dbGetQuery(con, "SELECT * FROM data_corrected_tag_history;")
 
 if (any(tags != names(id_tables))) stop("Sort id_tables before continuing.")
 if (any(tags != names(sample_points))) stop("Sort sample_points before continuing.")
@@ -51,7 +51,7 @@ sampling_rows <- mcmapply(
 
 sampling_rows <- batch_rbind(sampling_rows)
 
-dbWriteTable(conn=link$conn, name='state_sampling_rows', value=sampling_rows, overwrite=TRUE, row.names=FALSE)
+dbWriteTable(conn=con, name='state_sampling_rows', value=sampling_rows, overwrite=TRUE, row.names=FALSE)
 
 
 

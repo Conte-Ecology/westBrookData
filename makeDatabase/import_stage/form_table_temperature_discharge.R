@@ -35,7 +35,7 @@ keep <- c(
 
 ed <- ed[,keep]
 
-ed[['date_ct']] <- parse_date_time(x=ed[['date']], orders=c('mdyhms')) 
+ed[['date_ct']] <- parse_date_time(x=ed[['date']], orders=c('mdy')) 
 bad <- ed[['date_ct']] > now()
 ed[['date_ct']][bad] <- ed[['date_ct']][bad] - years(100)
 ed[['temperature']] <- as.numeric(ed[['temperature']])
@@ -50,7 +50,7 @@ ed[['day_of_year']] <- yday(ed[['date_ct']])
 ed[['season']] <- sapply(ed[['day_of_year']], day_to_season)
 
 ## Save cleaned daily data.
-dbWriteTable(conn=link$conn, name='data_environmental', value=ed,
+dbWriteTable(conn=con, name='data_environmental', value=ed,
              row.names=FALSE, overwrite=TRUE, append=FALSE)
 
 ## Construct smooth for temperature:
@@ -93,7 +93,7 @@ average_ed <- data.frame(
   seasonal_mean_discharge = discharge_average[['seasonal_mean_log10_discharge']],
   season = temperature_average[['season']]
 )
-dbWriteTable(conn=link$conn, name='data_environmental_average',
+dbWriteTable(conn=con, name='data_environmental_average',
              value=average_ed, row.names=FALSE, overwrite=TRUE, append=FALSE)
 
 
@@ -115,7 +115,7 @@ edj[['daily_deviation_from_seasonal_mean_discharge']] <-
   log10(edj[['discharge']]) - edj[['seasonal_mean_discharge']]
 edj[['zsdm']] <- scale(edj[['daily_deviation_from_seasonal_mean_discharge']])[,1]
 edj[['season']] <- sapply(edj[['day_of_year']], day_to_season)
-dbWriteTable(conn=link$conn, name='data_environmental_with_zst_zsd', value=edj, overwrite=TRUE, row.names=FALSE)
+dbWriteTable(conn=con, name='data_environmental_with_zst_zsd', value=edj, overwrite=TRUE, row.names=FALSE)
 
 
 

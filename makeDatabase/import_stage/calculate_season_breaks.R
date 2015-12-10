@@ -1,4 +1,4 @@
-sampling <- dbGetQuery(link$conn, "SELECT * FROM data_sampling WHERE seasonal IS TRUE;")
+sampling <- dbGetQuery(con, "SELECT * FROM data_sampling WHERE seasonal IS TRUE;")
 sampling <- sampling[order(sampling[['start_date']]),]
 
 season_kmeans <- kmeans(x=sampling$start_julian_day, centers=c(90,15,280,350))
@@ -36,6 +36,6 @@ pl_sampling_points <- ggplot(
 ## season.
 names(season_breaks)[names(season_breaks) == 'start_julian_day'] <- 'end_julian_day'
 
-dbWriteTable(conn=link$conn, name='data_season', value=season_breaks,
+dbWriteTable(conn=con, name='data_season', value=season_breaks,
 						 row.names=FALSE, overwrite=TRUE, append=FALSE)
 

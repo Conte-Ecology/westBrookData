@@ -1,7 +1,7 @@
 stmt <- paste0(
 	"SELECT distinct(sample_name) FROM tags_captures;"
 )
-sampling <- dbGetQuery(link$conn, stmt)
+sampling <- dbGetQuery(con, stmt)
 sampling[['order']] <- as.numeric(sampling$sample_name)
 
 sampling[['start_date']] <- suppressWarnings(parse_date_time(NA, orders=date.format))
@@ -35,7 +35,7 @@ for (i in 1:nrow(sampling)) {
 		"WHERE sample_name = '", sampling[i,'sample_name'], "';"
 	)
 	### FUCKING DATE PARSING!
-	date <- dbGetQuery(link$conn,stmt)[['date']]#strsplit(x=dbGetQuery(link$conn,stmt)[['date']],"/")
+	date <- dbGetQuery(con,stmt)[['date']]#strsplit(x=dbGetQuery(con,stmt)[['date']],"/")
 	detection_date <- parse_date_time(x=date, orders=date.format)
 	detection_date[year(detection_date)<100]<-detection_date[year(detection_date)<100]+years(2000)
 	detection_date[detection_date > now()] <- 
@@ -81,7 +81,7 @@ for ( i in 1:nrow(sampling)) {
 	}
 }
 
-dbWriteTable(conn=link$conn, name='data_sampling',value=sampling,
+dbWriteTable(conn=con, name='data_sampling',value=sampling,
 						 overwrite=TRUE, row.names=FALSE)
 
 ## Embarassed to write code like this:  <3 !

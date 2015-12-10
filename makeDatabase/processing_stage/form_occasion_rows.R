@@ -1,9 +1,9 @@
-id_table <- dbGetQuery(link$conn, "SELECT * FROM data_per_tag;")
+id_table <- dbGetQuery(con, "SELECT * FROM data_per_tag;")
 id_tables <- split(x=id_table, f=id_table[['tag']])
 tags <- names(id_tables)
 
 occasion_points <- readRDS(file=file.path(processed_data_dir,'occasion_points.rds'))
-occasions <- dbGetQuery(link$conn, "SELECT * FROM data_occasions;")
+occasions <- dbGetQuery(con, "SELECT * FROM data_occasions;")
 
 if (any(tags != names(id_tables))) stop("Sort id_tables before continuing.")
 if (any(tags != names(occasion_points))) stop("Sort occasion_points before continuing.")
@@ -36,7 +36,7 @@ occasion_rows <- mcmapply(
 
 occasion_rows <- batch_rbind(occasion_rows)
 
-dbWriteTable(conn=link$conn, name='state_occasion_rows', value=occasion_rows, overwrite=TRUE, row.names=FALSE)
+dbWriteTable(conn=con, name='state_occasion_rows', value=occasion_rows, overwrite=TRUE, row.names=FALSE)
 
 
 

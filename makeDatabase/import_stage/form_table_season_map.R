@@ -1,5 +1,5 @@
 stmt <- paste0( "SELECT * FROM data_season;")
-season_breaks <- dbGetQuery(link$conn, stmt)
+season_breaks <- dbGetQuery(con, stmt)
 
 days_of_year_set <- 1:366
 season_end <- season_breaks[['end_julian_day']]
@@ -26,7 +26,7 @@ season_map[season_map[['season_name']] == 'summer','season_number'] <-2
 season_map[season_map[['season_name']] == 'autumn','season_number'] <-3
 season_map[season_map[['season_name']] == 'winter','season_number'] <-4
 
-dbWriteTable(conn=link$conn, name='season_map', value=season_map,
+dbWriteTable(conn=con, name='season_map', value=season_map,
 						 row.names=FALSE, overwrite=TRUE, append=FALSE)
 
 day_of_year_to_season <- function(day, output='season_name') {
@@ -51,7 +51,7 @@ season_breaks <- merge(
 	x=season_breaks, by.x='season', y=day_count, by.y='season_number')
 
 
-dbWriteTable(conn=link$conn, name='data_season', value=season_breaks,
+dbWriteTable(conn=con, name='data_season', value=season_breaks,
 						 row.names=FALSE, overwrite=TRUE, append=FALSE)
 
 

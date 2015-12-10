@@ -1,7 +1,7 @@
-id_table <- dbGetQuery(link$conn, "SELECT * FROM data_per_tag;")
+did_table <- dbGetQuery(con, "SELECT * FROM data_per_tag;")
 
-sampling <- dbGetQuery(link$conn, "SELECT * FROM data_sampling;")
-season_breaks <- dbGetQuery(link$conn, "SELECT * FROM season_data;")
+sampling <- dbGetQuery(con, "SELECT * FROM data_sampling;")
+season_breaks <- dbGetQuery(con, "SELECT * FROM data_season;")
 
 start_year <- year(min(sampling[['start_date']])) - 4
 end_year <- year(max(sampling[['start_date']])) + 4
@@ -50,7 +50,7 @@ if (count_unknown_sample_numbers > 0)
 occasion_points <- lapply(occasion_points, sort)
 
 saveRDS(object=occasion_points, file=file.path(processed_data_dir,'occasion_points.rds'))
-dbWriteTable(conn=link$conn, name='data_occasions',value=occasions, overwrite=TRUE, row.names=FALSE)
+dbWriteTable(conn=con, name='data_occasions',value=occasions, overwrite=TRUE, row.names=FALSE)
 
 
 

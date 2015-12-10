@@ -1,5 +1,5 @@
-sampling <- dbGetQuery(link$conn, "SELECT * FROM data_sampling;")
-id_table <- dbGetQuery(link$conn, "SELECT * FROM data_per_tag;")
+sampling <- dbGetQuery(con, "SELECT * FROM data_sampling;")
+id_table <- dbGetQuery(con, "SELECT * FROM data_per_tag;")
 
 sample_points <- mcmapply(
 	FUN = function(tag, lb, ub, sampling) {

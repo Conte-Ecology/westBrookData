@@ -37,11 +37,11 @@ column_code <- list(
 )
 
 
-source_data <- dbGetQuery(link$conn, "SELECT * FROM tags_captures;")
+source_data <- dbGetQuery(con, "SELECT * FROM tags_captures;")
 source_data <- pipeline_data_transformation(
 	data=source_data, pipeline=column_code)
 
-dbWriteTable(link$conn, 'data_captures', source_data, row.names=FALSE,
+dbWriteTable(con, 'data_captures', source_data, row.names=FALSE,
 						 overwrite=TRUE, append=FALSE)
 
 

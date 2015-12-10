@@ -19,4 +19,4 @@ create_query <- paste0(
 
 dbDropTable('untagged_captures')
 
-dbSendQuery(link$conn, create_query)
+dbSendQuery(con, create_query)

@@ -1,11 +1,11 @@
 ## Load state bits:
-occasion_table <- dbGetQuery(link$conn, "SELECT * FROM state_occasion_rows;")
+occasion_table <- dbGetQuery(con, "SELECT * FROM state_occasion_rows;")
 
-sampling_table <- dbGetQuery(link$conn, "SELECT * FROM state_sampling_rows;")
+sampling_table <- dbGetQuery(con, "SELECT * FROM state_sampling_rows;")
 sampling_table <- sampling_table[,names(occasion_table)]
 
 ## Load tag histories:
-history_table <- dbGetQuery(link$conn, "SELECT * FROM data_corrected_tag_history;")
+history_table <- dbGetQuery(con, "SELECT * FROM data_corrected_tag_history;")
 history_table <- unique(history_table)
 history_table <- history_table[,names(occasion_table)]
 
@@ -21,7 +21,7 @@ state <- state[
 
 ## Write:
 
-dbWriteTable(conn=link$conn, name='state_table', value=state, overwrite=TRUE, row.names=FALSE)
+dbWriteTable(conn=con, name='state_table', value=state, overwrite=TRUE, row.names=FALSE)
 
 
 

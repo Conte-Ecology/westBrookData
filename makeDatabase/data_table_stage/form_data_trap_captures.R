@@ -1,4 +1,4 @@
-captures <- dbReadTable(link$conn,'data_captures')
+captures <- dbReadTable(con,'data_captures')
 
 trap_captures <- captures[
 	captures[['survey']] %in% c('box trap','screw trap','duda fyke')
@@ -16,7 +16,7 @@ hour(trap_captures[['detection_date']]) <- 23
 minute(trap_captures[['detection_date']]) <- 59
 second(trap_captures[['detection_date']]) <- 59
 
-dbWriteTable(link$conn, 'data_trap_captures', trap_captures,
+dbWriteTable(con, 'data_trap_captures', trap_captures,
 						 row.names=FALSE, overwrite=TRUE, append=FALSE)
 
 

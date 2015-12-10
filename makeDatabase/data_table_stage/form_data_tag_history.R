@@ -1,13 +1,13 @@
-recaptures <- dbGetQuery(link$conn, 
+recaptures <- dbGetQuery(con, 
 	statement = "SELECT * FROM data_seasonal_captures;")
 
 recaptures[['status']] <- 'recaptured'
 
 tags <- unique(recaptures[['tag']])
 
-trap_recaptures <- dbGetQuery(link$conn, "SELECT * FROM data_trap_captures;")
+trap_recaptures <- dbGetQuery(con, "SELECT * FROM data_trap_captures;")
 trap_recaptures <- trap_recaptures[ trap_recaptures[['tag']] %in% tags,]
-boundary_detections <- dbGetQuery(link$conn, "SELECT * FROM data_boundary_detections;")
+boundary_detections <- dbGetQuery(con, "SELECT * FROM data_boundary_detections;")
 boundary_detections <- boundary_detections[ boundary_detections[['tag']] %in% tags,]
 
 detections <- rbind(
@@ -77,7 +77,7 @@ tag_history <- tag_history[order(tag_history[['tag']], tag_history[['detection_d
 #                        Sample=sample_name,Species=species,River=river),
 #       by=tag]
 
-dbWriteTable(link$conn, 'data_tag_history', tag_history, row.names=FALSE,
+dbWriteTable(con, 'data_tag_history', tag_history, row.names=FALSE,
 						 overwrite=TRUE, append=FALSE)
 
 

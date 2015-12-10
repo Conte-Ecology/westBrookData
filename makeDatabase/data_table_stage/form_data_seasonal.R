@@ -1,5 +1,5 @@
-captures <- dbReadTable(link$conn,'data_captures')
-sampling <- dbReadTable(link$conn, 'data_sampling')
+captures <- dbReadTable(con,'data_captures')
+sampling <- dbReadTable(con, 'data_sampling')
 
 seasonal_captures <- captures[ 
 	captures[['sample_number']] %in%
@@ -16,7 +16,7 @@ pl <- ggplot(
 	aes(x=sample_number, y=as.numeric(as.factor(tag))  )
 ) + geom_raster()
 
-dbWriteTable(link$conn, 'data_seasonal_captures', seasonal_captures, row.names=FALSE,
+dbWriteTable(con, 'data_seasonal_captures', seasonal_captures, row.names=FALSE,
 						 overwrite=TRUE, append=FALSE)
 
 

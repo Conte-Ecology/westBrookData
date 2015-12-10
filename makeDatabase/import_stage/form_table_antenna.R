@@ -17,6 +17,6 @@ create_query <- paste0(
 	"CREATE TABLE tags_antenna AS ",
 	"(", select_stmt, ");"
 )
-dbSendQuery(link$conn, create_query)
+dbSendQuery(con, create_query)
 
 

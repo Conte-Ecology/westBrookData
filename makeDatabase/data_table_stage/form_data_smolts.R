@@ -1,4 +1,4 @@
-trap_captures <-  dbGetQuery(link$conn, 
+trap_captures <-  dbGetQuery(con, 
 	"SELECT * FROM data_trap_captures WHERE species = 'ats';")
 
 smolts <- by(
@@ -13,6 +13,6 @@ smolts <- by(
 )
 smolts <- do.call(what=rbind, args=smolts)
 
-dbWriteTable(link$conn,'data_smolts',smolts, overwrite=TRUE, append=FALSE, row.names=FALSE)
+dbWriteTable(con,'data_smolts',smolts, overwrite=TRUE, append=FALSE, row.names=FALSE)
 
 

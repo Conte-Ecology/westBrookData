@@ -70,7 +70,7 @@ per_id_function <- function(id_history, cohort_table) {
 }
 
 
-tag_history <- dbGetQuery(link$conn, "SELECT * FROM data_corrected_tag_history;")
+tag_history <- dbGetQuery(con, "SELECT * FROM data_corrected_tag_history;")
 per_tag_history <- split(x=tag_history, f=tag_history[['tag']], drop=FALSE)
 
 assigned_cohorts <- readRDS(
@@ -95,7 +95,7 @@ if (any(lapply(id_tables,nrow) > 1))
 
 id_table <- do.call(what=rbind, args=id_tables)
 
-dbWriteTable(link$conn, 'data_per_tag', id_table, row.names=FALSE, overwrite=TRUE, append=FALSE)
+dbWriteTable(con, 'data_per_tag', id_table, row.names=FALSE, overwrite=TRUE, append=FALSE)
 
 
 
