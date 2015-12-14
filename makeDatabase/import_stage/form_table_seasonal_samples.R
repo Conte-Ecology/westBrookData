@@ -27,7 +27,7 @@ sampling[['seasonal']][sampling[['sample_name']] %in%
      "80", "81", "82", "83",
      "84", "85", "86", "87",
      "88", "89", "90", "91",
-		 "92", "93", "94", "95") ] <- TRUE
+		 "92", "93", "94") ] <- TRUE
 
 for (i in 1:nrow(sampling)) {
 	stmt <- paste0(
@@ -69,7 +69,7 @@ sample_number_map <- c(
   "80" = 69, "81" = 70,                 "82" = 71, "83" = 72,
   "84" = 73, "85" = 74,                 "86" = 75, "87" = 76,
   "88" = 77, "89" = 78,                 "90" = 79, "91" = 80,
-	"92" = 81, "93" = 82,                 "94" = 83, "92" = 84
+	"92" = 81, "93" = 82,                 "94" = 83
  )
 sample_number_map <- as.list(sample_number_map)
 
@@ -81,7 +81,7 @@ for ( i in 1:nrow(sampling)) {
 	}
 }
 
-dbWriteTable(conn=con, name='data_sampling',value=sampling,
+dbWriteTable(conn=con, name='data_seasonal_sampling',value=sampling,
 						 overwrite=TRUE, row.names=FALSE)
 
 ## Embarassed to write code like this:  <3 !

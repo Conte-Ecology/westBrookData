@@ -4,5 +4,5 @@
 getFish<-function(tagged=T,sampleType=NA){
   reconnect() #make sure the link to the database still exists
 
-  dbGetQuery(link$conn,"SELECT * FROM")
+  dbGetQuery(con,"SELECT * FROM")
 }

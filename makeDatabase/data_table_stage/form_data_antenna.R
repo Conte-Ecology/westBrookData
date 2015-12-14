@@ -15,7 +15,13 @@ column_code <- list(
 	section = function(section) return(section),
 	survey = function(survey) return(survey),
 	sample_name = function(sample_name) return(sample_name),
-	reader_id = function(reader_id) return(reader_id)
+	reader_id = function(reader_id) return(reader_id),
+  sample_type = function(sample_type) {
+    stationary<-grep("stationary",sample_type)
+    portable<-grep("able",sample_type)
+    sample_type[stationary]<-"stationary"
+    sample_type[portable]<-"portable"
+  }
 )
 
 

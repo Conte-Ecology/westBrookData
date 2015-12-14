@@ -49,7 +49,7 @@ sampling_rows <- mcmapply(
 	SIMPLIFY=FALSE
 )
 
-sampling_rows <- batch_rbind(sampling_rows)
+sampling_rows <- batchRbind(sampling_rows)
 
 dbWriteTable(conn=con, name='state_sampling_rows', value=sampling_rows, overwrite=TRUE, row.names=FALSE)
 

@@ -1,4 +1,4 @@
-did_table <- dbGetQuery(con, "SELECT * FROM data_per_tag;")
+id_table <- dbGetQuery(con, "SELECT * FROM data_per_tag;")
 
 sampling <- dbGetQuery(con, "SELECT * FROM data_sampling;")
 season_breaks <- dbGetQuery(con, "SELECT * FROM data_season;")

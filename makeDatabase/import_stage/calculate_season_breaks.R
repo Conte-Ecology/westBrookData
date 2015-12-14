@@ -1,4 +1,4 @@
-sampling <- dbGetQuery(con, "SELECT * FROM data_sampling WHERE seasonal IS TRUE;")
+sampling <- dbGetQuery(con, "SELECT * FROM data_seasonal_sampling WHERE seasonal IS TRUE;")
 sampling <- sampling[order(sampling[['start_date']]),]
 
 season_kmeans <- kmeans(x=sampling$start_julian_day, centers=c(90,15,280,350))
