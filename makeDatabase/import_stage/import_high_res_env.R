@@ -32,7 +32,7 @@ for(n in sheetNamesSolinst){
   name<-paste0(gsub(" ","",n),"Solinst")
   assign(name,
          data.table(
-           suppress.warnings(read_excel(solinstPath,n))
+           suppressWarnings(read_excel(solinstPath,n))
            )
          )
   setnames(get(name),map(colnames(get(name)),nameMapSolinst))
@@ -72,7 +72,7 @@ for(n in names(sheetNameMap)){
   name<-paste0(n,"Temp")
   assign(name,
          data.table(
-           read_excel(tempPath,sheetNameMap[[n]])
+           suppressWarnings(read_excel(tempPath,sheetNameMap[[n]]))
            )
          )
   setnames(get(name),map(colnames(get(name)),nameMapTemp))

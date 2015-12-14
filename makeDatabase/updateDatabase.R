@@ -10,12 +10,14 @@ do <- list(
 		"form_table_seasonal_samples.R",
 		"calculate_season_breaks.R",
 		"form_table_season_map.R",
+		"form_table_yoy_bins.R",
 		
 		"form_table_tags.R",
 		"form_table_temperature_discharge.R"
 	),
 	
 	data_table_stage = c(
+	  "form_data_yoy_bins.R",
 		"form_data_antenna.R",
 		"form_data_boundary_detections.R",
 		"form_data_captures.R",

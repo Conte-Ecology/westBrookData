@@ -1,8 +1,9 @@
 columns <- list(
 	who = c('tag'),
-	when = c('earliest_detection_date_time'),
-	where = c('river','area','section','distance_upriver_m','distance_upriver_from_confluence'),
-	how = c('reader_id','sample_type','sample_name','survey','source')
+	when = c('earliest_detection_date_time','arrival','departure'),
+	where = c('river','area','section','quarter','left_or_right'),
+	how = c('reader_id','sample_type','sample_name','survey','pass'),
+	what = c('alive_or_dead','antenna_instance','comment','habitat','cover','justification')
 )
 
 select_stmt <- paste(
