@@ -1,5 +1,5 @@
 captures <- dbReadTable(con,'data_captures')
-sampling <- dbReadTable(con, 'data_sampling')
+sampling <- dbReadTable(con, 'data_seasonal_sampling')
 
 seasonal_captures <- captures[ 
 	captures[['sample_number']] %in%

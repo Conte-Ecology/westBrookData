@@ -7,16 +7,8 @@ columns <- list(
   mutable_trait = c('measured_length','measured_weight')
 )
 
-select_stmt<-paste(
-  "SELECT", paste(unlist(columns), collapse=', '), "FROM ",
-    "raw_captures WHERE tag IS NULL"
-)
+untagged_captures<-data.table(dbGetQuery(con,"SELECT * FROM raw_captures WHERE tag IS NULL"))
+untagged_captures[,sample_name:=as.character(as.numeric(sample_name))]
 
-create_query <- paste0(
-  "CREATE TABLE untagged_captures AS ",
-  "(", select_stmt, ");"
-)
-
-dbDropTable('untagged_captures')
-
-dbSendQuery(con, create_query)
+dbWriteTable(conn=con, name='untagged_captures',value=data.frame(untagged_captures),
+             overwrite=TRUE, row.names=FALSE)

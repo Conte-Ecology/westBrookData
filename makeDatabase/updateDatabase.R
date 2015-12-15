@@ -17,11 +17,11 @@ do <- list(
 	),
 	
 	data_table_stage = c(
-	  "form_data_yoy_bins.R",
 		"form_data_antenna.R",
 		"form_data_boundary_detections.R",
 		"form_data_captures.R",
 		"form_data_seasonal.R",
+		"form_data_yoy_bins.R",
 		"form_data_trap_captures.R",
 		"form_data_smolts.R",
 		"form_data_tag_history.R",

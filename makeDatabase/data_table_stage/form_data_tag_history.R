@@ -56,9 +56,9 @@ hatch.year.no.tag<-function(Length,Sample,Species,River){
     if(Species== 'bkt' & Sample == 74 & River == 'wb jimmy' & Length>190){River <- 'west brook'}
     if(Species== 'ats' & River != 'west brook'){River<-'west brook'}
     
-    upper<-yoy_bins[sample==Sample&species==Species&river==River,cohort_max_length]
-    lower<-yoy_bins[sample==Sample&species==Species&river==River,cohort_min_length]
-    hatch_year<-yoy_bins[sample==Sample&species==Species&river==River,cohort][
+    upper<-yoy_bins[sample_name==Sample&species==Species&river==River,cohort_max_length]
+    lower<-yoy_bins[sample_name==Sample&species==Species&river==River,cohort_min_length]
+    hatch_year<-yoy_bins[sample_name==Sample&species==Species&river==River,cohort][
       intersect(which(Length<=upper),which(Length>=lower))]
     if(length(hatch_year)>0) {return(as.numeric(hatch_year))} else{
       return(as.numeric(NA))

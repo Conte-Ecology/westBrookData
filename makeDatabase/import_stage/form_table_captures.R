@@ -36,15 +36,8 @@ for (query in queries[2:length(queries)]) {
 	dbSendQuery(con, insert_query)
 }
 
-dbDropTable('tags_captures')
+tags_captures<-data.table(dbGetQuery(con,"SELECT * FROM raw_captures WHERE tag IS NOT NULL"))
+tags_captures[,sample_name:=as.character(as.numeric(sample_name))]
 
-create_tagged_fish_table <- paste0(
-	"CREATE TABLE tags_captures AS (SELECT * FROM ",
-	"raw_captures WHERE tag IS NOT NULL);"
-)
-dbSendQuery(con, create_tagged_fish_table)
-
-
-
-
-
+dbWriteTable(conn=con, name='tags_captures',value=data.frame(tags_captures),
+             overwrite=TRUE, row.names=FALSE)

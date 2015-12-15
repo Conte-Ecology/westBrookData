@@ -1,7 +1,7 @@
 column_code <- list(
   river=function(river) return(river),
   species=function(species) return(species),
-  sample_name=function(sample) return(as.numeric(sample)),
+  sample_name=function(sample) return(as.character(sample)),
   age=function(age) return(as.numeric(age)),
   cohort_min_length=function(cohort_min_length){
     return(as.numeric(cohort_min_length))
@@ -11,17 +11,18 @@ column_code <- list(
   }
 )
 
-
 source_data <- dbGetQuery(con, "SELECT * FROM yoy_bins;")
 source_data <- data.table(pipeline_data_transformation(
   data=source_data, pipeline=column_code))
-
-samples<-data.table(dbGetQuery(con,"SELECT year, sample_name FROM data_seasonal_sampling"))
-samples[,sample_name:=as.numeric(sample_name)]
-setkey(samples,sample_name)
 setkey(source_data,sample_name)
 
-yoy_bins<-samples[source_data]
-       
-dbWriteTable(con, 'data_yoy_bins', source_data, row.names=FALSE,
+samples<-data.table(dbGetQuery(con,"SELECT * FROM data_seasonal_sampling"))
+samples<-samples[,list(sample_name,year)]
+setkey(samples,sample_name)
+
+source_data<-samples[source_data]
+source_data[,cohort:=year-age] 
+source_data[,year:=NULL]
+
+dbWriteTable(con, 'data_yoy_bins', data.frame(source_data), row.names=FALSE,
              overwrite=TRUE, append=FALSE)
