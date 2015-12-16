@@ -1,4 +1,4 @@
-sampling <- dbGetQuery(con, "SELECT * FROM data_sampling;")
+sampling <- dbGetQuery(con, "SELECT * FROM data_seasonal_sampling;")
 id_table <- dbGetQuery(con, "SELECT * FROM data_per_tag;")
 
 sample_points <- mcmapply(

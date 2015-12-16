@@ -19,8 +19,13 @@ do <- list(
 	data_table_stage = c(
 		"form_data_antenna.R",
 		"form_data_boundary_detections.R",
-		"form_data_captures.R",
-		"form_data_seasonal.R",
+		
+		"form_data_tagged_captures.R",
+		"declare_data_errors.R",
+		"fix_data_errors.R",
+		"fix_tag_data.R",
+		
+		"form_data_seasonal_sampling.R",
 		"form_data_yoy_bins.R",
 		"form_data_trap_captures.R",
 		"form_data_smolts.R",
@@ -28,24 +33,15 @@ do <- list(
 		"form_data_locations.R"
 	),
 
-	assert_stage = c(
-		"assert_tag_properties.R",
-		"assert_data_errors.R"
-	),
-
-	cleaning_stage = c(
-		"fix_data_errors.R"
-	),
-
 	processing_stage = c(
-		"form_per_tag_data.R",
-		"form_occasion_points.R",
-		"form_occasion_rows.R",
-		"form_sample_points.R",
-		"form_sample_rows.R"
-	),
-	state_stage = c(
-		"form_state_table.R"
+		"form_per_tag_data.R"
+# 		"form_occasion_points.R",
+# 		"form_occasion_rows.R",
+# 		"form_sample_points.R",
+# 		"form_sample_rows.R"
+# 	),
+# 	state_stage = c(
+# 		"form_state_table.R"
 	)
 )
 source('/data/projects/westbrook/code/westBrookData/makeDatabase/shared_data.R')

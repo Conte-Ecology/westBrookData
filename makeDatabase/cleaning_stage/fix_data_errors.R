@@ -1,4 +1,4 @@
-tag_history <- dbGetQuery(con, statement = "SELECT * FROM data_tag_history;")
+tag_history <- data.table(dbGetQuery(con, statement = "SELECT * FROM data_tagged_captures;"))
 
 drop_these <- vector(mode='numeric', length=0)
 could_not_find <- list()
@@ -52,7 +52,8 @@ split_tag_history <- mclapply(
 
 tag_history <- do.call(what=rbind, args=split_tag_history)
 
-dbWriteTable(con, 'data_corrected_tag_history', tag_history, 
+dbDropTable(con,'data_tagged_captures')
+dbWriteTable(con, 'data_tagged_captures', tag_history, 
 						 row.names=FALSE, overwrite=TRUE, append=FALSE)
 
 

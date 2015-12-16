@@ -1,6 +1,6 @@
 id_table <- dbGetQuery(con, "SELECT * FROM data_per_tag;")
 
-sampling <- dbGetQuery(con, "SELECT * FROM data_sampling;")
+sampling <- dbGetQuery(con, "SELECT * FROM data_seasonal_sampling;")
 season_breaks <- dbGetQuery(con, "SELECT * FROM data_season;")
 
 start_year <- year(min(sampling[['start_date']])) - 4
