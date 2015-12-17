@@ -48,5 +48,3 @@ if (length(dropThese) != 0) {
 dbDropTable('data_tagged_captures')
 dbWriteTable(con, 'data_tagged_captures', tag_history, 
 						 row.names=FALSE, overwrite=TRUE, append=FALSE)
-
-

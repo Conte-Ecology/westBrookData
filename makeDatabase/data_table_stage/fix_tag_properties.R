@@ -85,7 +85,7 @@ writeIssues<-function(tagIssues,issuesPath){
                          )
   for(i in dimnames(issues)[[2]]){
     if(!is.null(tagIssues[[i]]) & length(tagIssues[[i]])>0){
-      issues[,i]<-tagIssues[[i]]
+      issues[,i]<-c(tagIssues[[i]],rep(as.character(NA),dim(issues)[1]-length(tagIssues[[i]])))
     }
   }
   

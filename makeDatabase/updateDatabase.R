@@ -1,30 +1,29 @@
 do <- list(
 	import_stage = c(
-		"import_to_sql.R",
-		"import_high_res_env.R",
-		"form_table_dead.R",
-		"form_table_antenna.R",
-		"form_table_captures.R",
-		"form_table_untagged_captures.R",
+# 		"import_to_sql.R",
+# 		"import_high_res_env.R",
+# 		"form_table_dead.R",
+# 		"form_table_antenna.R",
+# 		"form_table_captures.R",
+# 		"form_table_untagged_captures.R",
+# 		
+# 		"form_table_seasonal_sampling.R",
+# 		"calculate_season_breaks.R",
+# 		"form_table_season_map.R",
+# 		"form_table_yoy_bins.R"
 		
-		"form_table_seasonal_samples.R",
-		"calculate_season_breaks.R",
-		"form_table_season_map.R",
-		"form_table_yoy_bins.R",
-		
-		"form_table_tags.R",
-		"form_table_temperature_discharge.R"
+#   	,"form_table_temperature_discharge.R"
 	),
 	
 	data_table_stage = c(
-		"form_data_antenna.R",
-		"form_data_boundary_detections.R",
-		
-		"form_data_tagged_captures.R",
-		"declare_data_errors.R",
-		"fix_data_errors.R",
-		"fix_tag_data.R",
-		
+# 		"form_data_antenna.R",
+# 		"form_data_boundary_detections.R",
+# 		
+# 		"form_data_tagged_captures.R",
+# 		"declare_data_errors.R",
+# 		"fix_data_errors.R",
+# 		"fix_tag_properties.R",
+# 		
 		"form_data_seasonal_sampling.R",
 		"form_data_yoy_bins.R",
 		"form_data_trap_captures.R",
@@ -34,7 +33,7 @@ do <- list(
 	),
 
 	processing_stage = c(
-		"form_per_tag_data.R"
+	  "form_dataByTag.R",
 # 		"form_occasion_points.R",
 # 		"form_occasion_rows.R",
 # 		"form_sample_points.R",
