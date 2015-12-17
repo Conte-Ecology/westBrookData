@@ -4,7 +4,7 @@ column_code <- list(
 		return(tag)
 	},
 	fish_number = function(fish_number) {
-		return(fish_number)
+		return(as.character(as.numeric(fish_number)))
 	},
 	species = function(species) return(species),
 	cohort = function(cohort, tag) {  ## cohort is not well defined.
@@ -28,7 +28,7 @@ column_code <- list(
 	},
 	river = function(river) return(river),
 	area = function(area) return(area),
-	section = function(section) return(section),
+	section = function(section) return(unlist(strsplit(section,"\\.00"))),
 	observed_length = function(measured_length) {	
 		observed_length <- as.numeric(measured_length)
 	},
@@ -38,7 +38,7 @@ column_code <- list(
 
 
 source_data <- dbGetQuery(con, "SELECT * FROM tags_captures;")
-tagged_captures <- pipeline_data_transformation(
+source_data <- pipeline_data_transformation(
 	data=source_data, pipeline=column_code)
 
 
