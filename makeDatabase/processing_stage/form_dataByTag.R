@@ -23,19 +23,21 @@ getMinLength<-function(x){
 
 cohortBins<-data.table(dbGetQuery(con,"SELECT * FROM data_yoy_bins"))
 
-getCohort<-function(cohort,species,length,sample){
-  execEnv<-env()
+getCohort<-function(cohort,species,length,sample,river){
+  execEnv<-environment()
   species<-unique(na.omit(species))
   if(length(species)>1) stop("cannot assign cohort for multiple species tag")
-  if(length(species==0)) return(NA)
-  cohort<-unique(na.omit(cohort))
-  if(length(cohort==1)) return(cohort)
-  if(length(cohort==0)){
+  if(length(species)==0) return(as.numeric(NA))
+  cohort<-as.numeric(unique(na.omit(cohort)))
+  if(length(cohort)==1) return(cohort)
+  if(length(cohort)==0){
     minLength<-suppressWarnings(min(length,na.rm=T))
-    if(minLength==Inf) return(NA)
+    if(minLength==Inf) return(as.numeric(NA))
     sample<-sample[which(length==minLength)]
+    river<-river[which(length==minLength)]
     bins<-cohortBins[species==get('species',envir=execEnv)&
-                          sample_name==get('sample',envir=execEnv),
+                      sample_name==get('sample',envir=execEnv)&
+                      river==get('river',envir=execEnv) ,
                           list(cohort_min_length,
                                cohort_max_length,
                                cohort)]
@@ -55,7 +57,8 @@ dataByTag<-captures[,list(species=getSpecies(species),
                           minLength=getMinLength(observed_length),
                           minLengthSample=detection_date[which.min(observed_length)],
                           firstCaptureSample=min(sample_name),
-                          lastCaptureSample=max(sample_name)
+                          lastCaptureSample=max(sample_name),
+                          cohort=getCohort(cohort,species,observed_length,sample_name,river)
                           ),by=tag]
 
 #add in lastAntennaDetection from antenna data
