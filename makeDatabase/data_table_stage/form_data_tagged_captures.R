@@ -29,8 +29,9 @@ column_code <- list(
 	river = function(river) return(river),
 	area = function(area) return(area),
 	section = function(section) return(unlist(strsplit(section,"\\.00"))),
-	observed_length = function(measured_length) {	
-		observed_length <- as.numeric(measured_length)
+	observed_length = function(measured_length) {
+	  observed_length<-as.numeric(measured_length)
+		return(ifelse(observed_length==0,NA,observed_length))
 	},
 	survey = function(survey) return(survey),
 	sample_name = function(sample_name) return(sample_name)

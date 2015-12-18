@@ -50,7 +50,7 @@
   
   pheno<-sampleNames[pheno]
   
-  #############################################################################
+  # subset ------------------------------------------------------------
   
   # subset variables for dMData
   # if include fish from cohorts < 1997, they will have ageInSamples that
@@ -123,7 +123,7 @@
                    #,'everMat01','mature01','sex','weight'
   )                  
   
-  # ----------------------------------------------------------------------
+  # random stuff that should go in data prep----------------------------------------------------------------------
 
   emigration<-pheno[sample_name %in% c("antenna_detection","trap")]
   
@@ -153,21 +153,20 @@
   setkey(pheno,tag,sample_name)
   pheno <- pheno[ !duplicated(pheno[,list(tag,sample_name)]), ]
   
-  ##########################
-  # End of initial data prep 
-  ##########################
+  # End of initial data prep --------------------------------------
+
   
-  #############################################################################
-  # subset species,river, and area                                                            
+# more subsetting ------------------------------------------------
+                                                         
   pheno2 <- pheno[species %in% get('species',env=execEnv) &
                     river   %in% riverSubset &
                     area    %in% areaSubset]
   
-  pheno2$riverN<-as.numeric(factor(pheno2$river))
+  pheno2$riverN<-as.numeric(factor(pheno2$river)) 
   
-  #############################################################################
-  # Generate data to set up long data format
-  #############################################################################
+# 
+# Generate data to set up long data format
+
   firstYear   <- min(pheno2$year)
   firstSample <- min(pheno2$sample_name)
   
@@ -252,7 +251,6 @@
   
   yearSeasonList3 <- rbind(augBack,yearSeasonList2)
   ##################################################
-  ##################################################
   
   # add sampleNumAdjConsec to pheno2
   pheno2 <- merge(
@@ -286,9 +284,8 @@
   pheno2Long[,enc:=ifelse(is.na(sample_name),0,1)]
   
   
-  ##############################################################################
-  # season index for each sample
-  ##############################################################################
+  # season index for each sample #############################################################################
+
   sampleToSeason <- unique(yearSeasonList3[,list(sampleNumAdjConsec,season)])
   #sort by sampleNumAdj - otherwise yearsMatrix is out of order
   
@@ -308,12 +305,10 @@
     by = c('sampleNumAdjConsec'), all.x = TRUE, sort=FALSE
   )
   
-  ##############################################################################
-  #get individual-specifc lists and prepare to merge into pheno2Long
-  ##############################################################################
-  ##############################################################################
-  # variables that don't change within fish
-  ##############################################################################
+  # get individual-specifc lists and prepare to merge into pheno2Long ###########
+
+  # variables that don't change within fish - create byTag #####################################
+
   boundaryDetections<-data.table(dbGetQuery(con,
                                             "SELECT * FROM data_boundary_detections;"))
   boundaryDetections<-boundaryDetections[,list(
@@ -384,7 +379,7 @@
   
   ##############################################################################
   # prepare to create availability column
-  ##############################################################################
+
   nOcc <- max(yearSeasonList3$sampleNumAdjConsec)
   
   # fish are not available when they are too old                        
@@ -444,11 +439,10 @@
   
   dMData[ river == 'west brook' & year == 2007 & season == 4, propSampled:=0 ]                                 
   
-  ##############################################################################
+
   
-  ##############################################################################
-  # add environmental data to each row of dMData
-  ##############################################################################
+  # add environmental data to each row of dMData ############################################################################
+
   #envData <- as.data.frame(read.csv(file="./envData.txt", header=TRUE))                                         
   # file created using access file query  fourRiversAllSpp:envData query
   # in C:\PITTAGMAIN\CMR Analyses\Hierach_Bugs\allSpp
@@ -591,7 +585,7 @@
     by = c('sampleNum'), all.x = TRUE
   )
   
-  
+  # antenna efficiency
   # set up template for all possible samples for antenna efficiency
   firstYearAnt <- 1997; lastYearAnt <- 2015
   yearSeasonListAnt <- as.data.frame(matrix(NA,(lastYearAnt-firstYearAnt+1)*4,2))
@@ -716,20 +710,10 @@
   ##############################################################
   
   dMData[,intervalLength:=difftime(lagDateForEnv,dateForEnv, unit="days")]
-  
-  
-  
-  
-  
-  # #########################################################################
-  # #########################################################################
-  # 
+
   # #########################################################################
   # ### AntennaTrib
-  # #########################################################################
-  # # 
-  # # 
-  # 
+
   # antennaTribs <- as.data.frame(read.csv(file="./antennaTribs.txt", header=TRUE))                                         
   # # file created using access file query  fourRiversAts:antennaDuda query
   # # in C:\PITTAGMAIN\CMR Analyses\Hierach_Bugs\allSpp

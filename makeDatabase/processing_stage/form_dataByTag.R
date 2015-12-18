@@ -1,5 +1,5 @@
 #use captures as the base
-captureQuery<-paste("SELECT tag,species,sample_name,cohort,observed_length",
+captureQuery<-paste("SELECT tag,species,sample_name,cohort,observed_length,river",
                     "FROM data_tagged_captures")
 captures<-data.table(dbGetQuery(con,captureQuery))
 setkey(captures,tag)
@@ -33,7 +33,7 @@ getCohort<-function(cohort,species,length,sample,river){
   if(length(cohort)==0){
     minLength<-suppressWarnings(min(length,na.rm=T))
     if(minLength==Inf) return(as.numeric(NA))
-    sample<-sample[which(length==minLength)]
+    sample<-min(sample[which(length==minLength)])
     river<-river[which(length==minLength)]
     bins<-cohortBins[species==get('species',envir=execEnv)&
                       sample_name==get('sample',envir=execEnv)&
@@ -41,8 +41,8 @@ getCohort<-function(cohort,species,length,sample,river){
                           list(cohort_min_length,
                                cohort_max_length,
                                cohort)]
-    cohort<-bins$cohort[intersect(which(minLength>bins$cohort_min_length),
-                                  which(minLength<bins$cohort_max_length))]
+    cohort<-bins$cohort[intersect(which(minLength>=bins$cohort_min_length),
+                                  which(minLength<=bins$cohort_max_length))]
     return(cohort)
   }
   if(length(cohort>1)){
@@ -54,8 +54,6 @@ getCohort<-function(cohort,species,length,sample,river){
 
 #get data from from seasonal sampling by tag
 dataByTag<-captures[,list(species=getSpecies(species),
-                          minLength=getMinLength(observed_length),
-                          minLengthSample=detection_date[which.min(observed_length)],
                           firstCaptureSample=min(sample_name),
                           lastCaptureSample=max(sample_name),
                           cohort=getCohort(cohort,species,observed_length,sample_name,river)
@@ -72,16 +70,14 @@ for(nom in c("data_stationary_antenna","data_portable_antenna")){
 setkey(antenna,tag)
 antenna<-antenna[,list(lastAntennaDetection=max(detection_date)),by=tag]
 
-dataByTag<-dataByTag[antenna]
+dataByTag<-antenna[dataByTag]
 
 #add dateKnownDead from tags_dead
 dead<-data.table(dbGetQuery(con,"SELECT * FROM tags_dead"))
 setkey(dead,tag)
 
-dataByTag<-dataByTag[dead]
+dataByTag<-dead[dataByTag]
 
-
-
-dbDropTable("dataByTag")
-dbWriteTable(con, 'dataByTag', dataByTag, row.names=FALSE)
+dbDropTable("data_by_tag")
+dbWriteTable(con, 'data_by_tag', dataByTag, row.names=FALSE)
 
