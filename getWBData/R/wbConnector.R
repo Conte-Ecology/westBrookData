@@ -15,7 +15,7 @@ wbConnector<-function(){
                     user=usr,
                     password=pass,
                     dbname="westbrook")
-  con<<-do.call(dbConnect,credentials)
+  con<<-do.call(RPostgreSQL::dbConnect,credentials)
   cat("\014")
 }
 
@@ -27,7 +27,7 @@ wbConnector<-function(){
 reconnect<-function(){
   if(!exists("con")){wbConnector()} else {
     if(class(con)!="PostgreSQLConnection"){wbConnector()} else{
-      if(class(try(dbGetQuery(con,""),silent=T))=="try-error"){
+      if(class(try(RPostgreSQL::dbGetQuery(con,""),silent=T))=="try-error"){
         wbConnector()
       }
     }

@@ -4,7 +4,8 @@
 \alias{getFish}
 \title{Test function for extracting data}
 \usage{
-getFish(tagged = T, sampleType = NA)
+getFish(species = c("bkt", "bnt", "ats"), tagged = T, sampleType = NA,
+  baseColumns = T, columnsToAdd = NULL)
 }
 \description{
 Test function for extracting data
