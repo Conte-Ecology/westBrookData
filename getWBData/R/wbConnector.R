@@ -22,7 +22,7 @@ wbConnector<-function(){
 #'Reconnect to the West Brook database
 #'
 #'Tests the connection to the database and runs wbConnect() if the connection has not been established or has expired
-#'@returns A connection to the West Brook database
+#'@return A connection to the West Brook database
 #'@export
 reconnect<-function(){
   if(!exists("con")){wbConnector()} else {

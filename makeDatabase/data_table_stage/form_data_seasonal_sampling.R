@@ -1,22 +1,22 @@
-captures <- dbReadTable(con,'data_captures')
-sampling <- dbReadTable(con, 'data_seasonal_sampling')
+seasonalSampling<-data.table(dbGetQuery(con,"SELECT * FROM data_seasonal_sampling"))
+season_map<-data.table(dbGetQuery(con,"SELECT * FROM season_map"))
+getSeason<-function(sample_name,startDay,endDay){
+  if(startDay<=endDay){
+    seasons<-season_map[day %in% startDay:endDay,season_number]
+  } else {
+    seasons<-season_map[day %in% c(startDay:365,1:endDay),season_number]
+  }
+  if(length(unique(seasons))>1){
+    warning(paste0("\nsample ",sample_name," crosses season boundary: ",
+                   round(sum(seasons==unique(seasons[1]))/length(seasons)*100),
+                         "% of days in one season"))}
+  season<-round(median(seasons))
+  return(season)
+}
 
-seasonal_captures <- captures[ 
-	captures[['sample_number']] %in%
-	sampling[sampling[['seasonal']],'sample_number']
-,]
-
-seasonal_captures <- seasonal_captures[
-	order(seasonal_captures[['species']],
-				seasonal_captures[['tag']],
-				seasonal_captures[['detection_date']]),]
-
-pl <- ggplot(
-	data=seasonal_captures, 
-	aes(x=sample_number, y=as.numeric(as.factor(tag))  )
-) + geom_raster()
-
-dbWriteTable(con, 'data_seasonal_captures', seasonal_captures, row.names=FALSE,
-						 overwrite=TRUE, append=FALSE)
-
-
+seasonalSampling[,season:=as.numeric(NA)]
+for(i in 1:nrow(seasonalSampling)){
+  seasonalSampling[i,season:=getSeason(sample_name,start_julian_day,end_julian_day)]
+}
+dbDropTable("data_seasonal_sampling")
+dbWriteTable(con,name="data_seasonal_sampling",value=seasonalSampling)

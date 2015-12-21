@@ -52,46 +52,8 @@
   
   # subset ------------------------------------------------------------
   
-  # subset variables for dMData
-  # if include fish from cohorts < 1997, they will have ageInSamples that
-  #don't go back to 1. for now we are leaving out cohort < 1997
-  #when we want to include them, we'll need to augment back to ageInsamples 1
-  #bay adding in negative smample numbers
-  subsetDMdataCohortMin <- cohorts[1] # >=
-  subsetDMdataCohortMax <- cohorts[2] # <=
-  
-  subsetDMdataAgeInSamples <- 15 # <  
-  
-  # exclude fish that were captured for the first time after the
-  # following ageInSamples
-  # set equal to subsetDMdataAgeInSamples - 1 to have no effect 
-  maxAgeInSamplesFirstCapt <- subsetDMdataAgeInSamples - 1 #4  0
-  
-  # this could be specified in the function call, but for now it's just 
-  #  set up for west brook
-  if (species == 'ats'  ) {
-    riverSubset <- tolower(c('WEST BROOK'))#,'WB JIMMY') 
-    #,'WB MITCHELL',"WB OBEAR") 
-    #riverSubset <- c("SHOREY BROOK") 
-    # "SAWMILL RIVER","WB JIMMY","WB OBEAR", "WB MITCHELL", "CATAMARAN BROOK", 
-    #riverSubset <- c("SAWMILL RIVER")
-    areaSubset <- tolower(c('INSIDE', 'ABOVE', 'BELOW'))#, 'TRIB' ) 
-    
-  }
-  
-  if (species %in% c('bkt')) {
-    riverSubset <- tolower(c('WEST BROOK','WB JIMMY','WB MITCHELL',"WB OBEAR")) 
-    areaSubset <- tolower(c('INSIDE', 'ABOVE', 'BELOW', 'TRIB','ABOVE ABOVE',
-                            'aboveabove','BELOW BELOW' )) 
-  }
-  
-  if (species %in% c('bnt')) {
-    riverSubset <- tolower(c('WEST BROOK','WB MITCHELL',"WB JIMMY")) 
-    areaSubset <- tolower(c('INSIDE', 'ABOVE', 'BELOW', 'TRIB','ABOVE ABOVE',
-                            'aboveabove','BELOW BELOW' )) 
-  }
-  
-  
+
+   
   # List variables to keep --------------------------------------------------
   
 # columns to include in  pheno2LongList
@@ -159,8 +121,8 @@
 # more subsetting ------------------------------------------------
                                                          
   pheno2 <- pheno[species %in% get('species',env=execEnv) &
-                    river   %in% riverSubset &
-                    area    %in% areaSubset]
+                    river   %in% subsetRiver &
+                    area    %in% subsetArea]
   
   pheno2$riverN<-as.numeric(factor(pheno2$river)) 
   
@@ -206,6 +168,7 @@
   
   # fill in NAs for sampleNumAdj. Happens when species=ATS for winter samples
   #just hard-coding this for now. sample #s will always line up w year/season
+
   yearSeasonList2[year==2005 & season==4,sample_name:=55]
   yearSeasonList2[year==2002 & season==4,sample_name:=42]
   yearSeasonList2[year==2007 & season==4,sample_name:=63]

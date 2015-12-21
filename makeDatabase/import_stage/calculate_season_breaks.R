@@ -16,13 +16,13 @@ sample_melt[ sample_melt[['value']] < 20,'value'] <- 366
 pl_samples_by_number <- ggplot(
   data=sample_melt[sample_melt[['seasonal']],],
   aes(x=value, y=year, colour=factor(sample_number), size=factor(season))
-) + geom_line()
+) + geom_line() + geom_vline(xintercept=season_breaks$start_julian_day)
 
 
 season_breaks <- aggregate(
 	formula = start_julian_day ~ season,
 	data = sampling,
-	FUN=function(x) sort(x)[3]  #### EXPLICITELY choosing third earliest sample start
+	FUN=function(x) sort(x)[1]  #### K had the third earliest sampling date, but that made a bunch of samples overlap seasons
 )
 
 pl_sampling_points <- ggplot(

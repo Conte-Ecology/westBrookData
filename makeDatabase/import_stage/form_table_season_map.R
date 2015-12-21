@@ -49,12 +49,10 @@ day_count <- aggregate(
 
 season_breaks <- merge(
 	x=season_breaks, by.x='season', y=day_count, by.y='season_number')
-
+names(season_breaks)[which(names(season_breaks)=="end_julian_day")]<-"start_julian_day"
 
 dbWriteTable(conn=con, name='data_season', value=season_breaks,
 						 row.names=FALSE, overwrite=TRUE, append=FALSE)
 
 
 	
-
-
