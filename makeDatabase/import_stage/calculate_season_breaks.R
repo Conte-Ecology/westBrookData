@@ -16,7 +16,7 @@ sample_melt[ sample_melt[['value']] < 20,'value'] <- 366
 pl_samples_by_number <- ggplot(
   data=sample_melt[sample_melt[['seasonal']],],
   aes(x=value, y=year, colour=factor(sample_number), size=factor(season))
-) + geom_line() + geom_vline(xintercept=season_breaks$start_julian_day)
+) + geom_line()
 
 
 season_breaks <- aggregate(

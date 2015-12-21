@@ -1,4 +1,4 @@
-captures <- dbReadTable(con,'data_captures')
+captures <- dbReadTable(con,'data_tagged_captures')
 
 trap_captures <- captures[
 	captures[['survey']] %in% c('box trap','screw trap','duda fyke')
