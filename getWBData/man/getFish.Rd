@@ -7,6 +7,9 @@
 getFish(species = c("bkt", "bnt", "ats"), tagged = T, sampleType = NA,
   baseColumns = T, columnsToAdd = NULL)
 }
+\value{
+Not much...yet
+}
 \description{
 Test function for extracting data
 }

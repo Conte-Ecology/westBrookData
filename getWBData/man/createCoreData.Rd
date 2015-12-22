@@ -4,13 +4,11 @@
 \alias{createCoreData}
 \title{Download data from West Brook database}
 \usage{
-createCoreData(sampleType = "electrofishing", species = c("bkt", "bnt",
-  "ats"), baseColumns = T, columnsToAdd = NULL, includeUntagged = F)
+createCoreData(sampleType = NULL, baseColumns = T, columnsToAdd = NULL,
+  includeUntagged = F, selectRows = list())
 }
 \arguments{
 \item{sampleType}{A character vector of sampling types to be included in output, options are: electrofishing,stationaryAntenna,portableAntenna,trap}
-
-\item{species}{A character vector of species to include, possible codes: bkt,bnt,ats,bnd}
 
 \item{baseColumns}{Logical: include default columns? tag,detection_date}
 
@@ -18,7 +16,31 @@ createCoreData(sampleType = "electrofishing", species = c("bkt", "bnt",
 
 \item{includeUntagged}{Logical: include untagged fish?}
 }
+\value{
+a data.frame of fish data
+}
 \description{
 Download data from West Brook database
+}
+\details{
+\strong{Column names for tables}
+These are the options for columns to add depending on the sampleType chosen. 
+ When multiple sampleTypes are selected, columns that only exist within one are given NA for the other sampleType(s)
+
+\emph{electrofishing:}
+
+tag, fish_number, species, cohort, sample_number, detection_date, season_number, river, area, section, observed_length, survey, sample_name
+
+\emph{stationaryAntenna:}
+
+tag, detection_date, river, area, section, survey, sample_name, reader_id, sample_type, alive_or_dead, instance, arrival, departure, comment
+
+\emph{portableAntenna:}
+
+tag, detection_date, river, area, section, survey, sample_name, reader_id, sample_type, alive_or_dead, instance, pass, quarter, left_or_right, habitat, cover, justification, comment
+
+\emph{trap:}
+
+tag, fish_number, species, cohort, sample_number, detection_date, season_number, river, area, section, observed_length, survey, sample_name
 }
 

@@ -1,5 +1,5 @@
 #'Test function for extracting data
-#'@returns Not much...yet
+#'@return Not much...yet
 #'@export
 getFish<-function(species=c("bkt","bnt","ats"),
                   tagged=T,
