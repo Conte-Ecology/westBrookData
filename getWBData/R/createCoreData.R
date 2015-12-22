@@ -7,14 +7,12 @@
 #'@details \strong{Column names for tables}
 #' These are the options for columns to add depending on the sampleType chosen. 
 #'  When multiple sampleTypes are selected, columns that only exist within one are given NA for the other sampleType(s)
-#'@details \emph{electrofishing:}
-#'@details tag, fish_number, species, cohort, sample_number, detection_date, season_number, river, area, section, observed_length, survey, sample_name
+#'@details \emph{captures:}
+#'@details tag, fishNumber, species, cohort, sampleNumber, detectionDate, seasonNumber, river, area, section, observedLength, survey, sampleName
 #'@details \emph{stationaryAntenna:}
-#'@details tag, detection_date, river, area, section, survey, sample_name, reader_id, sample_type, alive_or_dead, instance, arrival, departure, comment
+#'@details tag, detectionDate, river, area, section, survey, sampleName, readerId, sampleType, aliveOrDead, instance, arrival, departure, comment
 #'@details \emph{portableAntenna:}
-#'@details tag, detection_date, river, area, section, survey, sample_name, reader_id, sample_type, alive_or_dead, instance, pass, quarter, left_or_right, habitat, cover, justification, comment
-#'@details \emph{trap:}
-#'@details tag, fish_number, species, cohort, sample_number, detection_date, season_number, river, area, section, observed_length, survey, sample_name
+#'@details tag, detectionDate, river, area, section, survey, sampleName, readerId, sampleType, aliveOrDead, instance, pass, quarter, leftOrRight, habitat, cover, justification, comment
 #'  
 #'@export
 createCoreData<-function(sampleType=NULL,
@@ -24,10 +22,9 @@ createCoreData<-function(sampleType=NULL,
                   selectRows=list()){
   reconnect() #make sure the link to the database still exists
   #define the tables to grab from
-  st<-list(electrofishing="data_tagged_captures",
+  st<-list(captures="data_tagged_captures",
            stationaryAntenna="data_stationary_antenna",
            portableAntenna="data_portable_antenna",
-           trap="data_tagged_captures",
            dead="tags_dead")
   
   tables<-st[sampleType]
@@ -39,7 +36,7 @@ createCoreData<-function(sampleType=NULL,
   } else chosenColumnns<-NULL
   
   if(!is.null(columnsToAdd)){
-    chosenColumns <- c(chosenColumns,columnsToAdd)
+    chosenColumns <- c(fillUnderscore(chosenColumns),columnsToAdd)
   }
 
 #create receptacle for data
@@ -66,7 +63,7 @@ createCoreData<-function(sampleType=NULL,
     warning(paste0("column(s) ",paste(columnsNotIncluded,collapse=", "),
                    " do not exist in any sampleType selected"))
     }
-  
+  names(dataOut)<-camelCase(names(dataOut))
   return(dataOut)
 }
 

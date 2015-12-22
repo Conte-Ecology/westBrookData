@@ -89,8 +89,8 @@ getCohort<-function(cohort,species,length,sample,river){
 
 #get data from from seasonal sampling by tag
 dataByTag<-captures[,list(species=getSpecies(species),
-                          firstCaptureSample=min(sample_name),
-                          lastCaptureSample=max(sample_name),
+                          first_capture_sample=min(sample_name),
+                          last_capture_sample=max(sample_name),
                           cohort=getCohort(cohort,species,observed_length,sample_name,river)
                           ),by=tag]
 
@@ -103,7 +103,7 @@ for(nom in c("data_stationary_antenna","data_portable_antenna")){
   )
 }
 setkey(antenna,tag)
-antenna<-antenna[,list(lastAntennaDetection=max(detection_date)),by=tag]
+antenna<-antenna[,list(last_antenna_detection=max(detection_date)),by=tag]
 
 dataByTag<-antenna[dataByTag]
 

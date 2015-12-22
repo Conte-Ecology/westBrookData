@@ -3,16 +3,13 @@
 #'@param coreData a data.frame created using createCoreData
 #'@param columnsToAdd A character vector of columns to inlcude; can replace or add to baseColumns
 #'@details \strong{Options of columns to add}
-#' date_known_dead, lastAntennaDetection, species, firstCaptureSample, lastCaptureSample, cohort
+#' dateKnownDead, lastAntennaDetection, species, firstCaptureSample, lastCaptureSample, cohort
 #'@export
 
 addTagProperties<-function(coreData,
-  columnsToAdd=c("date_known_dead",
-                 "lastAntennaDetection",
-                 "species",             
-                 "firstCaptureSample",
-                 "lastCaptureSample",
-                 "cohort")){
+  columnsToAdd=c("dateKnownDead","lastAntennaDetection","species","first_capture_sample","last_capture_sample","cohort")
+  ){
+  columnsToAdd<-fillUnderscore(columnsToAdd)
   possibleColumns<-dbGetQuery(con,
                          paste0("SELECT column_name ",
                                 "FROM information_schema.columns ",
@@ -32,6 +29,6 @@ addTagProperties<-function(coreData,
   tagProperties<-dbGetQuery(con,query)
   
   coreData<-left_join(coreData,tagProperties,by="tag")
-  
+  names(coreData)<-camelCase(names(coreData)))
   return(coreData)
 }
