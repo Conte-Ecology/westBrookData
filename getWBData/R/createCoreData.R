@@ -35,25 +35,14 @@ createCoreData<-function(sampleType=NULL,
   
   #define the columns to grab
   if(baseColumns){
-    chosenColumns<-c("data_by_tag.tag","detection_date")
+    chosenColumns<-c("tag","detection_date")
   } else chosenColumnns<-NULL
   
   if(!is.null(columnsToAdd)){
     chosenColumns <- c(chosenColumns,columnsToAdd)
   }
-  #define tags to grab
-#   if(length(selectRows>0)){
-#     rowQuery<-NULL
-#     for(n in names(selectRowsOuput)){
-#       paste(" = '",selectRows[[n]])
-#     }
-#     selectionColumns<-paste(c("tag",names(selectRowsOutput),collapse=", ")
-#                           
-#     tags<-dbGetQuery(con,paste0("SELECT tag FROM by_tag_data",
-#                                 "WHERE " selectionColumns)
-#   }
-  
-  #create receptacle for data
+
+#create receptacle for data
   dataOut<-NULL
   
 #add data from each table
@@ -67,10 +56,7 @@ createCoreData<-function(sampleType=NULL,
     chosenTableColumns<-chosenColumns[chosenColumns %in% tableColumns]
     columnQuery<-paste(unique(chosenTableColumns),collapse=",")
     query<-paste("SELECT",columnQuery,
-                "FROM",t,
-                "INNER JOIN data_by_tag",
-                "ON ",paste(t,"tag",sep=".")," = data_by_tag.tag",
-                "WHERE data_by_tag.species = 'bkt'")
+                "FROM",t)
     #add data from this table to the data receptacle 
     dataOut<-dplyr::bind_rows(dataOut,RPostgreSQL::dbGetQuery(con,query))
   }
