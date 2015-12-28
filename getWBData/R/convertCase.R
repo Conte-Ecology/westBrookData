@@ -4,7 +4,7 @@
 #'@return A string (vector) with underscore separated words
 
 fillUnderscore<-Vectorize(function(x){
-  whichCaps<-which(unlist(strsplit(x,""))==unlist(strsplit(toupper(x),"")))
+  whichCaps<-which(unlist(strsplit(x,""))!=unlist(strsplit(tolower(x),"")))
   if(1 %in% whichCaps){whichCaps<-whichCaps[-1]}
   xSplit<-substring(x,c(1,whichCaps),c(whichCaps-1,nchar(x)))
   filled<-paste(tolower(xSplit),collapse="_")

@@ -17,7 +17,7 @@ setkey(allDateTime,dateTime)
 
 riverObjects<-c("jimmy","mitchell","obear","wb")
 for(r in riverObjects){
-  assign(r,get(r)[,list(dateTime,temp,depth)])
+  assign(r,get(r)[,list(dateTime,temp,depth,source="measured")])
   setkey(get(r),dateTime)
   assign(r,get(r)[allDateTime])
   setnames(get(r),c("temp","depth"),c(paste0(r,"Temp"),paste0(r,"Depth")))
@@ -27,6 +27,7 @@ data<-jimmy[mitchell]
 data<-data[obear]
 data<-data[wb]
 setkey(data,dateTime)
+
 
 #first pass is interpolating gaps <=4hrs
 interpolateTemps<-function(data){
