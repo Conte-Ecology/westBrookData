@@ -1,5 +1,6 @@
 solinstPath<-file.path(original_data_dir,"West Drainage Solinst logger data.xlsx")
 tempPath<-file.path(original_data_dir,"finished west brook temperature.xlsx")
+earlyPath<-file.path(original_data_dir,"earlyWestBrookEnv.csv")
 
 parseDateTime<-function(date,time){
   time<-as.POSIXlt(time)
@@ -86,6 +87,19 @@ for(n in names(sheetNameMap)){
 }
 
 highResEnv<-do.call(rbind,args=as.list(objectNames))
+highResEnv[,river:=tolower(river)]
+
+early<-suppressWarnings(fread(earlyPath))
+setnames(early,c("date/time","final depth"),c("dateTime","finalDepth"))
+early<-early[,list(river="west brook",
+                   section=NA,
+                   dateTime=as.POSIXct(dateTime*24*60*60,origin=as.POSIXct("1899-12-30 00:00:00")),
+                   temp=temp,
+                   depth=finalDepth,
+                   source="earlyDepthLogger")]
+
+highResEnv<-rbind(highResEnv,early)
+
 setkey(highResEnv,river,section,dateTime)
 
 dbWriteTable(con, 'raw_high_res_env', highResEnv, row.names=FALSE,
