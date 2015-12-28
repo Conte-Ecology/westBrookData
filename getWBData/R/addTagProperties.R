@@ -28,7 +28,7 @@ addTagProperties<-function(coreData,
   query<-paste("SELECT",columnQuery,"FROM data_by_tag")
   tagProperties<-RPostgreSQL::dbGetQuery(con,query)
   
-  coreData<-left_join(coreData,tagProperties,by="tag")
+  coreData<-dplyr::left_join(coreData,tagProperties,by="tag")
   names(coreData)<-camelCase(names(coreData))
   return(coreData)
 }
