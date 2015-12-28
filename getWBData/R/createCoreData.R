@@ -18,8 +18,7 @@
 createCoreData<-function(sampleType=NULL,
                   baseColumns=T,
                   columnsToAdd=NULL,
-                  includeUntagged=F,
-                  selectRows=list()){
+                  includeUntagged=F){
   reconnect() #make sure the link to the database still exists
   #define the tables to grab from
   st<-list(captures="data_tagged_captures",
@@ -45,7 +44,7 @@ createCoreData<-function(sampleType=NULL,
 #add data from each table
   for(t in tables){
     #select only columns that exist in each table
-    tableColumns<-dbGetQuery(con,
+    tableColumns<-RPostgreSQL::dbGetQuery(con,
                   paste0("SELECT column_name ",
                         "FROM information_schema.columns ",
                         "WHERE table_name = '",t,"'")
@@ -61,7 +60,7 @@ createCoreData<-function(sampleType=NULL,
   columnsNotIncluded<-chosenColumns[!chosenColumns %in% names(dataOut)]
   if(length(columnsNotIncluded)>0){
     warning(paste0("column(s) ",paste(columnsNotIncluded,collapse=", "),
-                   " do not exist in any sampleType selected"))
+                   " do(es) not exist in any sampleType selected"))
     }
   names(dataOut)<-camelCase(names(dataOut))
   return(dataOut)

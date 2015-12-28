@@ -77,11 +77,11 @@ interpolateTemps<-function(data){
       } 
       
       #interpolate in the gap in the river specific object
-      get(r)[dateTime>=earlier&
-               dateTime<=later,
-             c(paste0(r,"Temp"),"source"):=
-               list(approx(get(tempName),xout=1:length(get(tempName)))$y,
-               "interpolated")]
+      rows<-get(r)[dateTime>=earlier&
+               dateTime<=later,,which=T]
+      set(get(r),rows,which(names(get(r))==tempName),
+          approx(get(r)[dateTime %in% c(earlier,later),get(tempName)],n=length(rows))$y)
+      set(get(r),rows,which(names(get(r))=="source"),"interpolated")
       
       #update progress bar
       setTxtProgressBar(pb,t)
@@ -132,9 +132,12 @@ fillTemp<-function(river){
       next}
     
     #fill the rowsToPredict with the predicted values from the regression
-    get(river)[rowsToPredict,c(paste0(river,"Temp"),"source"):list(
-      predict(get(paste0(r,"Lm")),data[rowsToPredict,paste0(r,"Temp"),with=F]),
-      paste0("predictedFrom",r))]
+    set(get(river),rowsToPredict,
+        which(names(get(river))==c(paste0(river,"Temp"))),
+        predict(get(paste0(r,"Lm")),data[rowsToPredict,paste0(r,"Temp"),with=F]))
+    set(get(river),rowsToPredict,which(names(get(river))=="source"),
+        paste0("predictedFrom",toupper(substr(r,1,1)),substr(r,2,nchar(r))))
+    
     cat("filled",length(rowsToPredict),"rows from",r,"with r-squared = ",
         rsq[which(r==otherRivers)],"\n")
   }
