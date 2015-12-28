@@ -18,8 +18,7 @@
 createCoreData<-function(sampleType=NULL,
                   baseColumns=T,
                   columnsToAdd=NULL,
-                  includeUntagged=F,
-                  selectRows=list()){
+                  includeUntagged=F){
   reconnect() #make sure the link to the database still exists
   #define the tables to grab from
   st<-list(captures="data_tagged_captures",
@@ -61,7 +60,7 @@ createCoreData<-function(sampleType=NULL,
   columnsNotIncluded<-chosenColumns[!chosenColumns %in% names(dataOut)]
   if(length(columnsNotIncluded)>0){
     warning(paste0("column(s) ",paste(columnsNotIncluded,collapse=", "),
-                   " do not exist in any sampleType selected"))
+                   " do(es) not exist in any sampleType selected"))
     }
   names(dataOut)<-camelCase(names(dataOut))
   return(dataOut)

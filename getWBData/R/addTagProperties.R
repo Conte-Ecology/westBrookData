@@ -7,7 +7,7 @@
 #'@export
 
 addTagProperties<-function(coreData,
-  columnsToAdd=c("dateKnownDead","lastAntennaDetection","species","first_capture_sample","last_capture_sample","cohort")
+  columnsToAdd=c("dateKnownDead","lastAntennaDetection","species","firstCaptureSample","lastCaptureSample","cohort")
   ){
   columnsToAdd<-fillUnderscore(columnsToAdd)
   possibleColumns<-dbGetQuery(con,
@@ -29,6 +29,6 @@ addTagProperties<-function(coreData,
   tagProperties<-dbGetQuery(con,query)
   
   coreData<-left_join(coreData,tagProperties,by="tag")
-  names(coreData)<-camelCase(names(coreData)))
+  names(coreData)<-camelCase(names(coreData))
   return(coreData)
 }
