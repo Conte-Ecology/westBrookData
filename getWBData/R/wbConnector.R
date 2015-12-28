@@ -7,7 +7,7 @@ wbConnector<-function(){
   #obtain credentials interactively from the user
   cat("\nEnter postgres username")
   usr <- scan(what=character(),nmax=1,quiet=TRUE)
-  cat("\nEnter postgres password (console will be cleared upon entry)")
+  cat("\nEnter postgres password (not stored in history, console will be cleared upon entry)")
   pass <- scan(what=character(),nmax=1,quiet=TRUE)
   
   credentials<-list(drv="PostgreSQL",
