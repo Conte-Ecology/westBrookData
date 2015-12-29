@@ -8,6 +8,7 @@ library(reshape2)
 library(ggplot2)
 library(data.table)
 library(readxl)
+library(waterData)
 
 options(stringsAsFactors=FALSE)
 options(check.names=FALSE)

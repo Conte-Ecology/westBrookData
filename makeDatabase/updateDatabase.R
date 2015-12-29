@@ -28,8 +28,11 @@ do <- list(
 		"form_data_yoy_bins.R",
 		"form_data_trap_captures.R",
 		"form_data_smolts.R",
-		#"form_data_tag_history.R",
 		#"form_data_locations.R"
+		
+		#environmental data
+		"form_data_flow_extension.R",
+		"form_data_high_res_env_filled.R"
 	),
 
 	processing_stage = c(
