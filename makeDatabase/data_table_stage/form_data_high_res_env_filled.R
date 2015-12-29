@@ -150,15 +150,17 @@ fillTemp<-function(river){
 
 for(r in riverObjects){
   fillTemp(r)
-  setnames(get(r),c("dateTime","temp","depth"))
+  setnames(get(r),c("dateTime","temp","depth","source"))
   get(r)[,river:=r]
 }
 
 #put back in the long format
 data<-rbind(jimmy,mitchell,
             obear,wb)
+nameMap<-data.table(oldName=c("jimmy","obear","mitchell","wb"),
+                    newName=c("wb jimmy","wb obear","wb mitchell","west brook"))
 
-data<-data[!is.na(temp)]
+data[,river:=nameMap$newName[match(river,nameMap$oldName)]]
 
 dbWriteTable(con, 'data_high_res_env_filled', data, row.names=FALSE,
              overwrite=TRUE, append=FALSE)

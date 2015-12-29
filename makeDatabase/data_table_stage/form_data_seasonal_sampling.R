@@ -19,4 +19,4 @@ for(i in 1:nrow(seasonalSampling)){
   seasonalSampling[i,season:=getSeason(sample_name,start_julian_day,end_julian_day)]
 }
 dbDropTable("data_seasonal_sampling")
-dbWriteTable(con,name="data_seasonal_sampling",value=seasonalSampling)
+dbWriteTable(con,name="data_seasonal_sampling",value=seasonalSampling,row.names=FALSE)
