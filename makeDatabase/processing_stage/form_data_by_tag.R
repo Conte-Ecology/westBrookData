@@ -1,5 +1,5 @@
 #use captures as the base
-captureQuery<-paste("SELECT tag,species,sample_name,cohort,observed_length,river",
+captureQuery<-paste("SELECT tag,species,sample_name,cohort,observed_length,river,detection_date",
                     "FROM data_tagged_captures")
 captures<-data.table(dbGetQuery(con,captureQuery))
 setkey(captures,tag)
@@ -91,25 +91,47 @@ getCohort<-function(cohort,species,length,sample,river){
 dataByTag<-captures[,list(species=getSpecies(species),
                           first_capture_sample=min(sample_name),
                           last_capture_sample=max(sample_name),
+                          last_capture_date=max(detection_date),
                           cohort=getCohort(cohort,species,observed_length,sample_name,river)
                           ),by=tag]
 
 #add in lastAntennaDetection from antenna data
 antenna<-NULL
-antennaStub<-"SELECT tag,detection_date FROM"
+boundary_antennas <- c('a1','a2','03','04','05','06','wb above')
+antennaStub<-"SELECT tag,detection_date,reader_id FROM"
 for(nom in c("data_stationary_antenna","data_portable_antenna")){
   antenna<-rbind(antenna,
                  data.table(dbGetQuery(con,paste(antennaStub,nom)))
   )
 }
 setkey(antenna,tag)
-antenna<-antenna[,list(last_antenna_detection=max(detection_date)),by=tag]
+antenna<-antenna[,list(last_antenna_detection=max(detection_date),
+                       last_on_boundary=any(reader_id[which(detection_date==max(detection_date))]
+                                               %in% boundary_antennas)
+                      ),
+                       by=tag]
 
 dataByTag<-antenna[dataByTag]
+
+emigrated<-function(lastAntenna,lastCapture,onBoundary){
+  if(!onBoundary){return(as.Date(NA))}
+  if(lastCapture>lastAntenna){return(as.Date(NA))
+    } else {return(as.Date(lastAntenna))}
+}
+
+dataByTag[!is.na(last_on_boundary),
+          date_emigrated:=emigrated(last_antenna_detection,
+                                    last_capture_date,
+                                    last_on_boundary),
+          by=tag]
+dataByTag[,':='(last_capture_date=NULL,
+                last_on_boundary=NULL)]
 
 #add dateKnownDead from tags_dead
 dead<-data.table(dbGetQuery(con,"SELECT * FROM tags_dead"))
 setkey(dead,tag)
+dead[,date_known_dead:=as.Date(date_known_dead,format="%m/%d/%Y")]
+dead<-dead[,list(date_known_dead=min(date_known_dead)),by=tag]
 
 dataByTag<-dead[dataByTag]
 

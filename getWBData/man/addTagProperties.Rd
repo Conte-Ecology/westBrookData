@@ -2,9 +2,9 @@
 % Please edit documentation in R/addTagProperties.R
 \name{addTagProperties}
 \alias{addTagProperties}
-\title{Download data from West Brook database}
+\title{Add immutable tag properties to core westbrook data}
 \usage{
-addTagProperties(coreData, columnsToAdd = c("date_known_dead",
+addTagProperties(coreData, columnsToAdd = c("dateKnownDead",
   "lastAntennaDetection", "species", "firstCaptureSample", "lastCaptureSample",
   "cohort"))
 }
@@ -17,10 +17,10 @@ addTagProperties(coreData, columnsToAdd = c("date_known_dead",
 Immutable tag properties added to a data.frame
 }
 \description{
-Download data from West Brook database
+Add immutable tag properties to core westbrook data
 }
 \details{
 \strong{Options of columns to add}
-date_known_dead, lastAntennaDetection, species, firstCaptureSample, lastCaptureSample, cohort
+dateKnownDead, lastAntennaDetection, species, firstCaptureSample, lastCaptureSample, cohort
 }
 

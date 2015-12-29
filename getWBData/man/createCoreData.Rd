@@ -5,7 +5,7 @@
 \title{Download data from West Brook database}
 \usage{
 createCoreData(sampleType = NULL, baseColumns = T, columnsToAdd = NULL,
-  includeUntagged = F, selectRows = list())
+  includeUntagged = F)
 }
 \arguments{
 \item{sampleType}{A character vector of sampling types to be included in output, options are: electrofishing,stationaryAntenna,portableAntenna,trap}
@@ -27,20 +27,16 @@ Download data from West Brook database
 These are the options for columns to add depending on the sampleType chosen. 
  When multiple sampleTypes are selected, columns that only exist within one are given NA for the other sampleType(s)
 
-\emph{electrofishing:}
+\emph{captures:}
 
-tag, fish_number, species, cohort, sample_number, detection_date, season_number, river, area, section, observed_length, survey, sample_name
+tag, fishNumber, species, cohort, sampleNumber, detectionDate, seasonNumber, river, area, section, observedLength, survey, sampleName
 
 \emph{stationaryAntenna:}
 
-tag, detection_date, river, area, section, survey, sample_name, reader_id, sample_type, alive_or_dead, instance, arrival, departure, comment
+tag, detectionDate, river, area, section, survey, sampleName, readerId, sampleType, aliveOrDead, instance, arrival, departure, comment
 
 \emph{portableAntenna:}
 
-tag, detection_date, river, area, section, survey, sample_name, reader_id, sample_type, alive_or_dead, instance, pass, quarter, left_or_right, habitat, cover, justification, comment
-
-\emph{trap:}
-
-tag, fish_number, species, cohort, sample_number, detection_date, season_number, river, area, section, observed_length, survey, sample_name
+tag, detectionDate, river, area, section, survey, sampleName, readerId, sampleType, aliveOrDead, instance, pass, quarter, leftOrRight, habitat, cover, justification, comment
 }
 
