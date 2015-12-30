@@ -9,6 +9,7 @@
 #'  within the range defined. \code{$sampleIndex} and \code{$tagIndex} are also created
 #'  for refence within jags objects.
 #'
+#'
 
 createCmrData<-function(coreData,dateStart,dateEnd=as.POSIXct("2005-01-01"),
                         maxAgeInSamples=100){
