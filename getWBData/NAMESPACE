@@ -2,6 +2,8 @@
 
 export(addTagProperties)
 export(batchRbind)
+export(camelCase)
 export(createCoreData)
+export(fillUnderscore)
 export(getFish)
 export(reconnect)
