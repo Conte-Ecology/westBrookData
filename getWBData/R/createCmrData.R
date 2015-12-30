@@ -11,11 +11,12 @@
 #'
 #'
 
-createCmrData<-function(coreData,dateStart,dateEnd=as.POSIXct("2005-01-01"),
-                        maxAgeInSamples=100){
+createCmrData<-function(coreData,minCohort=1900,
+                        dateStart=as.POSIXct("1900-01-01"),dateEnd=as.POSIXct("2100-01-01"),
+                        maxAgeInSamples=20){
   reconnect()
   
-  dateStart<-as.POSIXct(dateStart)
+  #get the sample data
   sampleQuery<-paste("SELECT sample_name,sample_number,season,end_date,year",
                      "FROM data_seasonal_sampling",
                      "WHERE seasonal='TRUE'")
@@ -23,38 +24,39 @@ createCmrData<-function(coreData,dateStart,dateEnd=as.POSIXct("2005-01-01"),
                   arrange(sample_number)
   names(samples)<-camelCase(names(samples))
   
+  #subset data to the samples of interest
   samplesToInclude<-filter(samples,endDate>dateStart,endDate<dateEnd)[["sampleNumber"]]
   coreData<-coreData %>% filter(sampleNumber %in% samplesToInclude)
   
-  firstSampleNum<-min(coreData$sampleNumber)
-  lastSampleNum<-max(coreData$sampleNumber)
-  
+  ###pad with samples where individual was unobserved
   #I couldn't figure out quickly how to do this in dplyr, so it's in data.table for now
-  #.SD refers to the subsetted data.table (i.e., each tag's data.table)
-  #J creates a data.table to use as a join on the data.table's key (i.e., sampleNumber here)
-  #pad with samples where individual was unobserved
-  tagProperties<-c('tag','dateKnownDead','lastAntennaDetection',
+  tagProperties<-c('tag','dateKnownDead','lastAntennaDetection','cohort',
                   'species','firstCaptureSample','lastCaptureSample')
   tagProperties<-tagProperties[tagProperties %in% names(coreData)]
-  
-  coreData<-data.table(coreData)
-  setkey(coreData,sampleNumber)
-  coreData<-coreData[,.SD[J(firstSampleNum:lastSampleNum)],by=as.list(mget(tagProperties))]
+  coreData<-data.table::data.table(coreData)
+  data.table::setkey(coreData,sampleNumber)
+  coreData<-coreData[,.SD[J(min(samplesToInclude):max(samplesToInclude))],by=as.list(mget(tagProperties))]
   coreData<-tbl_df(data.frame(coreData))
   
+  #create cmr related columns
   coreData<-coreData %>% 
               mutate(enc=as.numeric(!is.na(detectionDate))) %>% # create encounter history
                 mutate(sampleIndex=sampleNumber-min(sampleNumber)+1) %>% 
                   mutate(tagIndex=as.numeric(as.factor(tag)))
   
-  samples %>%
-    filter(season==2) %>%
-      select(year,sampleNumber) %>%
-        rename(sampleBorn=sampleNumber) %>%
-          right_join(coreData,by=c("year"="cohort")) %>%
-            transmute(ageInSamples=sampleNumber-sampleBorn)
-
-  
+  #calculate ageInSamples
+  coreData<-samples %>%
+              filter(season==2) %>%
+                select(year,sampleNumber) %>%
+                  rename(sampleBorn=sampleNumber) %>%
+                    distinct() %>%
+                      right_join(coreData,by=c("year"="cohort")) %>%
+                        rename(cohort=year) %>%
+                          mutate(ageInSamples=sampleNumber-sampleBorn) %>%
+                            select(-sampleBorn)
+  #censor individuals when they get too old
+  coreData<-coreData %>%
+              filter(ageInSamples<maxAgeInSamples)
   
   return(coreData)
 }

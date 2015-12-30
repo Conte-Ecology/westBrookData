@@ -31,7 +31,7 @@ createCoreData<-function(sampleType=NULL,
   
   #define the columns to grab
   if(baseColumns){
-    chosenColumns<-c("tag","detection_date")
+    chosenColumns<-c("tag","detection_date","sample_number")
   } else chosenColumnns<-NULL
   
   if(!is.null(columnsToAdd)){

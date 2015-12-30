@@ -6,7 +6,7 @@
 \usage{
 addTagProperties(coreData, columnsToAdd = c("dateKnownDead",
   "lastAntennaDetection", "species", "firstCaptureSample", "lastCaptureSample",
-  "cohort"))
+  "cohort"), ageInSamples = T)
 }
 \arguments{
 \item{coreData}{a data.frame created using createCoreData}
