@@ -28,7 +28,7 @@ censor<-function(cmrData,emigrated=T,dead=F,beforeObs=T){
     toCensor<-dbGetQuery(con,query)
     dateNames<-(names(toCensor)[2:ncol(toCensor)])
     expr<-paste0("as.POSIXct(min(",paste(dateNames,collapse=","),",na.rm=T))")
-    toCensor<-toCensor %>% group_by(tag) %>% transmute_(censorDate=expr)
+    toCensor<-toCensor %>% group_by(tag) %>% transmute_(censorDate=expr) %>% ungroup()
     
     samples<-dbGetQuery(con,"SELECT sample_name,start_date FROM data_seasonal_sampling")
     firstCensoredSample<-function(date){
@@ -39,7 +39,8 @@ censor<-function(cmrData,emigrated=T,dead=F,beforeObs=T){
     }
     toCensor<-toCensor %>% 
                 group_by(tag) %>% 
-                  mutate(firstCensoredSample=firstCensoredSample(censorDate))
+                  mutate(firstCensoredSample=firstCensoredSample(censorDate)) %>%
+                    ungroup()
     
     cmrData<-toCensor %>%
                select(tag,firstCensoredSample) %>%
@@ -53,7 +54,8 @@ censor<-function(cmrData,emigrated=T,dead=F,beforeObs=T){
                group_by(tag) %>%
                  mutate(firstObs=sampleNumber[min(which(enc==1))]) %>%
                    filter(sampleNumber>=firstObs) %>%
-                     select(-firstObs)
+                     select(-firstObs) %>%
+                       ungroup()
   }
   
   return(cmrData)
