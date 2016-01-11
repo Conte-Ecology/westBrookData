@@ -18,6 +18,11 @@ createCmrData(coreData, minCohort = 1900,
 
 \item{endDate}{A A Date or POSIXct time to pad samples forward to}
 }
+\value{
+A data.frame containing encounter histories (\code{$enc}) with all samples 
+ within the range defined. \code{$sampleIndex} and \code{$tagIndex} are also created
+ for refence within jags objects.
+}
 \description{
 Create data strucuture for capture-mark-recapture analyses
 Creates encounter histories for each individual and indices for reference within jags

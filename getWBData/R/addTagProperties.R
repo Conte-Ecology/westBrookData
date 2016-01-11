@@ -7,9 +7,7 @@
 #'@export
 
 addTagProperties<-function(coreData,
-  columnsToAdd=c("dateKnownDead","lastAntennaDetection",
-                 "species","firstCaptureSample","lastCaptureSample","cohort"),
-  ageInSamples=T
+  columnsToAdd=c("species","cohort")
   ){
   columnsToAdd<-fillUnderscore(columnsToAdd)
   possibleColumns<-RPostgreSQL::dbGetQuery(con,

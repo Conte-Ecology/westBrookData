@@ -1,6 +1,7 @@
 columns <- list(
 	who = c('tag'),
-	when = c('date_known_dead')
+	when = c('date_known_dead'),
+	how = c('justification')
 )
 
 select_stmt <- paste(

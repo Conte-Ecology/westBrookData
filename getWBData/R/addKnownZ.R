@@ -1,15 +1,17 @@
 #'Adds known state to data.frame created with createCmrData()
 #'@param cmrData A data.frame created using createCmrData()
 #'@param knownDead Logical indicating whether to set known state based on tags known to be dead
-#'@returns A data.frame including \code{$knownZ} which is the known state (0=not born,1=alive,2=dead,NA=unknown)
+#'@return A data.frame including \code{$knownZ} which is the known state (0=not born,1=alive,2=dead,NA=unknown)
 #'@export
 addKnownZ<-function(cmrData,knownDead=T){
   getKnown<-function(x){
-    firstObs<-min(which(enc==1))
-    lastObs<-max(which(enc==1))
+    firstObs<-min(which(x==1))
+    lastObs<-max(which(x==1))
     known<-rep(0,length(x))
     known[firstObs:lastObs]<-1
-    known[lastObs:length(known)]<-NA
+    if(lastObs!=length(known)){
+    known[(lastObs+1):length(known)]<-NA
+    }
     return(known)
   }
   
@@ -37,12 +39,12 @@ addKnownZ<-function(cmrData,knownDead=T){
                filter(samples,start_date>date_known_dead) %>% select(sample_number) %>% min()
             )
     
-    dead %>% 
-      select(tag,firstSampleDead) %>% 
-        right_join(cmrData,by="tag") %>%
-          mutate(isDead=sampleNumber>=firstSampleDead|is.na(firstSampleDead)) %>%
-            mutate(knownZ=knownZ+isDead)
-              select(-isDead,-firstSampleDead)
+    cmrData<-dead %>% 
+               select(tag,firstSampleDead) %>% 
+                 right_join(cmrData,by="tag") %>%
+                   mutate(isDead=sampleNumber>=firstSampleDead&!is.na(firstSampleDead)) %>%
+                     mutate(knownZ=knownZ+isDead) %>%
+                       select(-isDead,-firstSampleDead)
   }
-  
 }
+

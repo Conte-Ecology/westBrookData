@@ -36,7 +36,7 @@ createCoreData<-function(sampleType=NULL,
   
   if(!is.null(columnsToAdd)){
     chosenColumns <- fillUnderscore(c(chosenColumns,columnsToAdd))
-  }
+  } else {stop("No columns chosen")}
 
 #create receptacle for data
   dataOut<-NULL

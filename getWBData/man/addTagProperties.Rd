@@ -4,9 +4,7 @@
 \alias{addTagProperties}
 \title{Add immutable tag properties to core westbrook data}
 \usage{
-addTagProperties(coreData, columnsToAdd = c("dateKnownDead",
-  "lastAntennaDetection", "species", "firstCaptureSample", "lastCaptureSample",
-  "cohort"), ageInSamples = T)
+addTagProperties(coreData, columnsToAdd = c("species", "cohort"))
 }
 \arguments{
 \item{coreData}{a data.frame created using createCoreData}

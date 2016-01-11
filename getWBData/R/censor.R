@@ -4,8 +4,8 @@
 #'@param cmrData A data.frame created using createCmrData
 #'@param emigrated Logical indicated whether to censor individuals that emigrated permanently
 #'@param dead Logical indicating whether to censore individuals that are known dead (see also createKnownState)
-#'@returns A data.frame without the rows
-#'
+#'@return A data.frame without occasions meeting specified criteria by individual
+#'@export
 censor<-function(cmrData,emigrated=T,dead=F,beforeObs=T){
   reconnect()
   

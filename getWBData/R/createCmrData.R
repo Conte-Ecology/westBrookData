@@ -5,11 +5,11 @@
 #'@param startDate A Date or POSIXct time to pad samples back to
 #'@param endDate A A Date or POSIXct time to pad samples forward to
 #'@param maxAgeInSamples An age in samples (age/4) after which encounter histories are censored
-#'@returns A data.frame containing encounter histories (\code{$enc}) with all samples 
+#'@return A data.frame containing encounter histories (\code{$enc}) with all samples 
 #'  within the range defined. \code{$sampleIndex} and \code{$tagIndex} are also created
 #'  for refence within jags objects.
 #'
-#'
+#'@export
 
 createCmrData<-function(coreData,minCohort=1900,
                         dateStart=as.POSIXct("1900-01-01"),dateEnd=as.POSIXct("2100-01-01"),
@@ -30,14 +30,22 @@ createCmrData<-function(coreData,minCohort=1900,
   
   ###pad with samples where individual was unobserved
   #I couldn't figure out quickly how to do this in dplyr, so it's in data.table for now
-  tagProperties<-c('tag','dateKnownDead','lastAntennaDetection','cohort',
+  tagProperties<-c('dateKnownDead','lastAntennaDetection','cohort',
                   'species','firstCaptureSample','lastCaptureSample')
   tagProperties<-tagProperties[tagProperties %in% names(coreData)]
-  coreData<-data.table::data.table(coreData)
-  data.table::setkey(coreData,sampleNumber)
-  coreData<-coreData[,.SD[J(min(samplesToInclude):max(samplesToInclude))],by=as.list(mget(tagProperties))]
-  coreData<-tbl_df(data.frame(coreData))
+#   coreData<-data.table::data.table(coreData)
+#   data.table::setkey(coreData,sampleNumber)
+#   coreData<-coreData[,.SD[J(min(samplesToInclude):max(samplesToInclude))],by=as.list(mget(tagProperties))]
+#   coreData<-tbl_df(data.frame(coreData))
   
+  allSamples<-min(samplesToInclude):max(samplesToInclude)
+  allSampleTags<-data.frame(tag=rep(unique(coreData$tag),length(allSamples),each=T),
+                            sampleNumber=rep(allSamples,length(unique(coreData$tag))),
+                            stringsAsFactors=F)
+  for(t in tagProperties){
+    allSampleTags[[t]]<-rep(coreData %>% group_by(tag) %>% summarize(paste0("unique(",t,")")))
+  }
+  coreData<-right_join(coreData,allSampleTags)
   #create cmr related columns
   coreData<-coreData %>% 
               mutate(enc=as.numeric(!is.na(detectionDate))) %>% # create encounter history

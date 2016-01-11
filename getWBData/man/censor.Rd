@@ -4,7 +4,7 @@
 \alias{censor}
 \title{Remove rows for individuals that are known to have emigrated or died}
 \usage{
-censor(cmrData, emigrated = T, dead = F)
+censor(cmrData, emigrated = T, dead = F, beforeObs = T)
 }
 \arguments{
 \item{cmrData}{A data.frame created using createCmrData}
@@ -12,6 +12,9 @@ censor(cmrData, emigrated = T, dead = F)
 \item{emigrated}{Logical indicated whether to censor individuals that emigrated permanently}
 
 \item{dead}{Logical indicating whether to censore individuals that are known dead (see also createKnownState)}
+}
+\value{
+A data.frame without occasions meeting specified criteria by individual
 }
 \description{
 Currently incomplete, the samples to censor are identified, but not yet censored
