@@ -39,10 +39,9 @@ createCmrData<-function(coreData,minCohort=1900,
                             stringsAsFactors=F)
   
   for(t in tagProperties){
-    
     allSampleTags[[t]]<-rep(
                         coreData %>% group_by(tag) %>% summarize_(paste0("unique(",t,")")) %>%
-                          ungroup() %>% .[[2]],
+                          ungroup() %>% .[[paste0("unique(",t,")")]],
                         each=length(allSamples))
                         
   }
