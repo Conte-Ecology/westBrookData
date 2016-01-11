@@ -29,21 +29,22 @@ createCmrData<-function(coreData,minCohort=1900,
   coreData<-coreData %>% filter(sampleNumber %in% samplesToInclude)
   
   ###pad with samples where individual was unobserved
-  #I couldn't figure out quickly how to do this in dplyr, so it's in data.table for now
   tagProperties<-c('dateKnownDead','lastAntennaDetection','cohort',
                   'species','firstCaptureSample','lastCaptureSample')
   tagProperties<-tagProperties[tagProperties %in% names(coreData)]
-#   coreData<-data.table::data.table(coreData)
-#   data.table::setkey(coreData,sampleNumber)
-#   coreData<-coreData[,.SD[J(min(samplesToInclude):max(samplesToInclude))],by=as.list(mget(tagProperties))]
-#   coreData<-tbl_df(data.frame(coreData))
-  
+
   allSamples<-min(samplesToInclude):max(samplesToInclude)
-  allSampleTags<-data.frame(tag=rep(unique(coreData$tag),length(allSamples),each=T),
+  allSampleTags<-data.frame(tag=rep(unique(coreData$tag),each=length(allSamples)),
                             sampleNumber=rep(allSamples,length(unique(coreData$tag))),
                             stringsAsFactors=F)
+  
   for(t in tagProperties){
-    allSampleTags[[t]]<-rep(coreData %>% group_by(tag) %>% summarize(paste0("unique(",t,")")))
+    
+    allSampleTags[[t]]<-rep(
+                        coreData %>% group_by(tag) %>% summarize_(paste0("unique(",t,")")) %>%
+                          ungroup() %>% .[[2]],
+                        each=length(allSamples))
+                        
   }
   coreData<-right_join(coreData,allSampleTags)
   #create cmr related columns
