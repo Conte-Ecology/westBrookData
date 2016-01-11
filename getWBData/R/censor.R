@@ -6,7 +6,7 @@
 #'@param dead Logical indicating whether to censore individuals that are known dead (see also createKnownState)
 #'@return A data.frame without occasions meeting specified criteria by individual
 #'@export
-censor<-function(cmrData,emigrated=T,dead=F,beforeObs=T){
+censor<-function(cmrData,emigrated=T,dead=F,PriorToFirstCapture=T){
   reconnect()
   
 
@@ -49,7 +49,7 @@ censor<-function(cmrData,emigrated=T,dead=F,beforeObs=T){
                      select(-firstCensoredSample)
   }#end emigrated or dead section
   
-  if(beforeObs){ #remove occasions prior to the first capture
+  if(priorToFirstCapture){ #remove occasions prior to the first capture
     cmrData<-cmrData %>%
                group_by(tag) %>%
                  mutate(firstObs=sampleNumber[min(which(enc==1))]) %>%
