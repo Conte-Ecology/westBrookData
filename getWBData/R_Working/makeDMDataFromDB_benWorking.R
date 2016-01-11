@@ -74,6 +74,13 @@
                    'area', 'riverN','emPerm'
                    #,'mature01','everMat01Consec''measured_weight','sex'
   )
+  sex,everMature
+  
+  section,river,age,area,mature
+  
+  season,year,medianDate
+  
+  
   
   dMDataNames <- c('tag','sampleName','sampleNum','length',
                    'section','enc', 'river','species',
@@ -548,6 +555,7 @@
     by = c('sampleNum'), all.x = TRUE
   )
   
+  ######################################
   # antenna efficiency
   # set up template for all possible samples for antenna efficiency
   firstYearAnt <- 1997; lastYearAnt <- 2015
@@ -880,6 +888,7 @@
   
   dMData[,sampleNumAdj:=sampleNum-min(sampleNum)+1]
   
+  #BEN add to evalRows maker
   
   nSamples <- dMData[,max(sampleNumAdj)]
   samples <- dMData[,list(sampleNumAdj,sampleNum,season,year)]

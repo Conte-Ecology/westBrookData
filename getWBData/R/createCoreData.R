@@ -23,15 +23,14 @@ createCoreData<-function(sampleType=NULL,
   #define the tables to grab from
   st<-list(captures="data_tagged_captures",
            stationaryAntenna="data_stationary_antenna",
-           portableAntenna="data_portable_antenna",
-           dead="tags_dead")
+           portableAntenna="data_portable_antenna")
   
   tables<-st[sampleType]
   if(includeUntagged) tables<-c(tables,"untagged_captures")
   
   #define the columns to grab
   if(baseColumns){
-    chosenColumns<-c("tag","detection_date","sample_number")
+    chosenColumns<-c("tag","detection_date","sample_number","river","section")
   } else chosenColumnns<-NULL
   
   if(!is.null(columnsToAdd)){

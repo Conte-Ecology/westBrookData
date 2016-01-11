@@ -8,7 +8,7 @@
 #'@param priorToFirstCapture Logical indicating whether to censor before the first capture for each fish
 #'@return A data.frame that doesn't include censored occassions
 #'@export
-censor<-function(cmrData,emigrated=T,dead=F,PriorToFirstCapture=T){
+censor<-function(cmrData,emigrated=T,dead=F,priorToFirstCapture=T){
   reconnect()
   
   columns<-"tag"

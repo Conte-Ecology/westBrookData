@@ -9,15 +9,17 @@
 #'  within the range defined. \code{$sampleIndex} and \code{$tagIndex} are also created
 #'  for refence within jags objects.
 #'
+#'
 #'@export
 
 createCmrData<-function(coreData,minCohort=1900,
-                        dateStart=as.POSIXct("1900-01-01"),dateEnd=as.POSIXct("2100-01-01"),
+                        dateStart=as.POSIXct("1900-01-01"),
+                        dateEnd=as.POSIXct("2100-01-01"),
                         maxAgeInSamples=20){
   reconnect()
   
   #get the sample data
-  sampleQuery<-paste("SELECT sample_name,sample_number,season,end_date,year",
+  sampleQuery<-paste("SELECT sample_number,season,end_date,year",
                      "FROM data_seasonal_sampling",
                      "WHERE seasonal='TRUE'")
   samples<-RPostgreSQL::dbGetQuery(con,sampleQuery) %>% 
