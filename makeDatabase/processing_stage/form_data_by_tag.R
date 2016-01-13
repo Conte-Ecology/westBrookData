@@ -43,7 +43,7 @@ getCohort<-function(cohort,species,length,sample,river){
     minLength<-suppressWarnings(min(length,na.rm=T))
     if(minLength==Inf) return(as.numeric(NA))
     sample<-min(sample[which(length==minLength)])
-    river<-river[which(length==minLength)]
+    river<-river[which(sample==get('sample',envir=execEnv))]
     if(species=='ats'){river<-'west brook'}#bins only assigned in west brook for salmon
     bins<-cohortBins[species==get('species',envir=execEnv)&
                       sample_name==get('sample',envir=execEnv)&

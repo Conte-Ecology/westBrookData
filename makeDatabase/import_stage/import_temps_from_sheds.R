@@ -19,4 +19,11 @@ shedsConnector<-function(){
 
 shedsConnector()
 
-dbGetQuery(shedsCon,SELECT * FROM information_schema.column WHERE TABLE_NAME='dataset')
+dbGetQuery(shedsCon,"SELECT * FROM information_schema.columns WHERE TABLE_NAME='dataset'")
+bla<-data.table(dbGetQuery(shedsCon,"SELECT * FROM dataset"))
+
+locations<-c("West Brook 6","West Brook 30","West Brook 45","West Brook B100",
+"Mitchell Brook sec 1","Mitchell Brook below waterfall",
+"O'Bear sec 1","O'Bear Brook sec 15",
+"Jimmy Nolan Brook","Jimmy Nolan Brook sec 15")
+

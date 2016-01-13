@@ -44,7 +44,10 @@ do <- list(
 # 	),
 # 	state_stage = c(
 # 		#"form_state_table.R"
-	)
+	),
+  permissions_stage = c(
+    "grant_permissions.R"
+  )
 )
 source('/data/projects/westbrook/code/westBrookData/makeDatabase/shared_data.R')
 for (stage in names(do)) {
