@@ -1,7 +1,8 @@
 #'Connect to West Brook sql database
 #'
-#'Creates a link to the West Brook database
-#'@return A link to the database
+#'Creates two links to the West Brook database one for RPostgreSQL and one for dplyr
+#'@return \cope{con} A link to the database for use with RPostgreSQL functions
+#'@return \code {conDplyr} A link to the database for use with dplyr functions
 wbConnector<-function(){
   
   #obtain credentials interactively from the user
@@ -16,6 +17,7 @@ wbConnector<-function(){
                     password=pass,
                     dbname="westbrook")
   con<<-do.call(RPostgreSQL::dbConnect,credentials)
+  conDplyr<<-do.call(src_postgres,credentials)
   cat("\014")
 }
 

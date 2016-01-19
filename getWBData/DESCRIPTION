@@ -8,7 +8,8 @@ Depends: data.table, dplyr, RPostgreSQL, R (>= 3.2.0)
 Imports: 
   integrator,
   DBI,
-  RPostgreSQL
+  RPostgreSQL,
+  dplyr
 License: GNU
 LazyData: true
 RoxygenNote: 5.0.1

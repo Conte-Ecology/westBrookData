@@ -35,7 +35,7 @@ column_code <- list(
 	},
   observed_weight = function(measured_weight){
     observed_weight = as.numeric(measured_weight)
-    return(ifelse(observed_length==0,NA,observed_weight))},
+    return(ifelse(observed_weight==0,NA,observed_weight))},
 	survey = function(survey) return(survey),
 	sample_name = function(sample_name) return(sample_name)
 )

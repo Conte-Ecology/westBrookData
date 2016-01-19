@@ -8,7 +8,7 @@
 #' These are the options for columns to add depending on the sampleType chosen. 
 #'  When multiple sampleTypes are selected, columns that only exist within one are given NA for the other sampleType(s)
 #'@details \emph{captures:}
-#'@details tag, fishNumber, species, cohort, sampleNumber, detectionDate, seasonNumber, river, area, section, observedLength, survey, sampleName
+#'@details tag, fishNumber, species, cohort, sampleNumber, detectionDate, seasonNumber, river, area, section, observedLength, observedWeight, survey, sampleName
 #'@details \emph{stationaryAntenna:}
 #'@details tag, detectionDate, river, area, section, survey, sampleName, readerId, sampleType, aliveOrDead, instance, arrival, departure, comment
 #'@details \emph{portableAntenna:}

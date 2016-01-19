@@ -2,19 +2,22 @@
 % Please edit documentation in R/censor.R
 \name{censor}
 \alias{censor}
-\title{Remove rows for individuals that are known to have emigrated or died}
+\title{Censor occasions in capture-mark-recapture data
+Remove occasions for individuals prior to first capture and/or when they are known to have emigrated or died}
 \usage{
-censor(cmrData, emigrated = T, dead = F, beforeObs = T)
+censor(cmrData, emigrated = T, dead = F, priorToFirstCapture = T)
 }
 \arguments{
 \item{cmrData}{A data.frame created using createCmrData}
 
 \item{emigrated}{Logical indicated whether to censor individuals that emigrated permanently}
 
-\item{dead}{Logical indicating whether to censore individuals that are known dead (see also createKnownState)}
+\item{dead}{Logical indicating whether to censor individuals that are known dead (see also createKnownState)}
+
+\item{priorToFirstCapture}{Logical indicating whether to censor before the first capture for each fish}
 }
 \value{
-A data.frame without occasions meeting specified criteria by individual
+A data.frame that doesn't include censored occassions
 }
 \description{
 Currently incomplete, the samples to censor are identified, but not yet censored

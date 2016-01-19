@@ -22,13 +22,13 @@ createCmrData<-function(coreData,minCohort=1900,
   sampleQuery<-paste("SELECT sample_number,season,end_date,year",
                      "FROM data_seasonal_sampling",
                      "WHERE seasonal='TRUE'")
-  samples<-RPostgreSQL::dbGetQuery(con,sampleQuery) %>% 
-                  arrange(sample_number)
+  samples<-dbGetQuery(con,sampleQuery) %>% 
+             arrange(sample_number)
   names(samples)<-camelCase(names(samples))
   
   #subset data to the samples of interest
-  samplesToInclude<-filter(samples,endDate>dateStart,endDate<dateEnd)[["sampleNumber"]]
-  coreData<-coreData %>% filter(sampleNumber %in% samplesToInclude)
+  samplesToInclude<-dplyr::filter(samples,endDate>dateStart,endDate<dateEnd)[["sampleNumber"]]
+  coreData<-coreData %>% dplyr::filter(sampleNumber %in% samplesToInclude)
   
   ###pad with samples where individual was unobserved
   tagProperties<-c('dateKnownDead','lastAntennaDetection','cohort',
@@ -47,7 +47,7 @@ createCmrData<-function(coreData,minCohort=1900,
                         each=length(allSamples))
                         
   }
-  coreData<-right_join(coreData,allSampleTags)
+  coreData<-suppressMessages(right_join(coreData,allSampleTags))
   #create cmr related columns
   coreData<-coreData %>% 
               mutate(enc=as.numeric(!is.na(detectionDate))) %>% # create encounter history
@@ -56,7 +56,7 @@ createCmrData<-function(coreData,minCohort=1900,
   
   #calculate ageInSamples
   coreData<-samples %>%
-              filter(season==2) %>%
+              dplyr::filter(season==2) %>%
                 select(year,sampleNumber) %>%
                   rename(sampleBorn=sampleNumber) %>%
                     distinct() %>%
@@ -66,7 +66,7 @@ createCmrData<-function(coreData,minCohort=1900,
                             select(-sampleBorn)
   #censor individuals when they get too old
   coreData<-coreData %>%
-              filter(ageInSamples<maxAgeInSamples)
+              dplyr::filter(ageInSamples<maxAgeInSamples)
   
   return(coreData)
 }
