@@ -21,11 +21,11 @@ getRiver<-function(location){
   return(river)
 }
 
-temps %>%
-  group_by(location) %>%
-  mutate(river=getRiver(location)) %>%
-  ungroup()
+temps<-temps %>%
+        group_by(location) %>%
+        mutate(river=getRiver(location)) %>%
+        ungroup()
            
 dbDropTable("raw_temps")
-dbWriteTable(con,"raw_temps",data.frame(temps))  
+dbWriteTable(con,"raw_temps",data.frame(temps),rownames=F)  
 
