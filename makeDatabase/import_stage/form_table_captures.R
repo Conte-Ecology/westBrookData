@@ -3,8 +3,8 @@ columns <- list(
 	when = c('date','sample_name'),
 	where = c('river','area','section'),
 	how = c('sample_type','survey'),
-	stable_trait = c('species','cohort'),
-	mutable_trait = c('measured_length','measured_weight')
+	stable_trait = c('species','cohort','sex'),
+	mutable_trait = c('measured_length','measured_weight','maturity')
 )
 
 captures_stub <- paste(
