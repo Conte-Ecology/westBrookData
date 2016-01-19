@@ -32,7 +32,8 @@ do <- list(
 		
 		#environmental data
 		"form_data_flow_extension.R",
-		"form_data_high_res_env_filled.R"
+		"form_data_high_res_env_filled.R",
+		"form_data_daily_temps.R"
 	),
 
 	processing_stage = c(
