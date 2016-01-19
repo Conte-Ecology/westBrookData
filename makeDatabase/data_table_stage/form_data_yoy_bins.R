@@ -17,7 +17,7 @@ source_data <- data.table(pipeline_data_transformation(
 setkey(source_data,sample_name)
 
 samples<-data.table(dbGetQuery(con,"SELECT * FROM data_seasonal_sampling"))
-samples<-samples[,list(sample_name,year)]
+samples<-unique(samples[,list(sample_name,year)])
 setkey(samples,sample_name)
 
 source_data<-samples[source_data]

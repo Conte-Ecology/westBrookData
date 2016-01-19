@@ -162,7 +162,7 @@ assign(
 		fixThis = list(DROP = TRUE)
 	),
 	list(tag="41097e413a",sample_name='23',
-	     fixThis=list(survey="shock")
+	     fixThis=list(survey="shock"))
 ), envir=shared_data)
 
 
