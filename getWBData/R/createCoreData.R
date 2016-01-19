@@ -68,7 +68,9 @@ createCoreData<-function(sampleType=NULL,
     newData<-tbl(conDplyr,t) %>%
               select(chosenTableColumns)
     if(t=="data_tagged_captures"){
-      newData<-newData %>% filter(survey %in% captureTypes)
+      if(length(captureTypes)>1){
+        newData<-newData %>% filter(survey %in% captureTypes)
+        } else {newData<-newData %>% filter(survey==captureTypes)}
     }
     newData<-collect(newData)
     

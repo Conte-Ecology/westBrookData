@@ -18,6 +18,9 @@ options(mc.cores=1)
 
 westbrookDir<-"/data/projects/westbrook"
 
+#redefine wbConnector to also make a connection to sheds
+source(file.path(westbrookDir,"code/westBrookData/makeDatabase/wbConnector.R"))
+
 shared_data <- local(expr={
   
   date.format=c('mdy','mdyR','mdyT') #input for 'orders' in the function parse_date_time that matches input csv date format 
