@@ -29,7 +29,7 @@ These are the options for columns to add depending on the sampleType chosen.
 
 \emph{captures:}
 
-tag, fishNumber, species, cohort, sampleNumber, detectionDate, seasonNumber, river, area, section, observedLength, survey, sampleName
+tag, fishNumber, species, cohort, sampleNumber, detectionDate, seasonNumber, river, area, section, observedLength, observedWeight, survey, sampleName
 
 \emph{stationaryAntenna:}
 

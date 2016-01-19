@@ -1,5 +1,16 @@
 sampling <- dbGetQuery(con, "SELECT * FROM data_seasonal_sampling WHERE seasonal IS TRUE;")
-sampling <- sampling[order(sampling[['start_date']]),]
+#eliminate river specific data for determining seasons:
+sampling<-sampling %>%
+  group_by(sample_name,sample_number,order,seasonal) %>%
+  summarize(start_julian_day=yday(min(start_date)),
+            end_julian_day=yday(max(end_date)),
+            year=min(year)) %>%
+  ungroup() %>%
+  arrange(sample_name)
+
+#sampling[sampling$start_julian_day<20,"start_julian_day"]<-366
+
+# sampling <- sampling[order(sampling[['start_date']]),]
 
 season_kmeans <- kmeans(x=sampling$start_julian_day, centers=c(90,15,280,350))
 row_cluster <- season_kmeans[['cluster']]

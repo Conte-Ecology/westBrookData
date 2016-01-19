@@ -4,7 +4,7 @@
 \alias{addEnvironmental}
 \title{Add environmental data to core westbrook data}
 \usage{
-addEnvironmental(coreData)
+addEnvironmental(coreData, tempData)
 }
 \arguments{
 \item{coreData}{a data.frame created using createCoreData}
