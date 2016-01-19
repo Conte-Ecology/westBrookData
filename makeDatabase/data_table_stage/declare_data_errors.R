@@ -160,7 +160,9 @@ assign(
 	list(tag = '41354e085e', fish_number = '11', sample_name = '25',
 		section = '23',
 		fixThis = list(DROP = TRUE)
-	)
+	),
+	list(tag="41097e413a",sample_name='23',
+	     fixThis=list(survey="shock")
 ), envir=shared_data)
 
 

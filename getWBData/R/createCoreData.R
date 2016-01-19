@@ -1,6 +1,6 @@
 #'Download data from West Brook database
 #'@return a data.frame of fish data
-#'@param sampleType A character vector of sampling types to be included in output, options are: electrofishing,stationaryAntenna,portableAntenna,trap
+#'@param sampleType A character vector of sampling types to be included in output, options are: electrofishing,stationaryAntenna,portableAntenna,trap,seine,snorkel
 #'@param baseColumns Logical: include default columns? tag,detection_date
 #'@param columnsToAdd A character vector of columns to inlcude; can replace or add to baseColumns
 #'@param includeUntagged Logical: include untagged fish?
@@ -21,22 +21,37 @@ createCoreData<-function(sampleType=NULL,
                   includeUntagged=F){
   reconnect() #make sure the link to the database still exists
   #define the tables to grab from
+  if(any(sampleType %in% c("trap","electrofishing","seine","snorkel"))){
+    tables<-c(sampleType[!sampleType %in% c("trap","electrofishing","seine","snorkel")],"captures")
+    captureTypes<-sampleType[sampleType %in% c("trap","electrofishing","seine","snorkel")]
+    possibleCaptureTypes<-list(trap=c("box trap","screw trap","duda fyke"),
+                       electrofishing="shock",
+                       seine=c("snorkel-seine-day","night seine"),
+                       snorkel=c("snorkel-seine-day","snorkel-night"))
+    captureTypes<-possibleCaptureTypes[captureTypes] %>% unlist()
+    names(captureTypes)<-NULL
+  }
+  
+  
   st<-list(captures="data_tagged_captures",
            stationaryAntenna="data_stationary_antenna",
            portableAntenna="data_portable_antenna")
   
-  tables<-st[sampleType]
+  tables<-st[tables]
   if(includeUntagged) tables<-c(tables,"untagged_captures")
+  
   
   #define the columns to grab
   if(baseColumns){
-    chosenColumns<-c("tag","detection_date","sample_number","river","section")
+    chosenColumns<-c("tag","detection_date","sample_name","river","section")
   } else chosenColumnns<-NULL
   
   if(!is.null(columnsToAdd)){
     chosenColumns <- fillUnderscore(c(chosenColumns,columnsToAdd))
-  } else {stop("No columns chosen")}
-
+  }
+  
+  if(is.null(chosenColumns)){stop("No columns chosen")}
+  chosenColumns<-unique(c(chosenColumns,"survey"))
 #create receptacle for data
   dataOut<-NULL
   
@@ -48,19 +63,26 @@ createCoreData<-function(sampleType=NULL,
                         "FROM information_schema.columns ",
                         "WHERE table_name = '",t,"'")
                   )$column_name
-    chosenTableColumns<-chosenColumns[chosenColumns %in% tableColumns]
-    columnQuery<-paste(unique(chosenTableColumns),collapse=",")
-    query<-paste("SELECT",columnQuery,
-                "FROM",t)
-    #add data from this table to the data receptacle 
-    dataOut<-dplyr::bind_rows(dataOut,RPostgreSQL::dbGetQuery(con,query))
+    chosenTableColumns<-match(chosenColumns,tableColumns,nomatch=0) %>% .[.>0]
+    
+    newData<-tbl(conDplyr,t) %>%
+              select(chosenTableColumns)
+    if(t=="data_tagged_captures"){
+      newData<-newData %>% filter(survey %in% captureTypes)
+    }
+    newData<-collect(newData)
+    
+    dataOut<-bind_rows(dataOut,newData)
   }
   
   columnsNotIncluded<-chosenColumns[!chosenColumns %in% names(dataOut)]
   if(length(columnsNotIncluded)>0){
     warning(paste0("column(s) ",paste(columnsNotIncluded,collapse=", "),
                    " do(es) not exist in any sampleType selected"))
-    }
+  }
+  if(!"survey" %in% columnsToAdd){
+    dataOut<-select(dataOut,-survey)
+  }
   names(dataOut)<-camelCase(names(dataOut))
   return(dataOut)
 }
