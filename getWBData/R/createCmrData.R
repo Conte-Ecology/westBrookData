@@ -68,5 +68,54 @@ createCmrData<-function(coreData,minCohort=1900,
   coreData<-coreData %>%
               dplyr::filter(ageInSamples<maxAgeInSamples)
   
+  #censor occasions where an individual is dead or emigrated if these options are chosen
+  columns<-"tag"
+  notNull<-NULL
+  if(dead){columns<-c(columns,"date_known_dead")
+  notNull<-c(notNull,"date_known_dead IS NOT NULL")
+  }
+  if(emigrated){columns<-c(columns,"date_emigrated")
+  notNull<-c(notNull,"date_emigrated IS NOT NULL")
+  }
+  if(emigrated|dead){ #censor emigrated and/or dead
+    query<-paste("SELECT",
+                 paste(columns,collapse=","),
+                 "FROM data_by_tag",
+                 "WHERE",
+                 paste(notNull,collapse=" OR "))
+    
+    toCensor<-dbGetQuery(con,query)
+    dateNames<-(names(toCensor)[2:ncol(toCensor)])
+    expr<-paste0("as.POSIXct(min(",paste(dateNames,collapse=","),",na.rm=T))")
+    toCensor<-toCensor %>% group_by(tag) %>% transmute_(censorDate=expr) %>% ungroup()
+    
+    samples<-dbGetQuery(con,"SELECT sample_name,start_date FROM data_seasonal_sampling")
+    firstCensoredSample<-function(date){
+      samples %>% 
+        filter(start_date>date) %>% 
+        filter(start_date==min(start_date)) %>% 
+        .[["sample_name"]]
+    }
+    toCensor<-toCensor %>% 
+      group_by(tag) %>% 
+      mutate(firstCensoredSample=firstCensoredSample(censorDate)) %>%
+      ungroup()
+    
+    coreData<-toCensor %>%
+      select(tag,firstCensoredSample) %>%
+      right_join(coreData,by="tag") %>%
+      filter(sampleNumber<firstCensoredSample|is.na(firstCensoredSample)) %>%
+      select(-firstCensoredSample)
+  }#end emigrated or dead section
+  
+  if(priorToFirstCapture){ #remove occasions prior to the first capture
+    coreData<-coreData %>%
+      group_by(tag) %>%
+      mutate(firstObs=sampleNumber[min(which(enc==1))]) %>%
+      filter(sampleNumber>=firstObs) %>%
+      select(-firstObs) %>%
+      ungroup()
+  }
+  
   return(coreData)
 }

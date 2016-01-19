@@ -20,7 +20,16 @@ createCoreData<-function(sampleType=NULL,
                   columnsToAdd=NULL,
                   includeUntagged=F){
   reconnect() #make sure the link to the database still exists
-  #define the tables to grab from
+
+  if(any(!sampleType %in% c("trap","electrofishing","seine",
+                            "snorkel","stationaryAntenna","portableAntenna"))){
+    invalidType<-sampleType[which(!sampleType %in% c("trap","electrofishing","seine",
+                                                     "snorkel","stationaryAntenna",
+                                                     "portableAntenna"))]
+    stop(paste("Invalid sampleType:",invalidType))
+  }
+  
+  #define the survey values to grab from capture data depending on sampleType
   if(any(sampleType %in% c("trap","electrofishing","seine","snorkel"))){
     tables<-c(sampleType[!sampleType %in% c("trap","electrofishing","seine","snorkel")],"captures")
     captureTypes<-sampleType[sampleType %in% c("trap","electrofishing","seine","snorkel")]

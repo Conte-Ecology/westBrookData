@@ -7,9 +7,9 @@
 wbConnector()
 }
 \value{
-\cope{con} A link to the database for use with RPostgreSQL functions
+\code{con} A link to the database for use with RPostgreSQL functions
 
-\code {conDplyr} A link to the database for use with dplyr functions
+\code{conDplyr} A link to the database for use with dplyr functions
 }
 \description{
 Creates two links to the West Brook database one for RPostgreSQL and one for dplyr

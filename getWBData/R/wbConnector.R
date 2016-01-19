@@ -1,8 +1,8 @@
 #'Connect to West Brook sql database
 #'
 #'Creates two links to the West Brook database one for RPostgreSQL and one for dplyr
-#'@return \cope{con} A link to the database for use with RPostgreSQL functions
-#'@return \code {conDplyr} A link to the database for use with dplyr functions
+#'@return \code{con} A link to the database for use with RPostgreSQL functions
+#'@return \code{conDplyr} A link to the database for use with dplyr functions
 wbConnector<-function(){
   
   #obtain credentials interactively from the user

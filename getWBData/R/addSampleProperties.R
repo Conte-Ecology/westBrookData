@@ -4,7 +4,7 @@
 #'year should be minimum year for the sample
 
 addSampleProperties<-function(data){
-  if(defaultColumns=T){
+  if(defaultColumns==T){
     columns<-c("proportion_sampled")
   }
 }

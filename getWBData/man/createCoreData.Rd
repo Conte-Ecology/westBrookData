@@ -8,7 +8,7 @@ createCoreData(sampleType = NULL, baseColumns = T, columnsToAdd = NULL,
   includeUntagged = F)
 }
 \arguments{
-\item{sampleType}{A character vector of sampling types to be included in output, options are: electrofishing,stationaryAntenna,portableAntenna,trap}
+\item{sampleType}{A character vector of sampling types to be included in output, options are: electrofishing,stationaryAntenna,portableAntenna,trap,seine,snorkel}
 
 \item{baseColumns}{Logical: include default columns? tag,detection_date}
 

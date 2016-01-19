@@ -1,5 +1,5 @@
 library(getWBData)
-coreData<-createCoreData(sampleType="captures",columnsToAdd=c("sampleNumber","river",'observedLength','observedWeight','seasonNumber')) %>% 
+coreData<-createCoreData(sampleType="electrofishing",columnsToAdd=c("sampleNumber","river",'observedLength','observedWeight','seasonNumber')) %>% 
             addTagProperties() %>%
               dplyr::filter(species=="bkt") %>%
                 createCmrData(maxAgeInSamples=20) %>%
@@ -11,7 +11,8 @@ coreData<-createCoreData(sampleType="captures",columnsToAdd=c("sampleNumber","ri
 JAGSData <- createJAGSData(coreData)
 
 
-coreData<-createCoreData(sampleType="captures",columnsToAdd=c("sampleNumber","river",'observedLength','observedWeight'))
+coreData<-createCoreData(sampleType="electrofishing",columnsToAdd=c("sampleNumber","river",
+                                                                    'observedLength','observedWeight'))
 coreData<-addTagProperties(coreData)
 coreData<-dplyr::filter(coreData,species == "bkt")
 coreData<-createCmrData(coreData,maxAgeInSamples=20)

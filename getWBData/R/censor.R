@@ -1,3 +1,4 @@
+#'OBSOLETE, INCLUDED IN createCmrData()
 #'Censor occasions in capture-mark-recapture data
 #'Remove occasions for individuals prior to first capture and/or when they are known to have emigrated or died 
 #'
@@ -7,7 +8,6 @@
 #'@param dead Logical indicating whether to censor individuals that are known dead (see also createKnownState)
 #'@param priorToFirstCapture Logical indicating whether to censor before the first capture for each fish
 #'@return A data.frame that doesn't include censored occassions
-#'@export
 censor<-function(cmrData,emigrated=T,dead=F,priorToFirstCapture=T){
   reconnect()
   
