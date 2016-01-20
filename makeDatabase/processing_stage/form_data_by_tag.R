@@ -25,7 +25,7 @@ cohortBins<-data.table(dbGetQuery(con,"SELECT * FROM data_yoy_bins"))
 
 seasonalSampling<-
   data.table(
-   dbGetQuery(con,"SELECT sample_name,season,year FROM data_seasonal_sampling")
+   dbGetQuery(con,"SELECT distinct sample_name,season,year FROM data_seasonal_sampling")
   )
  
 setkey(cohortBins,sample_name)
