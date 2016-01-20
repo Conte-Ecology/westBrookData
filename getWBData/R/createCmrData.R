@@ -71,6 +71,16 @@ createCmrData<-function(coreData,minCohort=1900,
   coreData<-coreData %>%
               dplyr::filter(ageInSamples<maxAgeInSamples)
   
+  
+  if(modelType=="CJS"){ #remove occasions prior to the first capture
+    coreData<-coreData %>%
+      group_by(tag) %>%
+      mutate(firstObs=sampleNumber[min(which(enc==1))]) %>%
+      filter(sampleNumber>=firstObs) %>%
+      select(-firstObs) %>%
+      ungroup()
+  }
+  
   #censor occasions where an individual is dead or emigrated if these options are chosen
   columns<-"tag"
   notNull<-NULL
@@ -111,15 +121,7 @@ createCmrData<-function(coreData,minCohort=1900,
       filter(sampleNumber<firstCensoredSample|is.na(firstCensoredSample)) %>%
       select(-firstCensoredSample)
   }#end emigrated or dead section
-  
-  if(modelType=="CJS"){ #remove occasions prior to the first capture
-    coreData<-coreData %>%
-      group_by(tag) %>%
-      mutate(firstObs=sampleNumber[min(which(enc==1))]) %>%
-      filter(sampleNumber>=firstObs) %>%
-      select(-firstObs) %>%
-      ungroup()
-  }
+
   
   return(coreData)
 }
