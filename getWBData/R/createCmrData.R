@@ -12,7 +12,7 @@
 #'
 #'@export
 
-createCmrData<-function(coreData,minCohort=1900,
+createCmrData<-function(coreData,
                         dateStart=as.POSIXct("1900-01-01"),
                         dateEnd=as.POSIXct("2100-01-01"),
                         maxAgeInSamples=20,
@@ -22,7 +22,7 @@ createCmrData<-function(coreData,minCohort=1900,
   reconnect()
   
   #get the sample data
-  sampleQuery<-paste("SELECT sample_number,season,end_date,year",
+  sampleQuery<-paste("SELECT distinct sample_number,season,end_date,year",
                      "FROM data_seasonal_sampling",
                      "WHERE seasonal='TRUE'")
   samples<-dbGetQuery(con,sampleQuery) %>% 
@@ -38,16 +38,13 @@ createCmrData<-function(coreData,minCohort=1900,
                   'species','firstCaptureSample','lastCaptureSample')
   tagProperties<-tagProperties[tagProperties %in% names(coreData)]
 
-  allSamples<-min(samplesToInclude):max(samplesToInclude)
-  allSampleTags<-data.frame(tag=rep(unique(coreData$tag),each=length(allSamples)),
+  allSamples<-as.numeric(min(samplesToInclude):max(samplesToInclude))
+  allTags<-coreData %>% select(one_of(c("tag",tagProperties))) %>% distinct()
+  allSampleTags<-data.frame(tag=rep(allTags$tag,each=length(allSamples)),
                             sampleNumber=rep(allSamples,length(unique(coreData$tag))),
                             stringsAsFactors=F)
-  
   for(t in tagProperties){
-    allSampleTags[[t]]<-rep(
-                        coreData %>% group_by(tag) %>% summarize_(paste0("unique(",t,")")) %>%
-                          ungroup() %>% .[[paste0("unique(",t,")")]],
-                        each=length(allSamples))
+    allSampleTags[[t]]<-rep(allTags[[t]],each=length(allSamples))
                         
   }
   coreData<-suppressMessages(right_join(coreData,allSampleTags))
@@ -69,7 +66,7 @@ createCmrData<-function(coreData,minCohort=1900,
                             select(-sampleBorn)
   #censor individuals when they get too old
   coreData<-coreData %>%
-              dplyr::filter(ageInSamples<maxAgeInSamples)
+              dplyr::filter(ageInSamples<=maxAgeInSamples)
   
   
   if(modelType=="CJS"){ #remove occasions prior to the first capture
