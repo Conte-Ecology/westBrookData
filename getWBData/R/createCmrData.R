@@ -15,7 +15,10 @@
 createCmrData<-function(coreData,minCohort=1900,
                         dateStart=as.POSIXct("1900-01-01"),
                         dateEnd=as.POSIXct("2100-01-01"),
-                        maxAgeInSamples=20){
+                        maxAgeInSamples=20,
+                        censorDead=F,
+                        censorEmigrated=T,
+                        modelType="CJS"){
   reconnect()
   
   #get the sample data
@@ -71,13 +74,13 @@ createCmrData<-function(coreData,minCohort=1900,
   #censor occasions where an individual is dead or emigrated if these options are chosen
   columns<-"tag"
   notNull<-NULL
-  if(dead){columns<-c(columns,"date_known_dead")
+  if(censorDead){columns<-c(columns,"date_known_dead")
   notNull<-c(notNull,"date_known_dead IS NOT NULL")
   }
-  if(emigrated){columns<-c(columns,"date_emigrated")
+  if(censorEmigrated){columns<-c(columns,"date_emigrated")
   notNull<-c(notNull,"date_emigrated IS NOT NULL")
   }
-  if(emigrated|dead){ #censor emigrated and/or dead
+  if(censorEmigrated|censorDead){ #censor emigrated and/or dead
     query<-paste("SELECT",
                  paste(columns,collapse=","),
                  "FROM data_by_tag",
@@ -89,12 +92,13 @@ createCmrData<-function(coreData,minCohort=1900,
     expr<-paste0("as.POSIXct(min(",paste(dateNames,collapse=","),",na.rm=T))")
     toCensor<-toCensor %>% group_by(tag) %>% transmute_(censorDate=expr) %>% ungroup()
     
-    samples<-dbGetQuery(con,"SELECT sample_name,start_date FROM data_seasonal_sampling")
+    samples<-dbGetQuery(con,"SELECT sample_number,start_date FROM data_seasonal_sampling WHERE sample_number is not NULL")
     firstCensoredSample<-function(date){
-      samples %>% 
+      sample<-samples %>% 
         filter(start_date>date) %>% 
         filter(start_date==min(start_date)) %>% 
-        .[["sample_name"]]
+        .[["sample_number"]]
+      return(sample[1])
     }
     toCensor<-toCensor %>% 
       group_by(tag) %>% 
@@ -108,7 +112,7 @@ createCmrData<-function(coreData,minCohort=1900,
       select(-firstCensoredSample)
   }#end emigrated or dead section
   
-  if(priorToFirstCapture){ #remove occasions prior to the first capture
+  if(modelType=="CJS"){ #remove occasions prior to the first capture
     coreData<-coreData %>%
       group_by(tag) %>%
       mutate(firstObs=sampleNumber[min(which(enc==1))]) %>%

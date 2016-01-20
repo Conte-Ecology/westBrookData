@@ -16,7 +16,7 @@ coreData<-createCoreData(sampleType="electrofishing",columnsToAdd=c("sampleNumbe
 coreData<-addTagProperties(coreData)
 coreData<-dplyr::filter(coreData,species == "bkt")
 coreData<-createCmrData(coreData,maxAgeInSamples=20)
-coreData<-censor(coreData)
+# coreData<-censor(coreData)
 #addSampleProperties(coreData)
 #addEnvironmental(coreData)
 coreData<-addKnownZ(coreData)

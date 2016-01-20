@@ -2,7 +2,8 @@
 % Please edit documentation in R/censor.R
 \name{censor}
 \alias{censor}
-\title{Censor occasions in capture-mark-recapture data
+\title{OBSOLETE, INCLUDED IN createCmrData()
+Censor occasions in capture-mark-recapture data
 Remove occasions for individuals prior to first capture and/or when they are known to have emigrated or died}
 \usage{
 censor(cmrData, emigrated = T, dead = F, priorToFirstCapture = T)
