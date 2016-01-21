@@ -5,7 +5,6 @@ coreData<-createCoreData(sampleType="electrofishing",
             addTagProperties() %>%
               dplyr::filter(species=="bkt") %>%
                 createCmrData(maxAgeInSamples=20) %>%
-                  censor() %>%
                     #addSampleProperties() %>%
                       #addEnvironmental() %>%
                         addKnownZ()

@@ -99,8 +99,12 @@ early<-early[,list(river="west brook",
                    source="earlyDepthLogger")]
 
 highResEnv<-rbind(highResEnv,early)
-
+highResEnv[river!="west brook",
+           river:=unlist(strsplit(river,"wb "))[2],
+           by=river]
 setkey(highResEnv,river,section,dateTime)
+
+rivers<-data.table()
 
 dbWriteTable(con, 'raw_high_res_env', highResEnv, row.names=FALSE,
              overwrite=TRUE, append=FALSE)
