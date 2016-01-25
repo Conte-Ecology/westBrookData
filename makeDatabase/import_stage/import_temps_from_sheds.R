@@ -34,6 +34,17 @@ riverSection<-data.frame(location=c("Jimmy Nolan Brook sec 15",
 
 temps<-left_join(temps,riverSection,by='location')
 
+#add in the early records from the depth logger
+earlyPath<-file.path(original_data_dir,"earlyWestBrookEnv.csv")
+early<-suppressWarnings(fread(earlyPath))
+setnames(early,c("date/time","final depth"),c("dateTime","finalDepth"))
+early<-early[,list(location="West Brook sec ??? Depth logger",
+                   river="west brook",
+                   section=NA,
+                   datetime=as.POSIXct(dateTime*24*60*60,origin=as.POSIXct("1899-12-30 00:00:00")),
+                   temperature=temp)]
+temps<-bind_rows(temps,early)
+
 dbDropTable("raw_temps")
 dbWriteTable(con,"raw_temps",data.frame(temps),row.names=F)  
 
