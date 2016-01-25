@@ -1,4 +1,4 @@
-dailyTemps<-tbl(conDplyr,'data_hourly_temps') %>%
+dailyTemps<-tbl(conDplyr,'data_hourly_temperature') %>%
             filter(river %in% c("jimmy","mitchell","obear","west brook")) %>%
             collect() %>%
             mutate(date=as.Date(datetime)) %>%
@@ -6,8 +6,8 @@ dailyTemps<-tbl(conDplyr,'data_hourly_temps') %>%
             summarize(mean_daily_temp=mean(temperature)) %>%
             ungroup()
 
-dbDropTable("data_daily_temps")
-dbWriteTable(con,"data_daily_temps",data.frame(dailyTemps),row.names=F)
+dbDropTable("data_daily_temperature")
+dbWriteTable(con,"data_daily_temperature",data.frame(dailyTemps),row.names=F)
 
 
 
