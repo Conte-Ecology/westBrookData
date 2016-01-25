@@ -93,7 +93,7 @@ early<-suppressWarnings(fread(earlyPath))
 setnames(early,c("date/time","final depth"),c("dateTime","finalDepth"))
 early<-early[,list(river="west brook",
                    section=NA,
-                   dateTime=as.POSIXct(dateTime*24*60*60,origin=as.POSIXct("1899-12-30 00:00:00")),
+                   dateTime=as.POSIXct(dateTime*24*60*60,origin=as.POSIXct("1899-12-30 00:00:00",tz="UTC")),
                    temp=temp,
                    depth=finalDepth,
                    source="earlyDepthLogger")]
@@ -103,8 +103,10 @@ highResEnv[river!="west brook",
            river:=unlist(strsplit(river,"wb "))[2],
            by=river]
 setkey(highResEnv,river,section,dateTime)
-
-rivers<-data.table()
-
+highResEnv[,dateTime:=force_tz(dateTime,"EST")]
+highResEnv[,dateTime:=as.POSIXct(format(dateTime,tz="America/New_York",usetz=T))]
+highResEnv[section=="100",section:="B100"]
+highResEnv[section=="SMOLT TRAP",section:="smoltTrap"]
+highResEnv[section=="16",section:="15"]
 dbWriteTable(con, 'raw_high_res_env', highResEnv, row.names=FALSE,
              overwrite=TRUE, append=FALSE)

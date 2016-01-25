@@ -16,7 +16,7 @@ temps <- tbl(conSheds, "values") %>%
 riverSection<-data.frame(location=c("Jimmy Nolan Brook sec 15",
                                     "Jimmy Nolan Brook",
                                     "O'Bear sec 1",
-                                    "O'Bear sec 15",
+                                    "O'Bear Brook sec 15",
                                     "Stanley Brook sec 11",
                                     "West Brook B100",
                                     "Mitchell Brook sec 1",
@@ -33,7 +33,7 @@ riverSection<-data.frame(location=c("Jimmy Nolan Brook sec 15",
                          stringsAsFactors=F)
 
 temps<-left_join(temps,riverSection,by='location')
-           
+
 dbDropTable("raw_temps")
 dbWriteTable(con,"raw_temps",data.frame(temps),row.names=F)  
 
