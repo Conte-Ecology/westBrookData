@@ -33,9 +33,9 @@ addEnvironmental <-function( coreData ){
            group_by( tag,sampleNumber ) %>%
            mutate(
              indMeanTemp = 
-               mean( envData$daily_mean_temp[ envData$river == coreData$river &
-                                              envData$date >= coreData$detectionDate & 
-                                              envData$date <= coreData$lagDetectionDate ], rm.na=T
+               mean( envData$daily_mean_temp[ envData$river == river &
+                                              envData$date >= detectionDate & 
+                                              envData$date <= lagDetectionDate ], rm.na=T
                     )
                   )
             
