@@ -9,6 +9,7 @@ library(ggplot2)
 library(data.table)
 library(readxl)
 library(waterData)
+library(tidyr)
 
 options(stringsAsFactors=FALSE)
 options(check.names=FALSE)
