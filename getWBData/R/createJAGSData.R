@@ -35,7 +35,12 @@ createJAGSData <-function(coreData, modelType = 'CJS'){
     #filter(n==1)
 #    ggplot( aes(n)) + geom_histogram()
   
-#  repeatRows <- coreData %>% group_by( tag,sampleNumber ) %>% filter( n() > 1 )
+  repeatRows <- coreData %>% group_by( tag,sampleNumber ) %>% filter( n() > 1 )
+  if(nrow(repeatRows>0)){
+    repeatRows<<-repeatRows
+    warning("Multiple observations of at least one individual in a sample 
+            (print repeatRows to view cases)")
+    }
   #
   ##################################################################################
 if(modelType != 'CJS' & modelType != 'JS' ) warning('ModelType needs to be CJS or JS')

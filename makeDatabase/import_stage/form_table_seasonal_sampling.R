@@ -7,12 +7,16 @@ sampling<-tbl(conDplyr,"tags_captures") %>%
 
 sampling<-sampling %>%
             mutate(date=parse_date_time(x=date, orders=date.format)) %>%
+            group_by(sample_name) %>%
+            mutate(median_date=median(date)) %>%
+            ungroup() %>%
             group_by(sample_name,river) %>%
-            summarize(median_date=median(date),
+            summarize(median_date=median(median_date),
                       start_date=min(date),
                       end_date=max(date)) %>%
             ungroup() %>%
             mutate(order=as.numeric(sample_name))
+
 
 seasonal_samples<-
     c("1",  "7",  "8",  "9", 

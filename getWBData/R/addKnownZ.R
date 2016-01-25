@@ -34,10 +34,15 @@ addKnownZ<-function(cmrData,knownDead=T){
             distinct() %>%
               arrange(start_date)
     
-    dead<-dead %>% group_by(tag) %>% transmute(date_known_dead=as.POSIXct(date_known_dead)) %>%
-            mutate(firstSampleDead=
-               filter(samples,start_date>date_known_dead) %>% select(sample_number) %>% min()
-            )
+    dead<-dead %>% 
+          group_by(tag) %>% 
+          transmute(date_known_dead=as.POSIXct(date_known_dead)) %>%
+          mutate(firstSampleDead=
+               filter(samples,start_date>date_known_dead) %>% 
+               select(sample_number) %>% 
+               min()
+            ) %>%
+          ungroup()
     
     cmrData<-dead %>% 
                select(tag,firstSampleDead) %>% 

@@ -3,7 +3,9 @@ dailyTemps<-tbl(conDplyr,'data_hourly_temperature') %>%
             collect() %>%
             mutate(date=as.Date(datetime)) %>%
             group_by(river,date) %>%
-            summarize(mean_daily_temp=mean(temperature)) %>%
+            summarize(daily_mean_temp=mean(temperature),
+                      daily_max_temp=max(temperature),
+                      daily_min_temp=min(temperature)) %>%
             ungroup()
 
 dbDropTable("data_daily_temperature")
