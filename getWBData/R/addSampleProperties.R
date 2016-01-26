@@ -6,9 +6,7 @@
 #'@export
 
 addSampleProperties<-function(data,defaultColumns=T,columnsToAdd=NULL){
-  data<-data %>% mutate(naRiver=is.na(river))
-  data[is.na(data$river),"river"]<-"west brook"
-  
+  reconnect()
   
   if(defaultColumns==T){
     chosenColumns<-c("year","season","median_date")
@@ -17,7 +15,8 @@ addSampleProperties<-function(data,defaultColumns=T,columnsToAdd=NULL){
   if(is.null(chosenColumns)) stop("Must choose at least one column to add")
   
   fillMedianDate<-"median_date" %in% chosenColumns
-  chosenColumns<-c(chosenColumns,"sample_number","river") %>% unique()
+  chosenColumns<-c(chosenColumns[chosenColumns!="median_date"],
+                   "sample_number","river") %>% unique()
   
   newData<-tbl(conDplyr,'data_seasonal_sampling') %>%
     select(one_of(chosenColumns)) %>%
@@ -28,10 +27,16 @@ addSampleProperties<-function(data,defaultColumns=T,columnsToAdd=NULL){
   data<-left_join(data,newData,by=c('sampleNumber','river'))
   
   if(fillMedianDate){
+    newData<-tbl(conDplyr,'data_seasonal_sampling') %>%
+      select(sample_number,median_date) %>%
+      distinct() %>%
+      collect()
+    names(newData)<-camelCase(names(newData))
+    
+    data<-left_join(data,newData,by='sampleNumber')
     data[is.na(data$detectionDate),"detectionDate"]<-
       data[is.na(data$detectionDate),"medianDate"]
-    data[data$naRiver==T,"river"]<-NA
-    data<-select(data,-medianDate,-naRiver)
+    data<-select(data,-medianDate)
   }
   return(data)
 }

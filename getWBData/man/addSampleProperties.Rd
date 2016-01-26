@@ -2,12 +2,21 @@
 % Please edit documentation in R/addSampleProperties.R
 \name{addSampleProperties}
 \alias{addSampleProperties}
-\title{needs to include year,season,medianDate,proportionSampled}
+\title{Add immutable sample properties to a data frame}
 \usage{
-addSampleProperties(data)
+addSampleProperties(data, defaultColumns = T, columnsToAdd = NULL)
+}
+\arguments{
+\item{data}{A data.frame created with createCoreData(), which must include sampleNumber as a column}
+
+\item{columnsToAdd}{A character vector of columns to inlcude; can replace or add to baseColumns}
+
+\item{basecolumns}{Logical: include default columns? year,season,medianDate}
+}
+\value{
+A data.frame appended with sample properties
 }
 \description{
-medianDate should fill in observedDate, add option to addJulian version,
-year should be minimum year for the sample
+Add immutable sample properties to a data frame
 }
 
