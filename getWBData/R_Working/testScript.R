@@ -6,7 +6,7 @@ coreData<-createCoreData(sampleType="electrofishing",
               dplyr::filter(species=="bkt") %>%
                 createCmrData(maxAgeInSamples=20) %>%
                     addSampleProperties() %>%
-                      #addEnvironmental() %>%
+                      addEnvironmental() %>%
                         addKnownZ()
 
 JAGSData <- createJAGSData(coreData)
