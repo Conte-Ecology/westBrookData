@@ -25,7 +25,7 @@ source(file.path(westbrookDir,"code/westBrookData/makeDatabase/wbConnector.R"))
 shared_data <- local(expr={
   
   date.format=c('mdy','mdyR','mdyT') #input for 'orders' in the function parse_date_time that matches input csv date format 
-  
+  rm(con) #solves problems with existing connection, but lacking conSheds
 	reconnect() #creates connection 'con'
 
 	dataInDir <- file.path(westbrookDir,'dataIn')

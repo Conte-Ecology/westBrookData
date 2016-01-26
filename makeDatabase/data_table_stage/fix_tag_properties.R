@@ -72,16 +72,33 @@ checkLength<-function(length,date,tag){
 
 tag_history[,checkLength(observed_length,detection_date,tag),by=tag]
 
+#check for outliers in length-weight regressions
+lengthWeightComboCheck<-function(tag,length,weight,tolerance=0.999999){
+  logLength<-log(length)
+  logWeight<-log(weight)
+  fit<-lm(logWeight~logLength)
+  predicted<-predict(fit,data.frame(logLength=logLength),
+                     interval="prediction",level=tolerance) %>%
+    data.frame()
+  outliers<-which(logWeight<predicted$lwr|logWeight>predicted$upr)
+  lengthWeightComboTags<<-c(lengthWeightComboTags,tag[outliers])
+}
+lengthWeightComboTags<-NULL
+tag_history[,lengthWeightComboCheck(tag,observed_length,observed_weight)]
+tagIssues[['lengthWeightCombos']]<-lengthWeightComboTags
+
 writeIssues<-function(tagIssues,issuesPath){
   multiObsWithinSample<-!is.null(tagIssues$multiObsWithinSample)
   multiSpecies<-!is.null(tagIssues$multiSpecies)
   weirdGrowth<-!is.null(tagIssues$weirdGrowth)
+  lengthWeightCombos<-!is.null(tagIssues$lengthWeightComboTags)
   
   nIssues<-max(sapply(tagIssues,length))
-  issues<-array(NA,dim=c(nIssues,3))
+  issues<-array(NA,dim=c(nIssues,4))
   dimnames(issues)<-list(NULL,c("multiObsWithinSample",
                                 "multiSpecies",
-                                "weirdGrowth")
+                                "weirdGrowth",
+                                "lengthWeightCombos")
                          )
   for(i in dimnames(issues)[[2]]){
     if(!is.null(tagIssues[[i]]) & length(tagIssues[[i]])>0){
