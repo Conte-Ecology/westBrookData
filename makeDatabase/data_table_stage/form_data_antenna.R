@@ -7,7 +7,7 @@ column_code_portable <- list(
   },
 	detection_date = function(earliest_detection_date_time) {
 		require(lubridate)
-		detection_date <- parse_date_time(x=earliest_detection_date_time, orders='mdyhm')
+		detection_date <- parse_date_time(x=earliest_detection_date_time, orders=date.format)
 		detection_date[detection_date > now()] <- 
 			detection_date[detection_date > now()] - years(100)
 		return(detection_date)
@@ -45,7 +45,7 @@ column_code_stationary <- list(
   },
   detection_date = function(earliest_detection_date_time) {
     require(lubridate)
-    detection_date <- parse_date_time(x=earliest_detection_date_time, orders='mdyhm')
+    detection_date <- parse_date_time(x=earliest_detection_date_time, orders=date.format)
     detection_date[detection_date > now()] <- 
       detection_date[detection_date > now()] - years(100)
     return(detection_date)
