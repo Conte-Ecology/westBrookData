@@ -5,6 +5,7 @@
 #'@param columnsToAdd A character vector of columns to inlcude; can replace or add to baseColumns
 #'@export
 
+#could pull sample_name through, but need to deal with the multiple names per number before that
 addSampleProperties<-function(data,defaultColumns=T,columnsToAdd=NULL){
   reconnect()
   
@@ -16,15 +17,16 @@ addSampleProperties<-function(data,defaultColumns=T,columnsToAdd=NULL){
   
   fillMedianDate<-"median_date" %in% chosenColumns
   chosenColumns<-c(chosenColumns[chosenColumns!="median_date"],
-                   "sample_number","river") %>% unique()
+                   "sample_number") %>% unique()
   
   newData<-tbl(conDplyr,'data_seasonal_sampling') %>%
     select(one_of(chosenColumns)) %>%
     filter(!is.na(sample_number)) %>%
+    distinct() %>%
     collect()
   names(newData)<-camelCase(names(newData))
 
-  data<-left_join(data,newData,by=c('sampleNumber','river'))
+  data<-left_join(data,newData,by=c('sampleNumber'))
   
   if(fillMedianDate){
     newData<-tbl(conDplyr,'data_seasonal_sampling') %>%
