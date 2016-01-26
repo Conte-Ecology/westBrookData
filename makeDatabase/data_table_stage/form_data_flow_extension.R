@@ -40,6 +40,7 @@ qGaged[,qPredicted:=predict(flowExt,data.frame(qGaged=qGaged))]
 qGaged[,":="(river="west brook",
              source="flowExtension")]
 qGaged[,qGaged:=NULL]
+qGaged[,date:=as.POSIXct(date)]
 
 dbDropTable("data_flow_extension")
 dbWriteTable(con,"data_flow_extension",qGaged,row.names=F)

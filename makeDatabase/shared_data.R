@@ -21,12 +21,12 @@ westbrookDir<-"/data/projects/westbrook"
 
 #redefine wbConnector to also make a connection to sheds
 source(file.path(westbrookDir,"code/westBrookData/makeDatabase/wbConnector.R"))
+if(exists('con')) rm(con) #solves problems with existing connections that lack conSheds
 
 shared_data <- local(expr={
   
   date.format=c('mdy','mdyR','mdyT') #input for 'orders' in the function parse_date_time that matches input csv date format 
-  rm(con) #solves problems with existing connection, but lacking conSheds
-	reconnect() #creates connection 'con'
+	reconnect() #creates connection 'con' and 'conSheds' and 'conDplyr'
 
 	dataInDir <- file.path(westbrookDir,'dataIn')
 	dataOutDir <- file.path(westbrookDir,'dataOut')
