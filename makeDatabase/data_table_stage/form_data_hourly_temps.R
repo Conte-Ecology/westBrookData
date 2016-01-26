@@ -6,9 +6,9 @@ temps[,datetime:=as.POSIXct(round(datetime,"hours"))]
 temps<-temps[,list(temperature=mean(temperature,na.rm=T)),
                        by=list(river,datetime)]
 
-jimmy<-temps[river=="jimmy"]
-mitchell<-temps[river=="mitchell"]
-obear<-temps[river=='obear']
+jimmy<-temps[river=="wb jimmy"]
+mitchell<-temps[river=="wb mitchell"]
+obear<-temps[river=='wb obear']
 wb<-temps[river=="west brook"]
 
 allDateTime<-data.table(datetime=seq(min(temps$datetime),
@@ -115,10 +115,10 @@ for(r in riverObjects){
 #put back in the long format
 data<-rbind(jimmy,mitchell,
             obear,wb)
-# nameMap<-data.table(oldName=c("jimmy","obear","mitchell","wb"),
-#                     newName=c("wb jimmy","wb obear","wb mitchell","west brook"))
+nameMap<-data.table(oldName=c("jimmy","obear","mitchell","wb"),
+                     newName=c("wb jimmy","wb obear","wb mitchell","west brook"))
 
-# data[,river:=nameMap$newName[match(river,nameMap$oldName)]]
+data[,river:=nameMap$newName[match(river,nameMap$oldName)]]
 
 dbWriteTable(con, 'data_hourly_temperature', data, row.names=FALSE,
              overwrite=TRUE, append=FALSE)

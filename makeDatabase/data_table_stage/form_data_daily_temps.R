@@ -1,5 +1,5 @@
 dailyTemps<-tbl(conDplyr,'data_hourly_temperature') %>%
-            filter(river %in% c("jimmy","mitchell","obear","west brook")) %>%
+            filter(river %in% c("wb jimmy","wb mitchell","wb obear","west brook")) %>%
             collect() %>%
             mutate(date=as.Date(datetime)) %>%
             group_by(river,date) %>%
