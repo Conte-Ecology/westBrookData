@@ -19,22 +19,11 @@ createJAGSData <-function(coreData, modelType = 'CJS'){
     m <- cbind( rowMeans(m),m )
     return ( m )  
   }
-  
-  
-  
-   
+
   ##################################################################################
   # check data - will delete when function is finalized
   # need to get rid of repeatRows - they mess up evalRows etc.
-  
-#  nrow(coreData)
-#  length(unique(coreData$tag))
-  
-  
-#  coreData %>% group_by(tag) %>% summarize( n=n() ) %>% 
-    #filter(n==1)
-#    ggplot( aes(n)) + geom_histogram()
-  
+
   repeatRows <- coreData %>% group_by( tag,sampleNumber ) %>% filter( n() > 1 )
   if(nrow(repeatRows>0)){
     repeatRows<<-repeatRows
@@ -43,7 +32,9 @@ createJAGSData <-function(coreData, modelType = 'CJS'){
     }
   #
   ##################################################################################
+  
 if(modelType != 'CJS' & modelType != 'JS' ) warning('ModelType needs to be CJS or JS')
+  
   #### CJS #####  
   # evalRows  
 if(modelType == 'CJS'){
@@ -148,26 +139,17 @@ if(modelType == 'JS'){
       ind = coreData$tagIndex
       
       # For standardizing length
-      lengthMean = addColMeans( matrix(stdBySeasonRiver$lengthMean,nrow=length(unique(coreData$season))-1,ncol=length(unique(as.numeric(coreData$riverOrdered)-0))-1) )
-      lengthSd =   addColMeans( matrix(stdBySeasonRiver$lengthSd,  nrow=length(unique(coreData$season))-1,ncol=length(unique(as.numeric(coreData$riverOrdered)-0))-1) )
+      lengthMean = addColMeans( matrix(stdBySeasonRiver$lengthMean,nrow=length(unique(coreData$season)),ncol=length(unique(coreData$river))-1 ) )
+      lengthSd =   addColMeans( matrix(stdBySeasonRiver$lengthSd,  nrow=length(unique(coreData$season)),ncol=length(unique(coreData$river))-1 ) )
     
       # environmental covariates pertaining to intervals.  These are
       # covariates of growth and survival
       
       # For standardizing env predictors of growth and surv
-      tempMean = addColMeans( matrix(stdBySeasonRiver$tempMean,nrow=length(unique(coreData$season))-1,ncol=length(unique(as.numeric(coreData$riverOrdered)-0))-1 ) )
-      tempSd =   addColMeans( matrix(stdBySeasonRiver$tempSd,nrow=length(unique(coreData$season))-1,ncol=length(unique(as.numeric(coreData$riverOrdered)-0))-1 ) )  
-      flowMean = addColMeans( matrix(stdBySeasonRiver$flowMean,nrow=length(unique(coreData$season))-1,ncol=length(unique(as.numeric(coreData$riverOrdered)-0))-1 ) )
-      flowSd =   addColMeans( matrix(stdBySeasonRiver$flowSd,nrow=length(unique(coreData$season))-1,ncol=length(unique(as.numeric(coreData$riverOrdered)-0))-1 ) )  
-      
-      ## Predictors of phi for correcting N1 where countForN ==0
-      #tempForN = tempForN
-      #flowForN = flowForN
-      
-      # not used anymore, see below
-      #  tempDATA = ( as.numeric(dMData$fullMeanT) - stdBySeason$tempMean[ as.numeric(dMData$season)] ) / stdBySeason$tempSd[ as.numeric(dMData$season) ]
-      #  flowDATA = ( as.numeric(dMData$fullMeanD) - stdBySeason$flowMean[ as.numeric(dMData$season)] ) / stdBySeason$flowSd[ as.numeric(dMData$season) ]  
-      
+      tempMean = addColMeans( matrix(stdBySeasonRiver$tempMean,nrow=length(unique(coreData$season)),ncol=length(unique(coreData$river))-1 ) )
+      tempSd =   addColMeans( matrix(stdBySeasonRiver$tempSd,nrow=length(unique(coreData$season)),ncol=length(unique(coreData$river))-1 ) ) 
+      flowMean = addColMeans( matrix(stdBySeasonRiver$flowMean,nrow=length(unique(coreData$season)),ncol=length(unique(coreData$river))-1 ) )
+      flowSd =   addColMeans( matrix(stdBySeasonRiver$flowSd,nrow=length(unique(coreData$season)),ncol=length(unique(coreData$river))-1 ) )
       
       # Now doing standardization in the bugs code to make sure that unobserved fish get observed std env data
       tempDATA = as.numeric(coreData$meanTemperature)
@@ -206,7 +188,7 @@ if(modelType == 'JS'){
       # mean intervaldays by season and river for interval boundaries [ s,r ]
       dIntDays <- data.frame(enc=encDATA, int=as.numeric(intervalDays), river=riverDATA, season=season)
       dIntDaysMean <- dIntDays %>% filter( enc == 1 ) %>% group_by( season,river ) %>%  summarize( int = mean( int, na.rm=TRUE ) )
-      intervalMeans <- addColMeans( matrix(dIntDaysMean$int,nrow=length(unique(coreData$season))-1,ncol=length(unique(as.numeric(coreData$riverOrdered)-0))-1, byrow=T) ) 
+      intervalMeans <- addColMeans( matrix(dIntDaysMean$int,nrow=length(unique(coreData$season)),ncol=length(unique(coreData$river))-1, byrow=T) ) 
       rm(dIntDays)
 
       
@@ -230,34 +212,28 @@ if(modelType == 'JS'){
       zeroSectionsDATA[ 3:4,2,6 ] <- 1            #WB winter sample in 2007
       
       ####################################
+      # will need to update this depending on model structure
+      #
       # create a data frame of max lengths for YOYs from Matt with some visual fixes,
       
       # including fall,winter 0+ fish in YOY category
       #  cutoffYOYDATA <- cutoffYOYDATA 
       
       # including fall,winter 0+ and spring 1+ fish in YOY category
-      cutoffYOYDATA <- cutoffYOYInclSpring1DATA
+      #cutoffYOYDATA <- cutoffYOYInclSpring1DATA
       #
       ########################################
 
       
     }
   )
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
    
   return(list(evalRows = evalRows$evalRows,
               nEvalRows = nEvalRows,
               firstObsRows = firstObsRows$firstObsRows,
               nFirstObsRows = nFirstObsRows,
-              
-))
+              lastObsRows = lastObsRows$lastObsRows,
+              nLastObsRows = nLastObsRows,
+              d=d
+         )   )
 }

@@ -1,4 +1,3 @@
-
 #'Add environmental data to core westbrook data
 #'@return Environmental data added to a coreData
 #'@param coreData a data.frame created using createCoreData
@@ -20,7 +19,7 @@ addEnvironmental <-function( coreData ){
   flowData <- RPostgreSQL::dbGetQuery(con,queryFlow)
   
   #merge data
-  envData <- left_join( envData, flowData )
+  envData <- left_join( envData, flowData, by=c("river","date"))
   
   ###########################################################################
   # set up table of intervals based on date for each capture interval by fish
@@ -55,7 +54,8 @@ addEnvironmental <-function( coreData ){
                            mutate( meanTemperature = getIntervalMean( detectionDate, lagDetectionDate, river, "Temperature" ),
                                    meanFlow =        getIntervalMean( detectionDate, lagDetectionDate, river, "Flow" ))
   
-  coreData <- left_join( coreData,coreDataUniqueDates )
+  coreData <- left_join( coreData,coreDataUniqueDates,
+                         by=c("detectionDate","river","lagDetectionDate"))
   
 #   i=495
 #   getIntervalMean( coreData$detectionDate[i],coreData$lagDetectionDate[i],coreData$river[i],"Temperature" )

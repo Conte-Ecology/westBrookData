@@ -16,7 +16,7 @@ Environmental data added to a coreData
 Add environmental data to core westbrook data
 }
 \details{
-View this function as a template to be altered to get different env variables or different summaries. This function add columns of mean daily temperature and mean daily flow to coreData. For each individual, it returns the mean env values between capture dates or between median capture dates of all individuals of a fish was not captured on an occasion.
+View this function as a template to be altered to get different env variables or different summaries. / This function add columns of mean daily temperature and mean daily flow to coreData. For each individual, it returns the mean env values between capture dates or between median capture dates of all individuals of a fish was not captured on an occasion.
 The internal function getIntervalMean returns means for the observed river or for all rivers if an individual was unobserved.
 Could alter getIntervalMean to return data for the mean daily min or max env data or for data from the last observed river, instead of all rivers.
 }
