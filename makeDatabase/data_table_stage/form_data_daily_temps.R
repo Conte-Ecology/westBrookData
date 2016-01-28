@@ -7,7 +7,7 @@ dailyTemps<-tbl(conDplyr,'data_hourly_temperature') %>%
                       daily_max_temp=max(temperature),
                       daily_min_temp=min(temperature)) %>%
             ungroup() %>%
-            mutate(date=as.POSIXct(date))
+            mutate(date=as.POSIXct(as.character(date),format="%F"))
 
 dbDropTable("data_daily_temperature")
 dbWriteTable(con,"data_daily_temperature",data.frame(dailyTemps),row.names=F)
