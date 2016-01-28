@@ -24,7 +24,7 @@ createJAGSData <-function(coreData, modelType = 'CJS'){
   # check data - will delete when function is finalized
   # need to get rid of repeatRows - they mess up evalRows etc.
 
-  repeatRows <- coreData %>% group_by( tag,sampleNumber ) %>% filter( n() > 1 )
+  repeatRows <- coreData %>% group_by( tag,sampleNumber ) %>% dplyr::filter( n() > 1 )
   if(nrow(repeatRows>0)){
     repeatRows<<-repeatRows
     warning("Multiple observations of at least one individual in a sample 
@@ -187,7 +187,7 @@ if(modelType == 'JS'){
  
       # mean intervaldays by season and river for interval boundaries [ s,r ]
       dIntDays <- data.frame(enc=encDATA, int=as.numeric(intervalDays), river=riverDATA, season=season)
-      dIntDaysMean <- dIntDays %>% filter( enc == 1 ) %>% group_by( season,river ) %>%  summarize( int = mean( int, na.rm=TRUE ) )
+      dIntDaysMean <- dIntDays %>% dplyr::filter( enc == 1 ) %>% group_by( season,river ) %>%  summarize( int = mean( int, na.rm=TRUE ) )
       intervalMeans <- addColMeans( matrix(dIntDaysMean$int,nrow=length(unique(coreData$season)),ncol=length(unique(coreData$river))-1, byrow=T) ) 
       rm(dIntDays)
 

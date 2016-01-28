@@ -40,7 +40,7 @@ addKnownZ<-function(cmrData,knownDead=T){
           group_by(tag) %>% 
           transmute(date_known_dead=as.POSIXct(date_known_dead)) %>%
           mutate(firstSampleDead=
-               filter(samples,as.Date(start_date)>as.Date(date_known_dead)) %>% 
+               dplyr::filter(samples,as.Date(start_date)>as.Date(date_known_dead)) %>% 
                #select(sample_number) %>% 
                .[['sample_number']] %>%
                min(.)
