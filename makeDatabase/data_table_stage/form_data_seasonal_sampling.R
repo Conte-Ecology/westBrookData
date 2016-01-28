@@ -23,8 +23,11 @@ seasonalSampling[,proportion_sampled:=1]
 seasonalSampling[year==2002&season==4&river=="west brook",proportion_sampled:=2/47]
 seasonalSampling[river == 'west brook' & year == 2003 & season == 4, proportion_sampled:=30/47 ] 
 seasonalSampling[ river == 'west brook' & year == 2004 & season == 4, proportion_sampled:=3/47 ]
+
 seasonalSampling[ river == 'west brook' & year == 2005 & season == 4, proportion_sampled:=0]
-seasonalSampling[ river == 'west brook' & year == 2007 & season == 4, proportion_sampled:=0 ]   
+seasonalSampling[ river == 'west brook' & year == 2007 & season == 4, proportion_sampled:=0 ]
+seasonalSampling[year==2002 & season==4 & river!="west brook",proportion_sampled:=0]
+
 
 dbDropTable("data_seasonal_sampling")
 dbWriteTable(con,name="data_seasonal_sampling",value=seasonalSampling,row.names=FALSE)

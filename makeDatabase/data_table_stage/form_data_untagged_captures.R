@@ -1,8 +1,4 @@
 column_code <- list(
-	tag = function(tag, species) {
-#		return(paste(tag, species, sep='-'))
-		return(tag)
-	},
 	fish_number = function(fish_number) {
 		return(as.character(as.numeric(fish_number)))
 	},
@@ -45,13 +41,13 @@ column_code <- list(
 )
 
 
-source_data <- dbGetQuery(con, "SELECT * FROM tags_captures;")
+source_data <- dbGetQuery(con, "SELECT * FROM untagged_captures;")
 source_data <- pipeline_data_transformation(
 	data=source_data, pipeline=column_code)
 
 
 
-dbWriteTable(con, 'data_tagged_captures', source_data, row.names=FALSE,
+dbWriteTable(con, 'data_untagged_captures', source_data, row.names=FALSE,
 						 overwrite=TRUE, append=FALSE)
 
 

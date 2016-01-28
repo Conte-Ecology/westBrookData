@@ -4,7 +4,7 @@ columns <- list(
   where = c('river','area','section'),
   how = c('sample_type','survey'),
   stable_trait = c('species','cohort'),
-  mutable_trait = c('measured_length','measured_weight')
+  mutable_trait = c('measured_length','measured_weight','maturity','sex')
 )
 
 untagged_captures<-data.table(dbGetQuery(con,"SELECT * FROM raw_captures WHERE tag IS NULL"))
