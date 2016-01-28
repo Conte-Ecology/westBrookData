@@ -73,7 +73,7 @@ createCmrData<-function(coreData,
     coreData<-coreData %>%
       group_by(tag) %>%
       mutate(firstObs=sampleNumber[min(which(enc==1))]) %>%
-      filter(sampleNumber>=firstObs) %>%
+      dplyr::filter(sampleNumber>=firstObs) %>%
       select(-firstObs) %>%
       ungroup()
   }
@@ -102,8 +102,8 @@ createCmrData<-function(coreData,
     samples<-dbGetQuery(con,"SELECT sample_number,start_date FROM data_seasonal_sampling WHERE sample_number is not NULL")
     firstCensoredSample<-function(date){
       sample<-samples %>% 
-        filter(start_date>date) %>% 
-        filter(start_date==min(start_date)) %>% 
+        dplyr::filter(start_date>date) %>% 
+        dplyr::filter(start_date==min(start_date)) %>% 
         .[["sample_number"]]
       return(sample[1])
     }
@@ -115,7 +115,7 @@ createCmrData<-function(coreData,
     coreData<-toCensor %>%
       select(tag,firstCensoredSample) %>%
       right_join(coreData,by="tag") %>%
-      filter(sampleNumber<firstCensoredSample|is.na(firstCensoredSample)) %>%
+      dplyr::filter(sampleNumber<firstCensoredSample|is.na(firstCensoredSample)) %>%
       select(-firstCensoredSample)
   }#end emigrated or dead section
 

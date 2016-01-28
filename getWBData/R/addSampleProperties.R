@@ -21,7 +21,7 @@ addSampleProperties<-function(data,defaultColumns=T,columnsToAdd=NULL){
   
   newData<-tbl(conDplyr,'data_seasonal_sampling') %>%
     select(one_of(chosenColumns)) %>%
-    filter(!is.na(sample_number)) %>%
+    dplyr::filter(!is.na(sample_number)) %>%
     distinct() %>%
     collect()
   names(newData)<-camelCase(names(newData))

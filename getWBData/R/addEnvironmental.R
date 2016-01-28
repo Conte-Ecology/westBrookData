@@ -9,27 +9,25 @@
 #'@export
 
 addEnvironmental <-function( coreData ){
-
   # get temperature data from database
-  queryTemp <-"SELECT * FROM data_daily_temperature"
-  envData <- RPostgreSQL::dbGetQuery(con,queryTemp)
-  
-  # get flow extension data from database
-  queryFlow <-"SELECT * FROM data_flow_extension"
-  flowData <- RPostgreSQL::dbGetQuery(con,queryFlow)
-  
-  #merge data
-  envData <- left_join( envData, flowData, by=c("river","date"))
+  envData<-tbl(conDplyr,"data_daily_temperature") %>%
+            left_join(tbl(conDplyr,"data_flow_extension"),
+                      by=c("river","date")) %>%
+            collect() %>%
+            dplyr::filter(date <= max(coreData$detectionDate),
+                          date >= min(coreData$detectionDate)) %>%
+            data.frame()
   
   ###########################################################################
   # set up table of intervals based on date for each capture interval by fish
   coreData <- coreData %>%
                 group_by( tag ) %>%
-                mutate( lagDetectionDate = lead( detectionDate ) ) 
+                mutate( lagDetectionDate = lead( detectionDate ) ) %>%
+                ungroup()
   
   # function to get mean environmental data for each row of coreData
   getIntervalMean <- function( start,end,r,e ){
-    d <- as.POSIXct(envData$date) #diff formats
+    d <- envData$date
 
     if( e == "Temperature" ) {
       envCol <- "daily_mean_temp"
@@ -47,12 +45,12 @@ addEnvironmental <-function( coreData ){
   
   # get unique start and end dates from coreData and calc env means for the intervals
   coreDataUniqueDates <- coreData %>%
-                           ungroup() %>%  # seems to carryover from previous block
                            select( river, detectionDate, lagDetectionDate ) %>%
                            distinct() %>%
                            group_by( river, detectionDate, lagDetectionDate ) %>% #just a loop, probably a better way to do this.
                            mutate( meanTemperature = getIntervalMean( detectionDate, lagDetectionDate, river, "Temperature" ),
-                                   meanFlow =        getIntervalMean( detectionDate, lagDetectionDate, river, "Flow" ))
+                                   meanFlow =        getIntervalMean( detectionDate, lagDetectionDate, river, "Flow" )) %>%
+                           ungroup()
   
   coreData <- left_join( coreData,coreDataUniqueDates,
                          by=c("detectionDate","river","lagDetectionDate"))
