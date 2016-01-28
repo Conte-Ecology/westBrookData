@@ -52,7 +52,7 @@ createCoreData<-function(sampleType=NULL,
   
   #define the columns to grab
   if(baseColumns){
-    chosenColumns<-c("tag","detection_date","sample_name","river","section")
+    chosenColumns<-c("tag","detection_date","sample_name","river","section","area")
   } else chosenColumnns<-NULL
   
   if(!is.null(columnsToAdd)){
