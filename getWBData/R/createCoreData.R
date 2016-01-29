@@ -47,7 +47,7 @@ createCoreData<-function(sampleType=NULL,
            portableAntenna="data_portable_antenna")
   
   tables<-st[tables]
-  if(includeUntagged) tables<-c(tables,"untagged_captures")
+  if(includeUntagged) tables<-c(tables,"data_untagged_captures")
   
   
   #define the columns to grab

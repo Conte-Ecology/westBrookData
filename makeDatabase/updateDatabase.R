@@ -23,6 +23,7 @@ do <- list(
 		"declare_data_errors.R",
 		"fix_data_errors.R",
 		"fix_tag_properties.R",
+		"form_data_untagged_captures.R",
 		
 		"form_data_seasonal_sampling.R",
 		"form_data_yoy_bins.R",
