@@ -23,7 +23,7 @@ seasonal_samples<-
       "11", "15", "17", "18",
       "20", "23", "24", "25", 
       "27", "30", "31", "32", 
-      "34", "35", "36", "37", 
+      "34", "36", "37", 
       "38", "40", "41", "41.8", 
       "43", "45", "46", "47", 
       "48", "49", "50", "51", 
@@ -50,61 +50,12 @@ sampling<-sampling %>% #unless you group by sample year can be different for dif
           mutate(year=min(year)) %>%
           ungroup()
 
-# sampling <- dbGetQuery(con, stmt)
-# sampling[['order']] <- as.numeric(sampling$sample_name)
-# 
-# sampling[['start_date']] <- suppressWarnings(parse_date_time(NA, orders=date.format))
-# sampling[['end_date']] <- suppressWarnings(parse_date_time(NA, orders=date.format))
-# 
-# sampling[['seasonal']] <- FALSE
-# sampling[['seasonal']][sampling[['sample_name']] %in%  
-# 	c(  "1",  "7",  "8",  "9", 
-# 		 "11", "15", "17", "18",
-# 		 "20", "23", "24", "25", 
-# 		 "27", "30", "31", "32", 
-# 		 "34", "35", "36", "37", 
-# 		 "38", "40", "41", "41.8", 
-# 		 "43", "45", "46", "47", 
-# 		 "48", "49", "50", "51", 
-# 		 "52", "53", "54", "55", 
-# 		 "56", "57", "58", "59", 
-# 		 "60", "61", "62", "63", 
-# 		 "64", "65", "66", "67", 
-# 		 "68", "69", "70", "71", 
-# 		 "72", "73", "74", "75",
-#      "76", "77", "78", "79",
-#      "80", "81", "82", "83",
-#      "84", "85", "86", "87",
-#      "88", "89", "90", "91",
-# 		 "92", "93", "94") ] <- TRUE
-# 
-# for (i in 1:nrow(sampling)) {
-# 	stmt <- paste0(
-# 		"SELECT distinct(date) FROM tags_captures ",
-# 		"WHERE sample_name = '", sampling[i,'sample_name'], "';"
-# 	)
-# 	### FUCKING DATE PARSING!
-# 	date <- dbGetQuery(con,stmt)[['date']]#strsplit(x=dbGetQuery(con,stmt)[['date']],"/")
-# 	detection_date <- parse_date_time(x=date, orders=date.format)
-# 	detection_date[year(detection_date)<100]<-detection_date[year(detection_date)<100]+years(2000)
-# 	detection_date[detection_date > now()] <- 
-# 		detection_date[detection_date > now()] - years(100)
-# 	sampling[i,'start_date'] <- min(detection_date, na.rm=TRUE)
-# 	sampling[i,'end_date'] <- max(detection_date, na.rm=TRUE)
-# 	if (getOption('verbose',FALSE)) print(sampling[i,])
-# }
-# 
-# sampling[['start_julian_day']] <- yday(sampling[['start_date']])
-# sampling[['end_julian_day']] <- yday(sampling[['end_date']])
-# sampling[['year']] <- year(sampling[['start_date']])
-# 
-
 sample_number_map <- c(  
 	 "1" = 10,  "7" = 11,  								 "8" = 12,
 	 "9" = 13, "11" = 14, 								"15" = 15, "17" = 16,
 	"18" = 17, "20" = 18, 								"23" = 19, "24" = 20,
 	"25" = 21, "27" = 22, 								"30" = 23, "31" = 24,
-	"32" = 25, c("34" = 26, "35" = 26), 	"36" = 27, "37" = 28,
+	"32" = 25, "34" = 26, 	              "36" = 27, "37" = 28,
 	"38" = 29, "40" = 30, 								"41" = 31, "41.8" = 32,
 	"43" = 33, "45" = 34, 								"46" = 35, "47" = 36,
 	"48" = 37, "49" = 38, 								"50" = 39, "51" = 40,
