@@ -23,7 +23,7 @@ createCmrData<-function(coreData,
   reconnect()
   
   #get the sample data
-  sampleQuery<-paste("SELECT distinct sample_number,season,end_date,year",
+  sampleQuery<-paste("SELECT distinct sample_number,sample_name,season,end_date,year",
                      "FROM data_seasonal_sampling",
                      "WHERE seasonal='TRUE'")
   samples<-dbGetQuery(con,sampleQuery) %>% 
@@ -46,7 +46,8 @@ createCmrData<-function(coreData,
   allTags<-coreData %>% select(one_of(c("tag",tagProperties))) %>% distinct()
   allSampleTags<-data.frame(tag=rep(allTags$tag,each=length(allSamples)),
                             sampleNumber=rep(allSamples,length(unique(coreData$tag))),
-                            stringsAsFactors=F)
+                            stringsAsFactors=F) %>%
+                 mutate(sampleName=samples$sampleName[match(sampleNumber,samples$sampleNumber)])
   for(t in tagProperties){
     allSampleTags[[t]]<-rep(allTags[[t]],each=length(allSamples))
                         

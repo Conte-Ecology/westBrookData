@@ -95,6 +95,7 @@ createCoreData<-function(sampleType=NULL,
     dataOut<-select(dataOut,-survey)
   }
   names(dataOut)<-camelCase(names(dataOut))
+  dataOut<-arrange(dataOut,tag,detectionDate)
   return(dataOut)
 }
 
