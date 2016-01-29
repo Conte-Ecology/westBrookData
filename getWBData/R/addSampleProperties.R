@@ -21,7 +21,7 @@ addSampleProperties<-function(data,defaultColumns=T,columnsToAdd=NULL){
   
   newData<-tbl(conDplyr,'data_seasonal_sampling') %>%
     select(one_of(chosenColumns)) %>%
-    dplyr::filter(!is.na(sample_number)) %>%
+    dplyr::filter(!is.na(sample_name)) %>%
     distinct() %>%
     collect()
   names(newData)<-camelCase(names(newData))
@@ -30,7 +30,7 @@ addSampleProperties<-function(data,defaultColumns=T,columnsToAdd=NULL){
   
   if(fillMedianDate){
     newData<-tbl(conDplyr,'data_seasonal_sampling') %>%
-      select(sample_number,median_date) %>%
+      select(sample_name,median_date) %>%
       distinct() %>%
       collect()
     names(newData)<-camelCase(names(newData))
