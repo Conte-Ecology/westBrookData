@@ -4,6 +4,7 @@ setkey(tag_history,tag,detection_date)
 
 #Create lists of tags with different types of issues
 tagIssues<-list(multiSpecies=NULL,
+                multiSex=NULL,
                 weirdGrowth=NULL)
 
 tagIssues$multiObsWithinSample<-
@@ -56,6 +57,19 @@ fixSpecies<-function(species,tag){
 }
 
 tag_history[,species:=fixSpecies(species,tag),by=tag]
+
+#Make sure each tag has only one sex
+fixSex<-function(sex,tag){
+  nSex<-length(unique(na.omit(sex)))
+  if(nSex==0){return(rep(as.character(NA),length(sex)))}
+  if(nSex>1){
+    tagIssues$multiSex<<-c(tagIssues$multiSex,tag[1])
+    nBySex<-aggregate(sex,list(sex),length)
+    sex<-rep(nBySex[which.max(nBySex[,2]),1],length(sex))
+  }
+  return(sex)
+}
+tag_history[,sex:=fixSex(sex,tag),by=tag]
 
 #Check whether length sequences are reasonable
 checkLength<-function(length,date,tag){

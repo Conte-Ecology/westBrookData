@@ -1,18 +1,26 @@
 #use captures as the base
-captureQuery<-paste("SELECT tag,species,sample_name,cohort,observed_length,river,detection_date",
+captureQuery<-paste("SELECT tag,species,sample_name,cohort,",
+                      "observed_length,river,detection_date,sex",
                     "FROM data_tagged_captures")
 captures<-data.table(dbGetQuery(con,captureQuery))
 setkey(captures,tag)
 
-
-
 #functions and reference data to get info by tag
 getSpecies<-function(species,tag){
   species<-unique(na.omit(species))
-  if(length(species==1)){return(species)}
-  if(length(species==0)){return(as.character(NA))}
+  if(length(species)==1){return(species)}
+  if(length(species)==0){return(as.character(NA))}
   
-  stop("multiple species listed for tag",tag[1],
+  stop("multiple species listed for tag ",tag[1],
+       " should have been caught in fix_tag_properties.R")
+}
+
+getSex<-function(sex,tag){
+  sex<-unique(na.omit(sex))
+  if(length(sex)==1){return(sex)}
+  if(length(sex)==0){return(as.character(NA))}
+  
+  stop("multiple sexes listed for tag ",tag[1],
        " should have been caught in fix_tag_properties.R")
 }
 
@@ -88,11 +96,12 @@ getCohort<-function(cohort,species,length,sample,river){
 }
 
 #get data from from seasonal sampling by tag
-dataByTag<-captures[,list(species=getSpecies(species),
+dataByTag<-captures[,list(species=getSpecies(species,tag),
                           first_capture_sample=min(sample_name),
                           last_capture_sample=max(sample_name),
                           last_capture_date=max(detection_date),
-                          cohort=getCohort(cohort,species,observed_length,sample_name,river)
+                          cohort=getCohort(cohort,species,observed_length,sample_name,river),
+                          sex=getSex(sex,tag)
                           ),by=tag]
 
 #add in lastAntennaDetection from antenna data
