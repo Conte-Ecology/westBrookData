@@ -39,7 +39,7 @@ createCmrData<-function(coreData,
   
   ###pad with samples where individual was unobserved
   tagProperties<-c('dateKnownDead','lastAntennaDetection','cohort',
-                  'species','firstCaptureSample','lastCaptureSample')
+                  'species','firstCaptureSample','lastCaptureSample','sex')
   tagProperties<-tagProperties[tagProperties %in% names(coreData)]
 
   allSamples<-as.numeric(min(samplesToInclude):max(samplesToInclude))
