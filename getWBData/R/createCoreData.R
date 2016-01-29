@@ -28,7 +28,7 @@ createCoreData<-function(sampleType=NULL,
                                                      "portableAntenna"))]
     stop(paste("Invalid sampleType:",invalidType))
   }
-  
+  tables<-NULL
   #define the survey values to grab from capture data depending on sampleType
   if(any(sampleType %in% c("trap","electrofishing","seine","snorkel"))){
     tables<-c(sampleType[!sampleType %in% c("trap","electrofishing","seine","snorkel")],"captures")
@@ -40,7 +40,7 @@ createCoreData<-function(sampleType=NULL,
     captureTypes<-possibleCaptureTypes[captureTypes] %>% unlist()
     names(captureTypes)<-NULL
   }
-  
+  tables<-c(tables,sampleType[!sampleType %in% c("trap","electrofishing","seine","snorkel")])
   
   st<-list(captures="data_tagged_captures",
            stationaryAntenna="data_stationary_antenna",
