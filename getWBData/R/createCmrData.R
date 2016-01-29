@@ -18,7 +18,8 @@ createCmrData<-function(coreData,
                         maxAgeInSamples=20,
                         censorDead=F,
                         censorEmigrated=T,
-                        modelType="CJS"){
+                        modelType="CJS",
+                        inside=T){
   reconnect()
   
   #get the sample data
@@ -32,6 +33,9 @@ createCmrData<-function(coreData,
   #subset data to the samples of interest
   samplesToInclude<-dplyr::filter(samples,endDate>dateStart,endDate<dateEnd)[["sampleNumber"]]
   coreData<-coreData %>% dplyr::filter(sampleNumber %in% samplesToInclude)
+  
+  #Subset to fish inside the core study area
+  if(inside) coreData<-coreData %>% dplyr::filter(area %in% c('inside','trib'))
   
   ###pad with samples where individual was unobserved
   tagProperties<-c('dateKnownDead','lastAntennaDetection','cohort',
