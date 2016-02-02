@@ -13,7 +13,7 @@ addEnvironmental <-function( coreData, sampleFlow=F ){
   envData<-tbl(conDplyr,"data_daily_temperature") %>%
             left_join(tbl(conDplyr,"data_flow_extension"),
                       by=c("river","date")) %>%
-            select(-source)
+            select(-source) %>%
             collect() %>%
             dplyr::filter(date <= max(coreData$detectionDate),
                           date >= min(coreData$detectionDate)) %>%
