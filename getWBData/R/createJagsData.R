@@ -172,23 +172,29 @@ if(modelType == 'JS'){
       
       
       nFirstObsRows = nFirstObsRows
-      firstObsRows = firstObsRows
+      firstObsRows = firstObsRows$firstObsRows
       
       nOcc = length(unique(coreData$sampleNumber))
       occ = coreData$sampleNum-min(coreData$sampleNumber)-1
       
       nEvalRows = nEvalRows  
-      evalRows = evalRows   
+      evalRows = evalRows$evalRows   
 
-      lastObsRows = lastObsRows
+      lastObsRows = lastObsRows$lastObsRows
       nLastObsRows = nLastObsRows
       
       nOut = nEvalRows # evalRows to output for each trace
  
       # mean intervaldays by season and river for interval boundaries [ s,r ]
       dIntDays <- data.frame(enc=encDATA, int=as.numeric(intervalDays), river=riverDATA, season=season)
-      dIntDaysMean <- dIntDays %>% dplyr::filter( enc == 1 ) %>% group_by( season,river ) %>%  summarize( int = mean( int, na.rm=TRUE ) )
-      intervalMeans <- addColMeans( matrix(dIntDaysMean$int,nrow=length(unique(coreData$season)),ncol=length(unique(coreData$river))-1, byrow=T) ) 
+      dIntDaysMean <- dIntDays %>%
+                      dplyr::filter( enc == 1 ) %>%
+                      group_by( season,river ) %>%
+                      summarize( int = mean( int, na.rm=TRUE ) ) %>%
+                      ungroup() %>%
+                      as.matrix()
+                      
+      intervalMeans <- addColMeans( matrix(dIntDaysMean[,'int'],nrow=length(unique(coreData$season)),ncol=length(unique(coreData$river))-1, byrow=T) ) 
       rm(dIntDays)
 
       
