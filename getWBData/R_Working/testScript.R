@@ -9,9 +9,7 @@ coreData<-createCoreData(sampleType="electrofishing",
                       addEnvironmental() %>%
                         addKnownZ()
 
-jagsData <- createJAGSData(coreData)
-
-
+jagsData <- createJagsData(coreData)
 
 
 coreData<-createCoreData(sampleType="electrofishing",

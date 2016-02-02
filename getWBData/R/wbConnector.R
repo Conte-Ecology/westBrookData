@@ -4,12 +4,11 @@
 #'@return \code{con} A link to the database for use with RPostgreSQL functions
 #'@return \code{conDplyr} A link to the database for use with dplyr functions
 wbConnector<-function(){
-  
+  #!/usr/bin/r -vi  
   #obtain credentials interactively from the user
-  cat("\nEnter postgres username")
-  usr <- scan(what=character(),nmax=1,quiet=TRUE)
-  cat("\nEnter postgres password (not stored in history, console will be cleared upon entry)")
-  pass <- scan(what=character(),nmax=1,quiet=TRUE)
+  usr<-readline("Enter postgres username: ")
+  # cat("\nEnter postgres password (not stored in history, console will be cleared upon entry)")
+  pass<-readline("Enter postgres password: ")
   
   credentials<-list(drv="PostgreSQL",
                     host="osensei.cns.umass.edu",

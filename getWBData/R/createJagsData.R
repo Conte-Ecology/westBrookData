@@ -1,7 +1,7 @@
 #'Create data needed for JAGS runs
 #'@return List of evalRows and firstObsRows
 #'@param coreData a data.frame created using createCoreData
-#'@param modelType one of {"CJS","JS}
+#'@param modelType either "CJS" or "JS"
 #'@details \strong{Options of columns to add}
 #' 
 #'@export
