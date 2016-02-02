@@ -4,10 +4,12 @@
 \alias{addEnvironmental}
 \title{Add environmental data to core westbrook data}
 \usage{
-addEnvironmental(coreData)
+addEnvironmental(coreData, sampleFlow = F)
 }
 \arguments{
 \item{coreData}{a data.frame created using createCoreData}
+
+\item{sampleFlow}{Logical indicating whether to add the discharge on detectionDate to the output}
 }
 \value{
 Environmental data added to a coreData

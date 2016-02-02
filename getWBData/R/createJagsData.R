@@ -1,12 +1,12 @@
 #'Create data needed for JAGS runs
 #'@return List of evalRows and firstObsRows
 #'@param coreData a data.frame created using createCoreData
-#'@param 
+#'@param modelType one of {"CJS","JS}
 #'@details \strong{Options of columns to add}
 #' 
 #'@export
 
-createJAGSData <-function(coreData, modelType = 'CJS'){
+createJagsData <-function(coreData, modelType = 'CJS'){
  
   # function to add dummy rows and columns for zRiv=1
   addRowColMeans <- function(m){
@@ -25,7 +25,7 @@ createJAGSData <-function(coreData, modelType = 'CJS'){
   # need to get rid of repeatRows - they mess up evalRows etc.
 
   repeatRows <- coreData %>% group_by( tag,sampleNumber ) %>% dplyr::filter( n() > 1 )
-  if(nrow(repeatRows>0)){
+  if(nrow(repeatRows)>0){
     repeatRows<<-repeatRows
     warning("Multiple observations of at least one individual in a sample 
             (print repeatRows to view cases)")
