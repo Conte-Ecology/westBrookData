@@ -54,8 +54,7 @@ addEnvironmental <-function( coreData, sampleFlow=F ){
                            ungroup()
   
   coreData <- left_join( coreData,coreDataUniqueDates,
-                         by=c("detectionDate","river","lagDetectionDate")) %>%
-              select(-lagDetectionDate)
+                         by=c("detectionDate","river","lagDetectionDate"))
   
 #   i=495
 #   getIntervalMean( coreData$detectionDate[i],coreData$lagDetectionDate[i],coreData$river[i],"Temperature" )

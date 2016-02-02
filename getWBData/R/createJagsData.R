@@ -228,12 +228,5 @@ if(modelType == 'JS'){
     }
   )
    
-  return(list(evalRows = evalRows$evalRows,
-              nEvalRows = nEvalRows,
-              firstObsRows = firstObsRows$firstObsRows,
-              nFirstObsRows = nFirstObsRows,
-              lastObsRows = lastObsRows$lastObsRows,
-              nLastObsRows = nLastObsRows,
-              d=d
-         )   )
+  return(d)
 }
