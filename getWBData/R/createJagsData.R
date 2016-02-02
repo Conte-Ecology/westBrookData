@@ -134,7 +134,7 @@ if(modelType == 'JS'){
       encDATA = as.numeric( coreData$enc ) 
       riverDATA = coreData$riverOrdered
       nRivers = coreData %>% filter(!is.na(river)) %>%
-                select(river) %>% unique() %>% nrow())
+                select(river) %>% unique() %>% nrow()
       lengthDATA = coreData$observedLength
       #availableDATA = dMData$available01 no longer need - taken care of with censor()
       ind = coreData$tagIndex
@@ -142,19 +142,19 @@ if(modelType == 'JS'){
       # For standardizing length
       lengthMean = addColMeans( matrix(stdBySeasonRiver$lengthMean,
                                        nrow=length(unique(coreData$season)),
-                                       ncol=nRivers)
+                                       ncol=nRivers))
       lengthSd =   addColMeans( matrix(stdBySeasonRiver$lengthSd,
                                        nrow=length(unique(coreData$season)),
-                                       ncol=nRivers )
+                                       ncol=nRivers ))
     
       # environmental covariates pertaining to intervals.  These are
       # covariates of growth and survival
       
       # For standardizing env predictors of growth and surv
-      tempMean = addColMeans( matrix(stdBySeasonRiver$tempMean,nrow=length(unique(coreData$season)),ncol=nRivers )
-      tempSd =   addColMeans( matrix(stdBySeasonRiver$tempSd,nrow=length(unique(coreData$season)),ncol=nRivers ) 
-      flowMean = addColMeans( matrix(stdBySeasonRiver$flowMean,nrow=length(unique(coreData$season)),ncol=nRivers )
-      flowSd =   addColMeans( matrix(stdBySeasonRiver$flowSd,nrow=length(unique(coreData$season)),ncol=nRivers )
+      tempMean = addColMeans( matrix(stdBySeasonRiver$tempMean,nrow=length(unique(coreData$season)),ncol=nRivers ))
+      tempSd =   addColMeans( matrix(stdBySeasonRiver$tempSd,nrow=length(unique(coreData$season)),ncol=nRivers )) 
+      flowMean = addColMeans( matrix(stdBySeasonRiver$flowMean,nrow=length(unique(coreData$season)),ncol=nRivers ))
+      flowSd =   addColMeans( matrix(stdBySeasonRiver$flowSd,nrow=length(unique(coreData$season)),ncol=nRivers ))
       
       # Now doing standardization in the bugs code to make sure that unobserved fish get observed std env data
       tempDATA = as.numeric(coreData$meanTemperature)
