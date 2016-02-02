@@ -77,6 +77,7 @@ createCmrData<-function(coreData,
   if(modelType=="CJS"){ #remove occasions prior to the first capture
     coreData<-coreData %>%
       group_by(tag) %>%
+      filter(sum(enc)>0) %>% #removes fish that were not observed (i.e. too old on first capture)
       mutate(firstObs=sampleNumber[min(which(enc==1))]) %>%
       dplyr::filter(sampleNumber>=firstObs) %>%
       select(-firstObs) %>%

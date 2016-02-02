@@ -1,10 +1,8 @@
 library(getWBData)
-coreData<-createCoreData(sampleType="electrofishing",
-                         columnsToAdd=c("sampleNumber","river",
-                                        'observedLength','observedWeight')) %>% 
+coreData<-createCoreData() %>% 
             addTagProperties() %>%
-              dplyr::filter(species=="bkt") %>%
-                createCmrData(maxAgeInSamples=20) %>%
+              # dplyr::filter(species=="bkt") %>%
+                createCmrData() %>%
                     addSampleProperties() %>%
                       addEnvironmental() %>%
                         addKnownZ()
@@ -12,14 +10,12 @@ coreData<-createCoreData(sampleType="electrofishing",
 jagsData <- createJagsData(coreData)
 
 
-coreData<-createCoreData(sampleType="electrofishing",
-                         columnsToAdd=c("sampleNumber","river",
-                                        'observedLength','observedWeight'))
-coreData<-addTagProperties(coreData,columnsToAdd=c("sex","cohort","species"))
-coreData<-dplyr::filter(coreData,species == "bkt")
-coreData<-createCmrData(coreData,maxAgeInSamples=20)
-# coreData<-censor(coreData)
+coreData<-createCoreData()
+coreData<-addTagProperties(coreData)
+coreData<-dplyr::filter(coreData,species %in% c("bkt","bnt","ats"))
+coreData<-dplyr::filter(coreData,species %in% c("bkt"))
+coreData<-createCmrData(coreData)
 coreData<-addSampleProperties(coreData)
 coreData<-addEnvironmental(coreData)
 coreData<-addKnownZ(coreData)
-#jagsData<-createJAGSData(coreData)
+jagsData<-createJagsData(coreData)

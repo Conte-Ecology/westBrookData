@@ -10,7 +10,7 @@ addSampleProperties<-function(data,defaultColumns=T,columnsToAdd=NULL){
   reconnect()
   
   if(defaultColumns==T){
-    chosenColumns<-c("year","season","median_date")
+    chosenColumns<-c("year","season","median_date","proportion_sampled")
   }
   chosenColumns<-c(chosenColumns,columnsToAdd) %>% fillUnderscore()
   if(is.null(chosenColumns)) stop("Must choose at least one column to add")

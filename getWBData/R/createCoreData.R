@@ -15,7 +15,7 @@
 #'@details tag, detectionDate, river, area, section, survey, sampleName, readerId, sampleType, aliveOrDead, instance, pass, quarter, leftOrRight, habitat, cover, justification, comment
 #'  
 #'@export
-createCoreData<-function(sampleType=NULL,
+createCoreData<-function(sampleType="electrofishing",
                   baseColumns=T,
                   columnsToAdd=NULL,
                   includeUntagged=F){
@@ -52,7 +52,9 @@ createCoreData<-function(sampleType=NULL,
   
   #define the columns to grab
   if(baseColumns){
-    chosenColumns<-c("tag","detection_date","sample_name","sample_number","river","section","area")
+    chosenColumns<-c("tag","detection_date","sample_name",
+                     "sample_number","river","section","area",
+                     "observed_length")
   } else chosenColumnns<-NULL
   
   if(!is.null(columnsToAdd)){

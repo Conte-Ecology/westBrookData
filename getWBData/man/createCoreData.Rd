@@ -4,8 +4,8 @@
 \alias{createCoreData}
 \title{Download data from West Brook database}
 \usage{
-createCoreData(sampleType = NULL, baseColumns = T, columnsToAdd = NULL,
-  includeUntagged = F)
+createCoreData(sampleType = "electrofishing", baseColumns = T,
+  columnsToAdd = NULL, includeUntagged = F)
 }
 \arguments{
 \item{sampleType}{A character vector of sampling types to be included in output, options are: electrofishing,stationaryAntenna,portableAntenna,trap,seine,snorkel}

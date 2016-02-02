@@ -203,26 +203,7 @@ if(modelType == 'JS'){
       intervalMeans <- addColMeans( matrix(dIntDaysMean[,'int'],nrow=length(unique(coreData$season)),ncol=nRivers, byrow=T) ) 
       rm(dIntDays)
 
-      
-      propSampledDATA =  array( 1, c(4,5,11) ) #season, river year
-      
-      propSampledDATA[ c(1,4),2:5,1 ] <- 0     #all spring and winter samples in 2002
-      propSampledDATA[ 2,3:4,1 ] <- 0          #J and M summer samples in 2002
-      #propSampledDATA[ 4,2:5,1 ] <- 0          #all winter samples in 2002
-      propSampledDATA[ 4,2,2 ] <- 30/47        #WB winter sample in 2003
-      propSampledDATA[ 4,2,3 ] <- 3/47         #WB winter sample in 2004
-      propSampledDATA[ 4,2,4 ] <- 0            #WB winter sample in 2005
-      propSampledDATA[ 4,2,6 ] <- 0            #WB winter sample in 2007 
-      
-      
-      # zeroSectionsDATA - completely unsampled winter samples. not including samples before season 4,year 1 because we didn't want to rewrite the meanPhiS34 indexing [mostly noise ni these estimates anyway]
-      
-      zeroSectionsDATA <- array( 0, c(4,5,11) ) #season, river year
-      
-      zeroSectionsDATA[ 3:4,2:5,1 ] <- 1          #all winter samples in 2002
-      zeroSectionsDATA[ 3:4,2,4 ] <- 1            #WB winter sample in 2005
-      zeroSectionsDATA[ 3:4,2,6 ] <- 1            #WB winter sample in 2007
-      
+      proportionSampled <- coreData$proportionSampled
       ####################################
       # will need to update this depending on model structure
       #
