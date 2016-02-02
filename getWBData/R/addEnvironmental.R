@@ -8,11 +8,12 @@
 #' 
 #'@export
 
-addEnvironmental <-function( coreData ){
+addEnvironmental <-function( coreData, sampleFlow=F ){
   # get temperature data from database
   envData<-tbl(conDplyr,"data_daily_temperature") %>%
             left_join(tbl(conDplyr,"data_flow_extension"),
                       by=c("river","date")) %>%
+            select(-source)
             collect() %>%
             dplyr::filter(date <= max(coreData$detectionDate),
                           date >= min(coreData$detectionDate)) %>%
@@ -63,7 +64,11 @@ addEnvironmental <-function( coreData ){
 #       print(  c(i,coreDataUniqueDates$detectionDate[i],coreDataUniqueDates$lagDetectionDate[i],coreDataUniqueDates$river[i],
 #                 getIntervalMean( coreDataUniqueDates$detectionDate[i],coreDataUniqueDates$lagDetectionDate[i],coreDataUniqueDates$river[i], "Temperature" )) )
 #     }
-
+  if(sampleFlow){
+  coreData <- envData %>% select(date,qPredicted) %>%
+              right_join (coreData,by=c("date"="detectionDate"))
+  }
+  
   return( coreData )  
     
 }
