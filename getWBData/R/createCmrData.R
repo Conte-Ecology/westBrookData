@@ -53,11 +53,9 @@ createCmrData<-function(coreData,
                         
   }
   coreData<-suppressMessages(right_join(coreData,allSampleTags))
-  #create cmr related columns
+  #create encounter histories
   coreData<-coreData %>% 
-              mutate(enc=as.numeric(!is.na(detectionDate))) %>% # create encounter history
-                mutate(sampleIndex=sampleNumber-min(sampleNumber)+1) %>% 
-                  mutate(tagIndex=as.numeric(as.factor(tag)))
+              mutate(enc=as.numeric(!is.na(detectionDate)))# create encounter history
   
   #calculate ageInSamples
   coreData<-samples %>%
@@ -125,6 +123,10 @@ createCmrData<-function(coreData,
       select(-firstCensoredSample)
   }#end emigrated or dead section
 
+  #create indices for samples and tags so min is 1
+  coreData<- coreData %>%
+  mutate(sampleIndex=sampleNumber-min(sampleNumber)+1) %>% 
+    mutate(tagIndex=as.numeric(as.factor(tag)))
   
   return(coreData)
 }
