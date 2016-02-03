@@ -64,8 +64,12 @@ addEnvironmental <-function( coreData, sampleFlow=F ){
 #                 getIntervalMean( coreDataUniqueDates$detectionDate[i],coreDataUniqueDates$lagDetectionDate[i],coreDataUniqueDates$river[i], "Temperature" )) )
 #     }
   if(sampleFlow){
-  coreData <- envData %>% select(date,qPredicted) %>%
-              right_join (coreData,by=c("date"="detectionDate"))
+  coreData <- envData %>%
+              filter(!is.na(qPredicted)) %>%
+              select(date,qPredicted) %>%
+              distinct() %>%
+              right_join (coreData,by=c("date"="detectionDate")) %>%
+              rename(detectionDate=date)
   }
   
   return( coreData )  
