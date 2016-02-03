@@ -132,7 +132,7 @@ if(modelType == 'JS'){
     expr = {
       
       encDATA = as.numeric( coreData$enc ) 
-      knownZ = coreData$knownZ
+      z = coreData$knownZ
       riverDATA = coreData$riverOrdered
       nRivers = coreData %>% filter(!is.na(river)) %>%
                 select(river) %>% unique() %>% nrow()
