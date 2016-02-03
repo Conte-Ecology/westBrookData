@@ -67,6 +67,7 @@ addEnvironmental <-function( coreData, sampleFlow=F ){
   coreData <- envData %>%
               filter(!is.na(qPredicted)) %>%
               select(date,qPredicted) %>%
+              rename(flowForP=qPredicted) %>%
               distinct() %>%
               right_join (coreData,by=c("date"="detectionDate")) %>%
               rename(detectionDate=date)
