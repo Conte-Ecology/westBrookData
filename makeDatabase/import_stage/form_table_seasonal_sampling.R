@@ -8,7 +8,7 @@ sampling<-tbl(conDplyr,"tags_captures") %>%
 sampling<-sampling %>%
             mutate(date=parse_date_time(x=date, orders=date.format)) %>%
             group_by(sample_name) %>%
-            mutate(median_date=median(date)) %>%
+            mutate(median_date=as.POSIXct(round(median(date),"days"))) %>%
             ungroup() %>%
             group_by(sample_name,river) %>%
             summarize(median_date=median(median_date),
