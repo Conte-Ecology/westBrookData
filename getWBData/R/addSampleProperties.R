@@ -16,7 +16,8 @@ addSampleProperties<-function(data,defaultColumns=T,columnsToAdd=NULL){
   if(is.null(chosenColumns)) stop("Must choose at least one column to add")
   
   fillMedianDate<-"median_date" %in% chosenColumns
-  chosenColumns<-c(chosenColumns[chosenColumns!="median_date"],
+  proportionSampled<-"proportion_sampled" %in% chosenColumns
+  chosenColumns<-c(chosenColumns[!chosenColumns %in% c("median_date","proportion_sampled")],
                    "sample_name","sample_number") %>% unique()
   
   newData<-tbl(conDplyr,'data_seasonal_sampling') %>%
@@ -40,5 +41,16 @@ addSampleProperties<-function(data,defaultColumns=T,columnsToAdd=NULL){
       data[is.na(data$detectionDate),"medianDate"]
     data<-select(data,-medianDate)
   }
+  if(proportionSampled){
+    newData<-tbl(conDplyr,'data_seasonal_sampling') %>%
+      dplyr::filter(seasonal==TRUE) %>%
+      select(sample_name,sample_number,river,proportion_sampled) %>%
+      distinct() %>%
+      collect()
+    names(newData)<-camelCase(names(newData))
+    
+    data<-left_join(data,newData,by=c('sampleName','sampleNumber','river'))
+  }
+  
   return(data)
 }
