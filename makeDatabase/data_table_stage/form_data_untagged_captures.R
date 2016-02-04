@@ -42,12 +42,69 @@ column_code <- list(
 
 
 source_data <- dbGetQuery(con, "SELECT * FROM untagged_captures;")
-source_data <- pipeline_data_transformation(
-	data=source_data, pipeline=column_code)
+untaggedCaptures <- pipeline_data_transformation(
+	data=source_data, pipeline=column_code) %>% data.table()
 
+cohortBins<-data.table(dbGetQuery(con,"SELECT * FROM data_yoy_bins"))
 
+seasonalSampling<-
+  data.table(
+    dbGetQuery(con,"SELECT distinct sample_name,season,year FROM data_seasonal_sampling")
+  )
 
-dbWriteTable(con, 'data_untagged_captures', source_data, row.names=FALSE,
+setkey(cohortBins,sample_name)
+setkey(seasonalSampling,sample_name)
+cohortBins<-seasonalSampling[cohortBins]
+
+getCohort<-function(species,length,sample,river){
+  execEnv<-environment()
+  if(length(species)==0|!species %in% c("bkt","bnt","ats")) return(as.numeric(NA))
+    if(is.na(length)) return(as.numeric(NA))
+    if(species=='ats'){river<-'west brook'}#bins only assigned in west brook for salmon
+    bins<-cohortBins[species==get('species',envir=execEnv)&
+                       sample_name==get('sample',envir=execEnv)&
+                       river==get('river',envir=execEnv) ,
+                     list(cohort_min_length,
+                          cohort_max_length,
+                          cohort)]
+    if(nrow(bins)==0){
+      thisSeason<-seasonalSampling[sample_name==sample,season]
+      bins<-cohortBins[species==get('species',envir=execEnv)&
+                         river==get('river',envir=execEnv)&
+                         season==thisSeason,
+                       list(meanMin=mean(cohort_min_length),
+                            meanMax=mean(cohort_max_length)),
+                       by=age]
+      setkey(bins,age)
+      bins[,cohort_max_length:=(meanMax+shift(meanMin,1,type='lead'))/2]
+      bins[age==max(age),cohort_max_length:=meanMax]
+      bins[,cohort_min_length:=c(meanMin[1],cohort_max_length[1:(nrow(bins)-1)])]
+      bins[,cohort:=seasonalSampling[sample_name==sample,year]-age]
+    }
+    if(length>max(bins$cohort_max_length)){
+      #if first length is bigger than the bins assigned for that stream, it probably came from west brook
+      river<-"west brook"
+      bins<-cohortBins[species==get('species',envir=execEnv)&
+                         sample_name==get('sample',envir=execEnv)&
+                         river==get('river',envir=execEnv) ,
+                       list(cohort_min_length,
+                            cohort_max_length,
+                            cohort)]
+    }
+    cohort<-bins$cohort[intersect(which(length>=bins$cohort_min_length),
+                                  which(length<=bins$cohort_max_length))]
+    
+    return(cohort)
+}
+
+untaggedCaptures[,cohort:=as.numeric(cohort)]
+for(i in which(is.na(untaggedCaptures$cohort))){
+  set(untaggedCaptures,i,which(names(untaggedCaptures)=="cohort"),
+      with(untaggedCaptures,
+      getCohort(species[i],observed_length[i],sample_name[i],river[i])))
+}
+
+dbWriteTable(con, 'data_untagged_captures', data.frame(untaggedCaptures), row.names=FALSE,
 						 overwrite=TRUE, append=FALSE)
 
 
