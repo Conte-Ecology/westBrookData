@@ -4,7 +4,7 @@ coreData<-createCoreData() %>%
               # dplyr::filter(species=="bkt") %>%
                 createCmrData() %>%
                     addSampleProperties() %>%
-                      addEnvironmental() %>%
+                      addEnvironmental(sampleFlow=T) %>%
                         addKnownZ()
 
 jagsData <- createJagsData(coreData)

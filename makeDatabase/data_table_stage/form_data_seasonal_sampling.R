@@ -44,9 +44,9 @@ fillProp0<-function(riv,y,seas){
   seasonalSampling<<-rbind(seasonalSampling,newRow)
   }
 }
-propsToFill<-data.table(river=c("west brook","west brook","wb jimmy","wb obear","wb mitchell"),
-                        year= c( 2005,        2007,       2002,       2002,      2002),
-                        season=c(4,           4,          4,          4,         4))
+propsToFill<-data.table(river=c("west brook","west brook","wb jimmy","wb obear","wb mitchell","west brook","west brook"),
+                        year= c( 2005,        2007,       2002,       2002,      2002,        2015,        2012),
+                        season=c(4,           4,          4,          4,         4,           1,           4))
 for(i in 1:nrow(propsToFill)){
   fillProp0(riv=propsToFill$river[i],
             y=propsToFill$year[i],
