@@ -3,7 +3,7 @@
 #'@param sampleType A character vector of sampling types to be included in output, options are: electrofishing,stationaryAntenna,portableAntenna,trap,seine,snorkel
 #'@param baseColumns Logical: include default columns? tag,detection_date
 #'@param columnsToAdd A character vector of columns to inlcude; can replace or add to baseColumns
-#'@param includeUntagged Logical: include untagged fish?
+#'@param includeUntagged Logical: include untagged fish? This also adds cohort and species for these individuals
 #'@details \strong{Column names for tables}
 #' These are the options for columns to add depending on the sampleType chosen. 
 #'  When multiple sampleTypes are selected, columns that only exist within one are given NA for the other sampleType(s)
@@ -74,7 +74,10 @@ createCoreData<-function(sampleType="electrofishing",
                         "FROM information_schema.columns ",
                         "WHERE table_name = '",t,"'")
                   )$column_name
-    chosenTableColumns<-match(chosenColumns,tableColumns,nomatch=0) %>% .[.>0]
+    if(t=="data_untagged_captures"){
+      chosenTableColumns<-match(c(chosenColumns,"species","cohort"),
+                                tableColumns,nomatch=0) %>% .[.>0]
+      } else chosenTableColumns<-match(chosenColumns,tableColumns,nomatch=0) %>% .[.>0]
     
     newData<-tbl(conDplyr,t) %>%
               select(chosenTableColumns)
