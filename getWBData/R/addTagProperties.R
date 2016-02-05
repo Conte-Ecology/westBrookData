@@ -28,8 +28,16 @@ addTagProperties<-function(coreData,
   query<-paste("SELECT",columnQuery,"FROM data_by_tag")
   tagProperties<-RPostgreSQL::dbGetQuery(con,query)
   
-  coreData<-dplyr::left_join(coreData,tagProperties,by="tag")
+  if("cohort" %in% names(coreData)){
+    untagged<-coreData %>% filter(is.na(tag))
+    coreData<-coreData %>% select(-cohort,-species)
+  }
   
+  coreData<-coreData %>%
+            filter(!is.na(tag)) %>%
+            left_join(tagProperties,by="tag")
   names(coreData)<-camelCase(names(coreData))
+  
+  coreData<-bind_rows(coreData,untagged)
   return(coreData)
 }
