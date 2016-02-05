@@ -98,7 +98,7 @@ getCohort<-function(species,length,sample,river){
 }
 
 untaggedCaptures[,cohort:=as.numeric(cohort)]
-for(i in which(is.na(untaggedCaptures$cohort))){
+for(i in which(is.na(untaggedCaptures$cohort)&!is.na(untaggedCaptures$observed_length))){
   set(untaggedCaptures,i,which(names(untaggedCaptures)=="cohort"),
       with(untaggedCaptures,
       getCohort(species[i],observed_length[i],sample_name[i],river[i])))
