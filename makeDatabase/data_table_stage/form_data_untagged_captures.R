@@ -4,7 +4,7 @@ column_code <- list(
 	},
 	species = function(species) return(species),
 	cohort = function(cohort, tag) {  ## cohort is not well defined.
-		return(cohort)
+		return(round(as.numeric(cohort)))
 	},
 	sample_number = function(sample_name) {
 		sample_number <- sample_name_to_sample_number(sample_name)
