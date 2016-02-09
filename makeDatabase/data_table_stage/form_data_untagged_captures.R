@@ -5,7 +5,7 @@ column_code <- list(
 	species = function(species) return(species),
 	cohort = function(cohort,comments,date,measured_length) {
 	  cohort<-round(as.numeric(cohort))
-	  smallNoLength<-which(is.na(cohort)&grepl("too small")&is.na(measured_length))
+	  smallNoLength<-which(is.na(cohort)&grepl("too small",comments)&is.na(measured_length))
 	  datesForTooSmall<-parse_date_time(x=date[smallNoLength], orders=date.format)
 	  lastYear<-as.numeric(yday(datesForTooSmall)<130)
 	  cohort[smallNoLength]<-year(datesForTooSmall)-lastYear

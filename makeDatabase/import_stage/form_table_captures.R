@@ -37,7 +37,8 @@ rawCaptures<-tbl(conDplyr,nom) %>%
              bind_rows(rawCaptures)
 }
 
-dbCreateTable(con,"raw_captures",data.frame(rawCaptures),row.names=F)
+dbWriteTable(con,"raw_captures",data.frame(rawCaptures),
+             row.names=F,overwrite=T)
 
 tags_captures<-data.table(dbGetQuery(con,"SELECT * FROM raw_captures WHERE tag IS NOT NULL"))
 tags_captures[,sample_name:=as.character(as.numeric(sample_name))]
