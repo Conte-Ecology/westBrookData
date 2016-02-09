@@ -2,7 +2,7 @@ columns <- list(
   who = c('fish_number'),
   when = c('date','sample_name'),
   where = c('river','area','section'),
-  how = c('sample_type','survey'),
+  how = c('sample_type','survey','comments'),
   stable_trait = c('species','cohort'),
   mutable_trait = c('measured_length','measured_weight','maturity','sex')
 )

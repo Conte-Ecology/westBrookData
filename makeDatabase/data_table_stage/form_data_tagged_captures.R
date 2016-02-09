@@ -45,7 +45,8 @@ column_code <- list(
     sex[which(sex=="p")]<-maturity[which(sex=="p")]
     return(sex)},
 	survey = function(survey) return(survey),
-	sample_name = function(sample_name) return(sample_name)
+	sample_name = function(sample_name) return(sample_name),
+  comments = function(comments) return(comments)
 )
 
 

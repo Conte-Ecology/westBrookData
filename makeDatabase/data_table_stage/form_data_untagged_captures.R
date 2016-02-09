@@ -3,8 +3,13 @@ column_code <- list(
 		return(as.character(as.numeric(fish_number)))
 	},
 	species = function(species) return(species),
-	cohort = function(cohort, tag) {  ## cohort is not well defined.
-		return(round(as.numeric(cohort)))
+	cohort = function(cohort,comments,date,measured_length) {
+	  cohort<-round(as.numeric(cohort))
+	  smallNoLength<-which(is.na(cohort)&grepl("too small")&is.na(measured_length))
+	  datesForTooSmall<-parse_date_time(x=date[smallNoLength], orders=date.format)
+	  lastYear<-as.numeric(yday(datesForTooSmall)<130)
+	  cohort[smallNoLength]<-year(datesForTooSmall)-lastYear
+		return(cohort)
 	},
 	sample_number = function(sample_name) {
 		sample_number <- sample_name_to_sample_number(sample_name)
@@ -37,7 +42,8 @@ column_code <- list(
   maturity=function(maturity){return(maturity)},
   sex=function(sex){return(sex)},
 	survey = function(survey) return(survey),
-	sample_name = function(sample_name) return(sample_name)
+	sample_name = function(sample_name) return(sample_name),
+	comments = function(comments) return(comments)
 )
 
 
