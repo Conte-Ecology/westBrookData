@@ -5,7 +5,7 @@
 #'@export
 
 fillSizeLocation<-function(data){
-  
+  #fills river or section with the last one observed
   fillLocation<-function(location){
     known<-which(!is.na(location))
     unknown<-which(is.na(location))
@@ -18,11 +18,20 @@ fillSizeLocation<-function(data){
     return(location)
   }
   
+  #means to fill after last observations
   lengthByAge<-data %>%
-               group_by(ageInSamples) %>%
-               summarize(meanLength=mean(observedLength,na.rm=T))
-  
-  fillLength<-function(length,ageInSamples){
+               filter(!is.na(river)) %>%
+               group_by(ageInSamples,river) %>%
+               summarize(meanLengthRiver=mean(observedLength,na.rm=T))
+  overallLengthByAge<-data %>%
+                      group_by(ageInSamples) %>%
+                      summarize(meanLength=mean(observedLength,na.rm=T))
+  oldFishLength<-coreData %>%
+                 filter(ageInSamples>=17,!is.na(observedLength)) %>%
+                 summarize(mean(observedLength))
+
+  #interpolates lengths between observations
+  fillLength<-function(length){
     firstObs<-suppressWarnings(min(which(!is.na(length))))
     lastObs<-suppressWarnings(max(which(!is.na(length))))
     if(firstObs!=Inf){
@@ -30,22 +39,52 @@ fillSizeLocation<-function(data){
         length[firstObs:lastObs]<-approx(length[firstObs:lastObs],n=length(firstObs:lastObs))$y
       }
     }
-    if(any(is.na(length))){
-      fillWithMean<-which(is.na(length))
-      length[fillWithMean]<-lengthByAge$meanLength[match(ageInSamples[fillWithMean],
-                                                      lengthByAge$ageInSamples)]
-    }
     return(length)
   }
   
-  
-  
+  #fill river, section, and interpolated lengths
   data<-data %>%
   group_by(tag) %>%
   mutate(river=fillLocation(river)) %>%
   mutate(section=fillLocation(section)) %>%
-  mutate(observedLength=fillLength(observedLength,ageInSamples)) %>%
-  ungroup()
+  mutate(observedLength=fillLength(observedLength)) %>%
+  ungroup() %>%
+  left_join(lengthByAge,by=c('ageInSamples','river')) %>%
+  left_join(overallLengthByAge,by='ageInSamples')
+  
+  #fill non-interpolatable lengths with means preferentially by river, overall mean, or average of old fish
+  data[is.na(data$observedLength),"observedLength"]<-
+    data[is.na(data$observedLength),"meanLengthRiver"]
+  
+  data[is.na(data$observedLength),"observedLength"]<-
+    data[is.na(data$observedLength),"meanLength"]
+  
+  data[is.na(data$observedLength)&data$ageInSamples>=15,"observedLength"]<-
+    oldFishLength
+  
+  data<-data %>% select(-meanLengthRiver,-meanLength)
+  
+#tried briefly to correct for fish getting smaller after they got the mean, but gave up  
+#   makeLengthMonotonic<-function(length,enc,tag){
+#     print(tag[1])
+#     lastObs<-max(which(enc==1))
+#     deltaLength<-diff(length)
+#     badFills<-which(deltaLength<0)+1
+#     badFills<-badFills[badFills>lastObs]
+#     while(length(na.omit(badFills))>0){
+#       for(b in badFills){
+#         length[b]<-length[lastObs]
+#       }
+#       deltaLength<-diff(length)
+#       badFills<-intersect(which(deltaLength<0),which(enc==0)) 
+#     }
+#     return(length)
+#   }
+#   
+#   data<-data %>%
+#         group_by(tag) %>%
+#         mutate(length=makeLengthMonotonic(observedLength,enc,tag)) %>%
+#         ungroup()
   
   return(data)
 }
