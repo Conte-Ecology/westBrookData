@@ -9,7 +9,7 @@ column_code <- list(
   cohort_max_length=function(cohort_max_length){
     return(as.numeric(cohort_max_length))
   },
-  cohort=function(cohort){return(cohort)}
+  cohort=function(cohort){return(as.numeric(cohort))}
 )
 
 source_data <- dbGetQuery(con, "SELECT * FROM yoy_bins;")
