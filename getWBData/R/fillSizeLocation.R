@@ -21,14 +21,15 @@ fillSizeLocation<-function(data){
   #means to fill after last observations
   lengthByAge<-data %>%
                filter(!is.na(river)) %>%
-               group_by(ageInSamples,river) %>%
+               group_by(ageInSamples,river,species) %>%
                summarize(meanLengthRiver=mean(observedLength,na.rm=T))
   overallLengthByAge<-data %>%
-                      group_by(ageInSamples) %>%
+                      group_by(ageInSamples,species) %>%
                       summarize(meanLength=mean(observedLength,na.rm=T))
   oldFishLength<-data %>%
+                 group_by(species) %>%
                  filter(ageInSamples>=17,!is.na(observedLength)) %>%
-                 summarize(mean(observedLength))
+                 summarize(oldLength=mean(observedLength))
 
   #interpolates lengths between observations
   fillLength<-function(length){
@@ -49,8 +50,9 @@ fillSizeLocation<-function(data){
   mutate(section=fillLocation(section)) %>%
   mutate(observedLength=fillLength(observedLength)) %>%
   ungroup() %>%
-  left_join(lengthByAge,by=c('ageInSamples','river')) %>%
-  left_join(overallLengthByAge,by='ageInSamples')
+  left_join(lengthByAge,by=c('ageInSamples','river','species')) %>%
+  left_join(overallLengthByAge,by=c('ageInSamples','species')) %>%
+  left_join(oldFishLength,by='species')
   
   #fill non-interpolatable lengths with means preferentially by river, overall mean, or average of old fish
   data[is.na(data$observedLength),"observedLength"]<-
@@ -60,9 +62,9 @@ fillSizeLocation<-function(data){
     data[is.na(data$observedLength),"meanLength"]
   
   data[is.na(data$observedLength)&data$ageInSamples>=15,"observedLength"]<-
-    oldFishLength
+    data[is.na(data$observedLength)&data$ageInSamples>=15,"oldLength"]
   
-  data<-data %>% select(-meanLengthRiver,-meanLength)
+  data<-data %>% select(-meanLengthRiver,-meanLength,-oldLength)
   
 #tried briefly to correct for fish getting smaller after they got the mean, but gave up  
 #   makeLengthMonotonic<-function(length,enc,tag){

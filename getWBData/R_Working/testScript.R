@@ -1,7 +1,6 @@
 library(getWBData)
 coreData<-createCoreData() %>% 
           addTagProperties() %>%
-          dplyr::filter(species=="bkt") %>%
           createCmrData() %>%
           addKnownZ() %>%
           fillSizeLocation() %>%
