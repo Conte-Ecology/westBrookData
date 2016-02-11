@@ -26,7 +26,7 @@ fillSizeLocation<-function(data){
   overallLengthByAge<-data %>%
                       group_by(ageInSamples) %>%
                       summarize(meanLength=mean(observedLength,na.rm=T))
-  oldFishLength<-coreData %>%
+  oldFishLength<-data %>%
                  filter(ageInSamples>=17,!is.na(observedLength)) %>%
                  summarize(mean(observedLength))
 
