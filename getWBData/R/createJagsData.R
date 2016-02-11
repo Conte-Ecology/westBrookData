@@ -172,7 +172,7 @@ if(modelType == 'JS'){
       
       # indexing of the input and state vectors
       year = as.numeric( coreData$year ) - min( as.numeric( coreData$year ) ) + 1
-      nYears = max( as.numeric( coreData$year ) ) - min( as.numeric( coreData$year ) ) + 1
+      nYears = max(coreData$year) - min(as.numeric(coreData$year)) + 1
       season = coreData$season 
       nAllRows = nrow(coreData)
       

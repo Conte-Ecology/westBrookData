@@ -14,7 +14,7 @@ createCoreData(sampleType = "electrofishing", baseColumns = T,
 
 \item{columnsToAdd}{A character vector of columns to inlcude; can replace or add to baseColumns}
 
-\item{includeUntagged}{Logical: include untagged fish?}
+\item{includeUntagged}{Logical: include untagged fish? This also adds cohort and species for these individuals}
 }
 \value{
 a data.frame of fish data
