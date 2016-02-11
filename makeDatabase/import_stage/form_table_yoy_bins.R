@@ -2,7 +2,7 @@ columns <- list(
   who = c('age','species'),
   when = c('sample'),
   where = c('river'),
-  what = c('cohort_min_length','cohort_max_length')
+  what = c('cohort_min_length','cohort_max_length','cohort')
 )
 
 select_stmt <- paste(

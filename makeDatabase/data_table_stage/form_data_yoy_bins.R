@@ -8,7 +8,8 @@ column_code <- list(
     },
   cohort_max_length=function(cohort_max_length){
     return(as.numeric(cohort_max_length))
-  }
+  },
+  cohort=function(cohort){return(cohort)}
 )
 
 source_data <- dbGetQuery(con, "SELECT * FROM yoy_bins;")
@@ -21,7 +22,7 @@ samples<-unique(samples[,list(sample_name,year)])
 setkey(samples,sample_name)
 
 source_data<-samples[source_data]
-source_data[,cohort:=year-age] 
+# source_data[,cohort:=year-age] 
 source_data[,year:=NULL]
 
 dbWriteTable(con, 'data_yoy_bins', data.frame(source_data), row.names=FALSE,
