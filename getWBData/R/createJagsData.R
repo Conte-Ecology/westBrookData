@@ -83,7 +83,7 @@ if(modelType == 'JS'){
   nLastObsRows <- nrow( lastObsRows ) 
   
 #################################################################
-  coreData$year <- as.factor(format(coreData$detectionDate, format="%Y"))
+  coreData$year <-as.numeric(format(coreData$detectionDate, format="%Y"))
   coreData$riverOrdered <- as.numeric( factor(coreData$river,levels=c('west brook','wb jimmy','wb mitchell','wb obear'), ordered=T) )
   
   # means for standardizing 
@@ -171,7 +171,7 @@ if(modelType == 'JS'){
       intervalDays = as.numeric( ( coreData$lagDetectionDate - coreData$detectionDate ) / 86400 )
       
       # indexing of the input and state vectors
-      year = as.numeric( coreData$year ) - min( as.numeric( coreData$year ) ) + 1
+      year = coreData$year - min(as.numeric(coreData$year)) + 1
       nYears = max(coreData$year) - min(as.numeric(coreData$year)) + 1
       season = coreData$season 
       nAllRows = nrow(coreData)

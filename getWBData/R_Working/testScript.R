@@ -1,12 +1,12 @@
 library(getWBData)
 coreData<-createCoreData() %>% 
-            addTagProperties() %>%
-              dplyr::filter(species=="bkt") %>%
-                createCmrData() %>%
-                    addSampleProperties() %>%
-                      addEnvironmental(sampleFlow=T) %>%
-                        addKnownZ() %>%
-                          fillSizeLocation()
+          addTagProperties() %>%
+          dplyr::filter(species=="bkt") %>%
+          createCmrData() %>%
+          addKnownZ() %>%
+          fillSizeLocation() %>%
+          addSampleProperties() %>%
+          addEnvironmental(sampleFlow=T)
   
 jagsData <- createJagsData(coreData)
 
