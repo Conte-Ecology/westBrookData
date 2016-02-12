@@ -33,7 +33,11 @@ rawCaptures<-tbl(conDplyr,nom) %>%
              collect() %>%
              filter(!grepl(paste(rowsToExclude,collapse="|"),comments)) %>%
              filter(species!="nobntp2") %>%
-             filter(!is.na(tag)|!is.na(measured_weight)|!is.na(measured_length)|!is.na(comments)|as.numeric(sample_name)<=16) %>%
+             filter(!is.na(tag)|
+                      !is.na(measured_weight)|
+                      !is.na(measured_length)|
+                      (!is.na(comments) & !grepl(" log",comments))|
+                      as.numeric(sample_name)<=16) %>%
              bind_rows(rawCaptures)
 }
 
