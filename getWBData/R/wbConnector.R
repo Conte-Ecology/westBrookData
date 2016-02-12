@@ -29,7 +29,7 @@ reconnect<-function(){
   if(!exists("con")){wbConnector()} else {
     if(class(con)!="PostgreSQLConnection"){wbConnector()} else{
       if(class(try(RPostgreSQL::dbGetQuery(con,""),silent=T))=="try-error"|
-         class(try(tbl(con,"yoy_bins"),silent=T))=="try-error"){
+         class(try(tbl(conDplyr,"yoy_bins"),silent=T))=="try-error"){
         wbConnector()
       }
     }
