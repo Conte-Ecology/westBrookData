@@ -2,6 +2,8 @@ do <- list(
   import_stage = c(
     "import_to_sql.R",
     "import_temps_from_sheds.R",
+    "import_depths.R",
+    
     "form_table_dead.R",
     "form_table_antenna.R",
     "form_table_captures.R",
@@ -11,8 +13,6 @@ do <- list(
     "calculate_season_breaks.R",
     "form_table_season_map.R",
     "form_table_yoy_bins.R"
-    
-    # ,"form_table_temperature_discharge.R"
   ),
   
   data_table_stage = c(
@@ -31,14 +31,14 @@ do <- list(
     
     
     "form_data_trap_captures.R",
-    "form_data_smolts.R",
-    
-    #"form_data_locations.R"
-    
-    #environmental data
-    "form_data_flow_extension.R",
+    "form_data_smolts.R"
+  ),
+  environmental_data_stage = c(
     "form_data_hourly_temps.R",
-    "form_data_daily_temps.R"
+    "form_data_daily_temps.R",
+    
+    "form_data_flow_extension.R",
+    "form_data_daily_discharge.R"
   ),
   
   processing_stage = c(
