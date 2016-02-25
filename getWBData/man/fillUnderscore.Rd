@@ -7,10 +7,10 @@
 fillUnderscore(x)
 }
 \arguments{
-\item{x}{Character (vector) to be converted to camel-case}
+\item{x}{Character vector to be converted to camel-case}
 }
 \value{
-A string (vector) with underscore separated words
+A Character vector with underscore separated words
 }
 \description{
 Convert camel-case string to underscore separated

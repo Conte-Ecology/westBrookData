@@ -7,7 +7,7 @@
 camelCase(x, sep = "_")
 }
 \arguments{
-\item{x}{Character(vector) to be converted to camel-case}
+\item{x}{Character vector to be converted to camel-case}
 
 \item{sep}{Character separating words in the original string}
 }
