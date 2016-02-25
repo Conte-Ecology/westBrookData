@@ -2,6 +2,7 @@
 #'
 #'@param x Character (vector) to be converted to camel-case
 #'@return A string (vector) with underscore separated words
+#'@export
 
 fillUnderscore<-Vectorize(function(x){
   whichCaps<-which(unlist(strsplit(x,""))!=unlist(strsplit(tolower(x),"")))
@@ -16,6 +17,7 @@ fillUnderscore<-Vectorize(function(x){
 #'@param x Character(vector) to be converted to camel-case
 #'@param sep Character separating words in the original string
 #'@return Camel-case string(s)
+#'@export
 
 camelCase<-Vectorize(function(x,sep="_"){
   xSplit<-unlist(strsplit(x,sep))
