@@ -23,8 +23,9 @@ fillUnderscore<-function(x){
 camelCase<-function(x,sep="_"){
   camel<-function(toCamel,sep){
   xSplit<-unlist(strsplit(toCamel,sep))
-  
+  xSplit[1]<-tolower(xSplit[1])
   if(length(xSplit)==1){return(xSplit)}
+
   for(n in 2:length(xSplit)){
     xSplit[n]<-paste0(toupper(substr(xSplit[n],1,1)),
                       substr(xSplit[n],2,nchar(xSplit[n])))
