@@ -44,6 +44,7 @@ fillSizeLocation<-function(data,size=T,location=T){
   }
   
   #fill river, section, and interpolated lengths
+
   if(location){
   data<-data %>%
   group_by(tag) %>%
