@@ -4,7 +4,7 @@
 #'@return Data for location and size even when fish are not observed.
 #'@export
 
-fillSizeLocation<-function(data){
+fillSizeLocation<-function(data,size=T,location=T){
   #fills river or section with the last one observed
   fillLocation<-function(location){
     known<-which(!is.na(location))
@@ -44,10 +44,17 @@ fillSizeLocation<-function(data){
   }
   
   #fill river, section, and interpolated lengths
+  if(location){
   data<-data %>%
   group_by(tag) %>%
   mutate(river=fillLocation(river)) %>%
-  mutate(section=fillLocation(section)) %>%
+  mutate(section=fillLocation(section))
+  ungroup()
+  }
+  
+  if(size){
+  data<-data %>%
+  group_by(tag)
   mutate(observedLength=fillLength(observedLength)) %>%
   ungroup() %>%
   left_join(lengthByAge,by=c('ageInSamples','river','species')) %>%
@@ -65,6 +72,7 @@ fillSizeLocation<-function(data){
     data[is.na(data$observedLength)&data$ageInSamples>=15,"oldLength"]
   
   data<-data %>% select(-meanLengthRiver,-meanLength,-oldLength)
+  }
   
 #tried briefly to correct for fish getting smaller after they got the mean, but gave up  
 #   makeLengthMonotonic<-function(length,enc,tag){
