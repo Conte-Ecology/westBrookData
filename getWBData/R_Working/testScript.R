@@ -1,5 +1,5 @@
 library(getWBData)
-coreData<-createCoreData() %>% 
+coreData<-createCoreData(includeUntagged = T) %>% 
           addTagProperties() %>%
           createCmrData() %>%
           addKnownZ() %>%
