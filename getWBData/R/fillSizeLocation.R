@@ -49,13 +49,13 @@ fillSizeLocation<-function(data,size=T,location=T){
   data<-data %>%
   group_by(tag) %>%
   mutate(river=fillLocation(river)) %>%
-  mutate(section=fillLocation(section))
+  mutate(section=fillLocation(section)) %>%
   ungroup()
   }
   
   if(size){
   data<-data %>%
-  group_by(tag)
+  group_by(tag) %>%
   mutate(observedLength=fillLength(observedLength)) %>%
   ungroup() %>%
   left_join(lengthByAge,by=c('ageInSamples','river','species')) %>%

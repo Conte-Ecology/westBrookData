@@ -38,7 +38,7 @@ createCmrData<-function(coreData,
   if(inside) coreData<-coreData %>% dplyr::filter(area %in% c('inside','trib'))
   
   ###pad with samples where individual was unobserved
-  tagProperties<-c('dateKnownDead','lastAntennaDetection','cohort',
+  tagProperties<-c('dateKnownDead','lastAntennaDetection','cohort','familyId',
                   'species','firstCaptureSample','lastCaptureSample','sex')
   tagProperties<-tagProperties[tagProperties %in% names(coreData)]
 
