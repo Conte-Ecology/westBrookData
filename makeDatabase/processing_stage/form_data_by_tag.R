@@ -144,6 +144,13 @@ dead<-dead[,list(date_known_dead=min(date_known_dead)),by=tag]
 
 dataByTag<-dead[dataByTag]
 
+family<-dbGetQuery(con,"SELECT tag, family_id FROM data_family") %>%
+  data.table() %>%
+  setkey(tag)
+
+dataByTag<-family[dataByTag]
+
+
 dbDropTable("data_by_tag")
 dbWriteTable(con, 'data_by_tag', dataByTag, row.names=FALSE)
 
