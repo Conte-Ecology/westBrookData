@@ -33,7 +33,7 @@ addKnownZ<-function(cmrData,knownDead=T){
       group_by(sample_number) %>%
         transmute(start_date=min(start_date)) %>%
           ungroup() %>%
-            distinct() %>%
+            unique() %>%
               arrange(start_date)
     
     dead<-suppressWarnings(dead %>% 

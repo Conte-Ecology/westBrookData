@@ -47,7 +47,7 @@ addEnvironmental <-function( coreData, sampleFlow=F ){
   # get unique start and end dates from coreData and calc env means for the intervals
   coreDataUniqueDates <- coreData %>%
                            select( river, detectionDate, lagDetectionDate ) %>%
-                           distinct() %>%
+                           unique() %>%
                            group_by( river, detectionDate, lagDetectionDate ) %>% #just a loop, probably a better way to do this.
                            mutate( meanTemperature = getIntervalMean( detectionDate, lagDetectionDate, river, "Temperature" ),
                                    meanFlow =        getIntervalMean( detectionDate, lagDetectionDate, river, "Flow" )) %>%
@@ -68,7 +68,7 @@ addEnvironmental <-function( coreData, sampleFlow=F ){
               filter(!is.na(qPredicted)) %>%
               select(date,qPredicted) %>%
               rename(flowForP=qPredicted) %>%
-              distinct() %>%
+              unique() %>%
               right_join (coreData,by=c("date"="detectionDate")) %>%
               rename(detectionDate=date)
   }

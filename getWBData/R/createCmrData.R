@@ -43,7 +43,7 @@ createCmrData<-function(coreData,
   tagProperties<-tagProperties[tagProperties %in% names(coreData)]
 
   allSamples<-as.numeric(min(samplesToInclude):max(samplesToInclude))
-  allTags<-coreData %>% select(one_of(c("tag",tagProperties))) %>% distinct()
+  allTags<-coreData %>% select(one_of(c("tag",tagProperties))) %>% unique()
   allSampleTags<-data.frame(tag=rep(allTags$tag,each=length(allSamples)),
                             sampleNumber=rep(allSamples,length(unique(coreData$tag))),
                             stringsAsFactors=F) %>%
@@ -62,7 +62,7 @@ createCmrData<-function(coreData,
               dplyr::filter(season==2) %>%
                 select(year,sampleNumber) %>%
                   rename(sampleBorn=sampleNumber) %>%
-                    distinct() %>%
+                    unique() %>%
                       right_join(coreData,by=c("year"="cohort")) %>%
                         rename(cohort=year) %>%
                           mutate(ageInSamples=sampleNumber-sampleBorn) %>%
