@@ -157,6 +157,10 @@ assign(
 		section = '100', 
 		fixThis = list(observed_length = 196)
 	),
+	list(tag = '00088cbfc6', sample_name = '94',
+	     section = '13',observed_length = 286, 
+	     fixThis = list(observed_length = NA)
+	),
 	list(tag = '41354e085e', fish_number = '11', sample_name = '25',
 		section = '23',
 		fixThis = list(DROP = TRUE)

@@ -38,12 +38,12 @@ createCmrData<-function(coreData,
   if(inside) coreData<-coreData %>% dplyr::filter(area %in% c('inside','trib'))
   
   ###pad with samples where individual was unobserved
-  tagProperties<-c('dateKnownDead','lastAntennaDetection','cohort',
+  tagProperties<-c('dateKnownDead','lastAntennaDetection','cohort','familyId',
                   'species','firstCaptureSample','lastCaptureSample','sex')
   tagProperties<-tagProperties[tagProperties %in% names(coreData)]
 
   allSamples<-as.numeric(min(samplesToInclude):max(samplesToInclude))
-  allTags<-coreData %>% select(one_of(c("tag",tagProperties))) %>% distinct()
+  allTags<-coreData %>% select(one_of(c("tag",tagProperties))) %>% unique()
   allSampleTags<-data.frame(tag=rep(allTags$tag,each=length(allSamples)),
                             sampleNumber=rep(allSamples,length(unique(coreData$tag))),
                             stringsAsFactors=F) %>%
@@ -62,7 +62,7 @@ createCmrData<-function(coreData,
               dplyr::filter(season==2) %>%
                 select(year,sampleNumber) %>%
                   rename(sampleBorn=sampleNumber) %>%
-                    distinct() %>%
+                    unique() %>%
                       right_join(coreData,by=c("year"="cohort")) %>%
                         rename(cohort=year) %>%
                           mutate(ageInSamples=sampleNumber-sampleBorn) %>%

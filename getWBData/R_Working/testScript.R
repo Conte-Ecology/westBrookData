@@ -1,6 +1,6 @@
 library(getWBData)
-coreData<-createCoreData(includeUntagged = T) %>% 
-          addTagProperties() %>%
+coreData<-createCoreData(includeUntagged = F) %>% 
+          addTagProperties(columnsToAdd=c("species","cohort","familyId")) %>%
           createCmrData() %>%
           addKnownZ() %>%
           fillSizeLocation() %>%

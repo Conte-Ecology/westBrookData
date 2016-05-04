@@ -23,16 +23,25 @@ riverSection<-data.frame(location=c("Jimmy Nolan Brook sec 15",
                                     "West Brook 6 (Onset)",
                                     "West Brook 45",
                                     "West Brook 30",
-                                    "West Brook smolt trap"),
+                                    "West Brook smolt trap",
+                                    "Jimmy Brook Sec 2 (Solinst)",
+                                    "Mitchell Brook Sec 1 (Solinst)",
+                                    "O'Bear Brook Sec 1 (Solinst)"),
                          section=c("15","1","1","15","11",
-                                   "B100","1","6","45","30","smoltTrap"),
+                                   "B100","1","6","45","30","smoltTrap",
+                                   "2","1","1"),
                          river=c("wb jimmy","wb jimmy","wb obear","wb obear",
                                  "stanley","wb west brook","wb mitchell",
                                  "west brook","west brook",
-                                 "west brook","west brook"),
+                                 "west brook","west brook",
+                                 "wb jimmy","wb mitchell","wb obear"),
                          stringsAsFactors=F)
 
 temps<-left_join(temps,riverSection,by='location')
+
+badDates<-list(mitchell=seq(as.Date("2013-04-01"),as.Date("2013-08-01"),by='days'))
+
+temps<-temps %>% filter(river!="wb mitchell"|! as.Date(datetime) %in% badDates$mitchell)
 
 #add in the early records from the depth logger
 earlyPath<-file.path(original_data_dir,"earlyWestBrookEnv.csv")
