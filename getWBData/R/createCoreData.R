@@ -13,15 +13,19 @@
 #'@details tag, detectionDate, river, area, section, survey, sampleName, readerId, sampleType, aliveOrDead, instance, arrival, departure, comment
 #'@details \emph{portableAntenna:}
 #'@details tag, detectionDate, river, area, section, survey, sampleName, readerId, sampleType, aliveOrDead, instance, pass, quarter, leftOrRight, habitat, cover, justification, comment
+#'@details \emph{acoustic:}
+#'@details tag, acousticTag, datetime, section, quarter
+
 #'  
 #'@export
 createCoreData<-function(sampleType="electrofishing",
                   baseColumns=T,
                   columnsToAdd=NULL,
-                  includeUntagged=F){
+                  includeUntagged=F,
+                  whichDrainage="west"){
   reconnect() #make sure the link to the database still exists
 
-  if(any(!sampleType %in% c("trap","electrofishing","seine",
+  if(any(!sampleType %in% c("trap","electrofishing","seine","acoustic",
                             "snorkel","stationaryAntenna","portableAntenna"))){
     invalidType<-sampleType[which(!sampleType %in% c("trap","electrofishing","seine",
                                                      "snorkel","stationaryAntenna",
@@ -33,7 +37,7 @@ createCoreData<-function(sampleType="electrofishing",
   if(any(sampleType %in% c("trap","electrofishing","seine","snorkel"))){
     tables<-c(sampleType[!sampleType %in% c("trap","electrofishing","seine","snorkel")],"captures")
     captureTypes<-sampleType[sampleType %in% c("trap","electrofishing","seine","snorkel")]
-    possibleCaptureTypes<-list(trap=c("box trap","screw trap","duda fyke"),
+    possibleCaptureTypes<-list(trap=c("box trap","screw trap","duda fyke","fyke net"),
                        electrofishing="shock",
                        seine=c("snorkel-seine-day","night seine"),
                        snorkel=c("snorkel-seine-day","snorkel-night"))
@@ -44,7 +48,8 @@ createCoreData<-function(sampleType="electrofishing",
   
   st<-list(captures="data_tagged_captures",
            stationaryAntenna="data_stationary_antenna",
-           portableAntenna="data_portable_antenna")
+           portableAntenna="data_portable_antenna",
+           acoustic="data_acoustic")
   
   tables<-st[tables]
   if(includeUntagged) tables<-c(tables,"data_untagged_captures")
@@ -80,6 +85,7 @@ createCoreData<-function(sampleType="electrofishing",
       } else chosenTableColumns<-match(chosenColumns,tableColumns,nomatch=0) %>% .[.>0]
     
     newData<-tbl(conDplyr,t) %>%
+              filter(drainage==whichDrainage) %>%
               select(chosenTableColumns)
     if(t=="data_tagged_captures"){
       if(length(captureTypes)>1){
@@ -96,7 +102,7 @@ createCoreData<-function(sampleType="electrofishing",
     warning(paste0("column(s) ",paste(columnsNotIncluded,collapse=", "),
                    " do(es) not exist in any sampleType selected"))
   }
-  if(!"survey" %in% columnsToAdd){
+  if(!"survey" %in% columnsToAdd & sampleType[1]!="acoustic"){
     dataOut<-select(dataOut,-survey)
   }
   names(dataOut)<-camelCase(names(dataOut))
