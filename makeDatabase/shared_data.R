@@ -11,6 +11,14 @@ library(readxl)
 library(waterData)
 library(tidyr)
 
+dbDropTable<-function(tableName){ #drops the table if it exists before writing the new version, really only matters for the first time the db is created
+  if(tableName %in% dbGetQuery(con,"SELECT table_name 
+                              FROM information_schema.tables 
+                              WHERE table_schema = 'public';")$table_name){
+    dbSendQuery(con,paste0("DROP TABLE ",tableName,";"))
+  }
+}
+
 options(stringsAsFactors=FALSE)
 options(check.names=FALSE)
 
@@ -37,21 +45,26 @@ shared_data <- local(expr={
   
 	tag_data_names <- c(
 		"tags_antenna", "tags_dead", 
-		"tags_salmon_wb", "tags_trout_wb", "tags_tribs_wb"
+		"tags_salmon_wb", "tags_trout_wb", "tags_tribs_wb")
+	stanley_data_names <-c(
+		"stanley_acoustic_data","stanley_dead_tags","stanley_tags",
+		"stanley_fyke_net","stanley_antenna"
 	)
 
-	csv_files <- paste0(file.path(original_data_dir, c(tag_data_names,"yoy_bins")), '.csv')
-	names(csv_files) <- c(tag_data_names,"yoy_bins")
-	standardize_files <- paste0(file.path(standardizeFilesDir, c(tag_data_names,"yoy_bins")), '_standardize.R')
-	names(standardize_files) <- c(tag_data_names,"yoy_bins")
-  
-	dbDropTable<-function(tableName){ #drops the table if it exists before writing the new version, really only matters for the first time the db is created
-	  if(tableName %in% dbGetQuery(con,"SELECT table_name 
-                              FROM information_schema.tables 
-                              WHERE table_schema = 'public';")$table_name){
-	    dbSendQuery(con,paste0("DROP TABLE ",tableName,";"))
-	  }
-	}
+	csv_files <- c(paste0(file.path(original_data_dir, c(tag_data_names,"yoy_bins")), '.csv'),
+	               paste0(file.path(original_data_dir, stanley_data_names), '.txt'))
+	names(csv_files) <- c(tag_data_names,"yoy_bins",stanley_data_names)
+	standardize_files <- paste0(file.path(standardizeFilesDir,
+	                                      c(tag_data_names,"yoy_bins",stanley_data_names)),
+	                            '_standardize.R')
+	names(standardize_files) <- c(tag_data_names,"yoy_bins",stanley_data_names)
+	# 
+	# stanley_files <- paste0(file.path(original_data_dir, stanley_data_names), '.txt')
+	# names(stanley_files) <- c(stanley_data_names)
+	# stanley_standardize_files <- paste0(file.path(standardizeFilesDir,stanley_data_names), '_standardize.R')
+	# names(standardize_files) <- c(stanley_data_names)
+	# 
+
 
 	return(environment(NULL)) 
 })

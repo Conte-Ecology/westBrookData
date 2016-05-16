@@ -1,15 +1,18 @@
+importAll<-F #if false only updates files that have date modified>last update
+
 do <- list(
   import_stage = c(
     "import_to_sql.R",
-    "import_temps_from_sheds.R",
-    "import_depths.R",
-    "import_family.R",
+    #"import_temps_from_sheds.R",
+    #"import_depths.R",
+    #"import_family.R",
     
     "form_table_dead.R",
     "form_table_antenna.R",
     "form_table_captures.R",
     "form_table_untagged_captures.R",
     "form_table_family.R",
+    "form_table_acoustic.R",
     
     "form_table_seasonal_sampling.R",
     "calculate_season_breaks.R",
@@ -27,6 +30,7 @@ do <- list(
     
     "form_data_tagged_captures.R",
     "form_data_untagged_captures.R",
+    "form_data_acoustic.R",
     "declare_data_errors.R",
     "fix_data_errors.R",
     
@@ -75,6 +79,3 @@ for (stage in names(do)) {
     rm(temp)
   }
 }
-
-
-
