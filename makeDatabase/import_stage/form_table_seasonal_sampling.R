@@ -2,6 +2,7 @@
 # 	"SELECT distinct(sample_name) FROM tags_captures;"
 # )
 sampling<-tbl(conDplyr,"tags_captures") %>%
+            filter(drainage=="west") %>%
             select(sample_name,river,date) %>%
             collect()
 

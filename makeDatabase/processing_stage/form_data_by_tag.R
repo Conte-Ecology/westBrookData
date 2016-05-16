@@ -1,6 +1,6 @@
 #use captures as the base
 captureQuery<-paste("SELECT tag,species,sample_name,cohort,",
-                      "observed_length,river,detection_date,sex",
+                      "observed_length,river,detection_date,sex,drainage",
                     "FROM data_tagged_captures")
 captures<-data.table(dbGetQuery(con,captureQuery))
 setkey(captures,tag)
@@ -40,7 +40,7 @@ setkey(cohortBins,sample_name)
 setkey(seasonalSampling,sample_name)
 cohortBins<-seasonalSampling[cohortBins]
 
-getCohort<-function(cohort,species,length,sample,river){
+getCohort<-function(cohort,species,length,sample,river,drainage){
   execEnv<-environment()
   species<-unique(na.omit(species))
   if(length(species)>1) stop("cannot assign cohort for multiple species tag")
@@ -48,6 +48,7 @@ getCohort<-function(cohort,species,length,sample,river){
   cohort<-as.numeric(unique(na.omit(cohort)))
   if(length(cohort)==1) return(cohort)
   if(length(cohort)==0){
+    if("stanley" %in% drainage){return(as.numeric(NA))}
     minLength<-suppressWarnings(min(length,na.rm=T))
     if(minLength==Inf) return(as.numeric(NA))
     sample<-min(sample[which(length==minLength)])
@@ -95,12 +96,25 @@ getCohort<-function(cohort,species,length,sample,river){
   }
 }
 
+#started adding acoustic tag, but it shouldn't be necessary because pit is in acoustic data
+# acousticTags<-tbl(conDplyr,"raw_stanley_acoustic_data") %>%
+#               select(tag,acoustic_tag) %>%
+#               distinct() %>%
+#               collect() %>%
+#               data.table()
+# 
+# getAcoustic<-function(tag,drainage){
+#   if("west" %in% drainage){return(as.character(NA))}
+#   
+# }
+
+
 #get data from from seasonal sampling by tag
 dataByTag<-captures[,list(species=getSpecies(species,tag),
                           first_capture_sample=min(sample_name),
                           last_capture_sample=max(sample_name),
                           last_capture_date=max(detection_date),
-                          cohort=getCohort(cohort,species,observed_length,sample_name,river),
+                          cohort=getCohort(cohort,species,observed_length,sample_name,river,drainage),
                           sex=getSex(sex,tag)
                           ),by=tag]
 

@@ -26,6 +26,11 @@ column_code <- list(
 		season <- day_of_year_to_season(yday(detection_date), output='season_number')
 		return(season)
 	},
+  drainage = function(drainage,river){
+    drainage[river %in% c("west brook","wb jimmy","wb mitchell","wb obear")]<-
+      "west"
+    return(drainage)
+  },
 	river = function(river) return(river),
 	area = function(area){
 	          area[area=="aboveabove"]<-"above above"
