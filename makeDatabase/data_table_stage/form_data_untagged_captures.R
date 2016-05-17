@@ -11,9 +11,9 @@ column_code <- list(
 	  cohort[smallNoLength]<-year(datesForTooSmall)-lastYear
 		return(cohort)
 	},
-	sample_number = function(sample_name) {
-		sample_number <- sample_name_to_sample_number(sample_name)
-		return(sample_number)
+	sample_number = function(sample_name,drainage) {
+	  sample_number<-sample_name_to_sample_number(sample_name,drainage)
+	  return(sample_number)
 	},
 	detection_date = function(date) {
 		require(lubridate)
@@ -56,15 +56,16 @@ source_data <- dbGetQuery(con, "SELECT * FROM raw_captures WHERE tag is NULL;")
 untaggedCaptures <- pipeline_data_transformation(
 	data=source_data, pipeline=column_code) %>% data.table()
 
-cohortBins<-data.table(dbGetQuery(con,"SELECT * FROM data_yoy_bins"))
+cohortBins<-data.table(dbGetQuery(con,"SELECT * FROM data_yoy_bins")) %>%
+  .[,drainage:="west"]
 
 seasonalSampling<-
   data.table(
-    dbGetQuery(con,"SELECT distinct sample_name,season,year FROM data_seasonal_sampling")
+    dbGetQuery(con,"SELECT distinct sample_name,season,year,drainage FROM data_seasonal_sampling")
   )
 
-setkey(cohortBins,sample_name)
-setkey(seasonalSampling,sample_name)
+setkey(cohortBins,sample_name,drainage)
+setkey(seasonalSampling,sample_name,drainage)
 cohortBins<-seasonalSampling[cohortBins]
 
 getCohort<-function(species,length,sample,river,drainage){
@@ -80,7 +81,8 @@ getCohort<-function(species,length,sample,river,drainage){
                           cohort_max_length,
                           cohort)]
     if(nrow(bins)==0){
-      thisSeason<-seasonalSampling[sample_name==as.numeric(sample),season]
+      thisSeason<-unique(seasonalSampling[sample_name==as.numeric(sample)&
+                                            drainage=="west",season])
       bins<-cohortBins[species==get('species',envir=execEnv)&
                          river==get('river',envir=execEnv)&
                          season==thisSeason,
@@ -91,7 +93,8 @@ getCohort<-function(species,length,sample,river,drainage){
       bins[,cohort_max_length:=(meanMax+shift(meanMin,1,type='lead'))/2]
       bins[age==max(age),cohort_max_length:=meanMax]
       bins[,cohort_min_length:=c(meanMin[1],cohort_max_length[1:(nrow(bins)-1)])]
-      bins[,cohort:=seasonalSampling[sample_name==as.numeric(sample),unique(year)]-age]
+      bins[,cohort:=seasonalSampling[sample_name==as.numeric(sample)&
+                                       drainage=="west",unique(year)]-age]
     }
     if(length>max(bins$cohort_max_length)){
       #if first length is bigger than the bins assigned for that stream, it probably came from west brook

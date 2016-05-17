@@ -3,9 +3,10 @@ importAll<-F #if false only updates files that have date modified>last update
 do <- list(
   import_stage = c(
     "import_to_sql.R",
-    #"import_temps_from_sheds.R",
-    #"import_depths.R",
-    #"import_family.R",
+    "import_temps_from_sheds.R",
+    "import_depths.R",
+    "import_stanley_environmental.R",
+    "import_family.R",
     
     "form_table_dead.R",
     "form_table_antenna.R",
@@ -33,10 +34,10 @@ do <- list(
     "form_data_acoustic.R",
     "declare_data_errors.R",
     "fix_data_errors.R",
-    
+
     "fix_tag_properties.R",
-    
-    
+
+
     "form_data_trap_captures.R",
     "form_data_smolts.R"
   ),
@@ -47,7 +48,7 @@ do <- list(
     "form_data_flow_extension.R",
     "form_data_daily_discharge.R"
   ),
-  
+
   processing_stage = c(
     "form_data_by_tag.R"
     # 		#"form_occasion_points.R",

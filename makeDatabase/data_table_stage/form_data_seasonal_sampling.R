@@ -1,12 +1,12 @@
 seasonalSampling<-data.table(dbGetQuery(con,"SELECT * FROM data_seasonal_sampling"))
 season_map<-data.table(dbGetQuery(con,"SELECT * FROM season_map"))
-getSeason<-function(sample_name,startDay,endDay){
+getSeason<-function(sample_name,startDay,endDay,drain){
   if(startDay<=endDay){
     seasons<-season_map[day %in% startDay:endDay,season_number]
   } else {
     seasons<-season_map[day %in% c(startDay:365,1:endDay),season_number]
   }
-  if(length(unique(seasons))>1){
+  if(length(unique(seasons))>1&drain=="west"){
     warning(paste0("\nsample ",sample_name," crosses season boundary: ",
                    round(sum(seasons==unique(seasons[1]))/length(seasons)*100),
                          "% of days in one season"))}
@@ -16,20 +16,23 @@ getSeason<-function(sample_name,startDay,endDay){
 
 seasonalSampling[,season:=as.numeric(NA)]
 for(i in 1:nrow(seasonalSampling)){
-  seasonalSampling[i,season:=getSeason(sample_name,start_julian_day,end_julian_day)]
+  seasonalSampling[i,season:=getSeason(sample_name,start_julian_day,end_julian_day,drainage)]
 }
 
 seasonalSampling[,proportion_sampled:=1]
 seasonalSampling[year==2002&season==4&river=="west brook",proportion_sampled:=2/47]
 seasonalSampling[river == 'west brook' & year == 2003 & season == 4, proportion_sampled:=30/47 ] 
 seasonalSampling[ river == 'west brook' & year == 2004 & season == 4, proportion_sampled:=3/47 ]
+seasonalSampling[drainage=="stanley"&sample_name=="2.5",proportion_sampled:=NA]
+seasonalSampling[drainage=="stanley"&sample_name=="10.1",proportion_sampled:=1/54]
 
-fillProp0<-function(riv,y,seas){
-  if(nrow(seasonalSampling[year==y&season==seas])>0&
-     nrow(seasonalSampling[year==y&season==seas&river==riv])==0){
+fillProp0<-function(riv,y,seas,drain){
+  if(nrow(seasonalSampling[year==y&season==seas&drainage==drain])>0&
+     nrow(seasonalSampling[year==y&season==seas&river==riv&drainage==drain])==0){
   newRow<-seasonalSampling[year==y&season==seas,
                             .(sample_name=unique(sample_name),
                               river=riv,
+                              drainage=drain,
                               median_date=unique(median_date),
                               start_date=unique(median_date),
                               end_date=unique(median_date),
@@ -50,7 +53,8 @@ propsToFill<-data.table(river=c("west brook","west brook","wb jimmy","wb obear",
 for(i in 1:nrow(propsToFill)){
   fillProp0(riv=propsToFill$river[i],
             y=propsToFill$year[i],
-            seas=propsToFill$season[i])
+            seas=propsToFill$season[i],
+            drain="west")
 }
 # seasonalSampling[ river == 'west brook' & year == 2005 & season == 4, proportion_sampled:=0]
 # seasonalSampling[ river == 'west brook' & year == 2007 & season == 4, proportion_sampled:=0 ]
