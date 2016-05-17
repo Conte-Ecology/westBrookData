@@ -5,7 +5,7 @@ column_code <- list(
   acoustic_tag = function(acoustic_tag) {
     return(acoustic_tag)
   },
-	datetime = function(datetime) {
+	detection_date = function(datetime) {
 		require(lubridate)
 		detection_date <- parse_date_time(x=datetime, orders=date.format)
 		detection_date[detection_date > now()] <- 

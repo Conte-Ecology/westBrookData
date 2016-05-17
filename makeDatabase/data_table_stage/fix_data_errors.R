@@ -4,18 +4,18 @@ setkey(tag_history,tag,fish_number,sample_name,section)
 dropThese <- vector(mode='numeric', length=0)
 couldNotFind <- list()
 
-fixErrors<-function(e){
+fixErrors<-function(e,data){
   fixThis<-e$fixThis
   e<-e[names(e)!="fixThis"]
 
-  if(suppressWarnings(any(key(tag_history)!=names(e)))){
-    suppressWarnings(key(tag_history)<-names(e))}
+  if(suppressWarnings(any(key(data)!=names(e)))){
+    suppressWarnings(key(data)<-names(e))}
 	
-	fixThisRow<-tag_history[e,,which=T]
+	fixThisRow<-data[e,,which=T]
 	
-	if (is.na(fixThisRow)) {
+	suppressWarnings(if(is.na(fixThisRow)) {
 		couldNotFind[[length(couldNotFind)+1]]<<-e	
-	} else {
+	}) else {
 	
 		actions <- names(fixThis)
 		if (length(actions) == 1 && actions == 'DROP') {
@@ -23,10 +23,10 @@ fixErrors<-function(e){
 			dropThese <<- c(dropThese,fixThisRow)
 		} else {
 			for (fixThisColumn in actions) {
-				if (identical(tag_history[fixThisRow, get(fixThisColumn)], fixThis[[fixThisColumn]])) {
+				if (identical(data[fixThisRow, get(fixThisColumn)], fixThis[[fixThisColumn]])) {
 					cat(fixThisColumn, ": (already) ", fixThis[[fixThisColumn]], "\n") 
 				} else {
-					set(tag_history,fixThisRow,which(fixThisColumn==names(tag_history)),
+					set(data,fixThisRow,which(fixThisColumn==names(data)),
 					    fixThis[[fixThisColumn]])
 					cat(fixThisColumn, ": ", fixThis[[fixThisColumn]], "\n")
 				}
@@ -36,7 +36,24 @@ fixErrors<-function(e){
 }
 
 for(e in errors){
-  fixErrors(e)
+  fixErrors(e,tag_history)
+}
+
+portableAntenna <- data.table(dbGetQuery(con, statement = "SELECT * FROM data_portable_antenna;"))
+stationaryAntenna <- data.table(dbGetQuery(con, statement = "SELECT * FROM data_stationary_antenna;"))
+deadTags<- data.table(dbGetQuery(con, statement = "SELECT * FROM tags_dead;"))
+setkey(portableAntenna,tag)
+setkey(stationaryAntenna,tag)
+setkey(deadTags,tag)
+
+for(e in crossDrainageDuplicates){
+  fixErrors(e,tag_history)
+  fixErrors(e,portableAntenna)
+  fixErrors(e,stationaryAntenna)
+}
+
+for(e in deadErrors){
+  fixErrors(e,deadTags)
 }
 
 if (length(dropThese) != 0) {
@@ -48,3 +65,15 @@ if (length(dropThese) != 0) {
 dbDropTable('data_tagged_captures')
 dbWriteTable(con, 'data_tagged_captures', tag_history, 
 						 row.names=FALSE, overwrite=TRUE, append=FALSE)
+
+dbDropTable('data_portable_antenna')
+dbWriteTable(con, 'data_portable_antenna', portableAntenna, 
+             row.names=FALSE, overwrite=TRUE, append=FALSE)
+
+dbDropTable('data_stationary_antenna')
+dbWriteTable(con, 'data_stationary_antenna', stationaryAntenna, 
+             row.names=FALSE, overwrite=TRUE, append=FALSE)
+
+dbDropTable('tags_dead')
+dbWriteTable(con, 'tags_dead', deadTags, 
+             row.names=FALSE, overwrite=TRUE, append=FALSE)

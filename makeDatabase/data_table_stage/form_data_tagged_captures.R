@@ -10,9 +10,9 @@ column_code <- list(
 	cohort = function(cohort, tag) {  ## cohort is not well defined.
 		return(cohort)
 	},
-	sample_number = function(sample_name) {
-		sample_number <- sample_name_to_sample_number(sample_name)
-		return(sample_number)
+	sample_number = function(sample_name,drainage) {
+	  	sample_number<-sample_name_to_sample_number(sample_name,drainage)
+	  	return(sample_number)
 	},
 	detection_date = function(date) {
 		require(lubridate)
