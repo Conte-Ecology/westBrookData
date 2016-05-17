@@ -19,15 +19,17 @@ createCmrData<-function(coreData,
                         censorDead=F,
                         censorEmigrated=T,
                         modelType="CJS",
-                        inside=T){
+                        inside=T,
+                        whichDrainage="west"){
   reconnect()
   
   #get the sample data
-  sampleQuery<-paste("SELECT distinct sample_number,sample_name,season,end_date,year",
-                     "FROM data_seasonal_sampling",
-                     "WHERE seasonal='TRUE'")
-  samples<-dbGetQuery(con,sampleQuery) %>% 
-             arrange(sample_number)
+  samples<-tbl(conDplyr,"data_seasonal_sampling") %>%
+    filter(drainage==whichDrainage,seasonal==T) %>%
+    select(sample_number,sample_name,season,end_date,year) %>%
+    distinct() %>%
+    collect() %>%
+    arrange(sample_number)
   names(samples)<-camelCase(names(samples))
   
   #subset data to the samples of interest
@@ -42,7 +44,7 @@ createCmrData<-function(coreData,
                   'species','firstCaptureSample','lastCaptureSample','sex')
   tagProperties<-tagProperties[tagProperties %in% names(coreData)]
 
-  allSamples<-as.numeric(min(samplesToInclude):max(samplesToInclude))
+  allSamples<-unique(samplesToInclude) %>% .[order(.)]
   allTags<-coreData %>% select(one_of(c("tag",tagProperties))) %>% unique()
   allSampleTags<-data.frame(tag=rep(allTags$tag,each=length(allSamples)),
                             sampleNumber=rep(allSamples,length(unique(coreData$tag))),
