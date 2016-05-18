@@ -42,6 +42,7 @@ setkey(seasonalSampling,sample_name,drainage)
 cohortBins<-seasonalSampling[cohortBins]
 
 getCohort<-function(cohort,species,length,sample,river,drainage){
+
   execEnv<-environment()
   species<-unique(na.omit(species))
   if(length(species)>1) stop("cannot assign cohort for multiple species tag")
@@ -49,15 +50,16 @@ getCohort<-function(cohort,species,length,sample,river,drainage){
   cohort<-as.numeric(unique(na.omit(cohort)))
   if(length(cohort)==1) return(cohort)
   if(length(cohort)==0){
-    if("stanley" %in% drainage){return(as.numeric(NA))}
     minLength<-suppressWarnings(min(length,na.rm=T))
     if(minLength==Inf) return(as.numeric(NA))
     sample<-min(sample[which(length==minLength)])
     river<-river[which(sample==get('sample',envir=execEnv))]
+    drainage<-drainage[which(Sample==get('sample',envir=execEnv))]
     if(species=='ats'){river<-'west brook'}#bins only assigned in west brook for salmon
     bins<-cohortBins[species==get('species',envir=execEnv)&
                       sample_name==get('sample',envir=execEnv)&
-                      river==get('river',envir=execEnv) ,
+                      river==get('river',envir=execEnv)&
+                      drainage==get('drainage',envir=execEnv),
                           list(cohort_min_length,
                                cohort_max_length,
                                cohort)]
@@ -66,6 +68,7 @@ getCohort<-function(cohort,species,length,sample,river,drainage){
                                      drainage=="west",season]
       bins<-cohortBins[species==get('species',envir=execEnv)&
                          river==get('river',envir=execEnv)&
+                         drainage==get('drainage',envir=execEnv)&
                          season==thisSeason,
                        list(meanMin=mean(cohort_min_length),
                             meanMax=mean(cohort_max_length)),
@@ -81,6 +84,7 @@ getCohort<-function(cohort,species,length,sample,river,drainage){
       river<-"west brook"
       bins<-cohortBins[species==get('species',envir=execEnv)&
                          sample_name==get('sample',envir=execEnv)&
+                         drainage==get('drainage',envir=execEnv)&
                          river==get('river',envir=execEnv) ,
                        list(cohort_min_length,
                             cohort_max_length,

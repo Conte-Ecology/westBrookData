@@ -13,9 +13,11 @@ fixErrors<-function(e,data){
 	
 	fixThisRow<-data[e,,which=T]
 	
-	suppressWarnings(if(is.na(fixThisRow)) {
+	naFix<-suppressWarnings(is.na(fixThisRow))
+	
+	if(naFix) {
 		couldNotFind[[length(couldNotFind)+1]]<<-e	
-	}) else {
+	} else {
 	
 		actions <- names(fixThis)
 		if (length(actions) == 1 && actions == 'DROP') {

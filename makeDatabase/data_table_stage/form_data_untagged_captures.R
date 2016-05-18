@@ -69,14 +69,15 @@ setkey(seasonalSampling,sample_name,drainage)
 cohortBins<-seasonalSampling[cohortBins]
 
 getCohort<-function(species,length,sample,river,drainage){
-  if(drainage=="stanley"){return(as.numeric(NA))}
+  #if(drainage=="stanley"){return(as.numeric(NA))}
   execEnv<-environment()
   if(length(species)==0|!species %in% c("bkt","bnt","ats")) return(as.numeric(NA))
     if(is.na(length)) return(as.numeric(NA))
     if(species=='ats'){river<-'west brook'}#bins only assigned in west brook for salmon
     bins<-cohortBins[species==get('species',envir=execEnv)&
                        sample_name==get('sample',envir=execEnv)&
-                       river==get('river',envir=execEnv) ,
+                       river==get('river',envir=execEnv)&
+                       drainage==get('drainage',envir=execEnv),
                      list(cohort_min_length,
                           cohort_max_length,
                           cohort)]
@@ -85,7 +86,8 @@ getCohort<-function(species,length,sample,river,drainage){
                                             drainage=="west",season])
       bins<-cohortBins[species==get('species',envir=execEnv)&
                          river==get('river',envir=execEnv)&
-                         season==thisSeason,
+                         season==thisSeason&
+                         drainage==get('drainage',envir=execEnv),
                        list(meanMin=mean(cohort_min_length),
                             meanMax=mean(cohort_max_length)),
                        by=age]
@@ -94,9 +96,10 @@ getCohort<-function(species,length,sample,river,drainage){
       bins[age==max(age),cohort_max_length:=meanMax]
       bins[,cohort_min_length:=c(meanMin[1],cohort_max_length[1:(nrow(bins)-1)])]
       bins[,cohort:=seasonalSampling[sample_name==as.numeric(sample)&
-                                       drainage=="west",unique(year)]-age]
+                                       drainage==get('drainage',envir=execEnv),
+                                     unique(year)]-age]
     }
-    if(length>max(bins$cohort_max_length)){
+    if(length>max(bins$cohort_max_length) & drainage=="west"){
       #if first length is bigger than the bins assigned for that stream, it probably came from west brook
       river<-"west brook"
       bins<-cohortBins[species==get('species',envir=execEnv)&

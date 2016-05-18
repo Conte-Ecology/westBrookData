@@ -48,8 +48,7 @@ shared_data <- local(expr={
 		"tags_salmon_wb", "tags_trout_wb", "tags_tribs_wb")
 	stanley_data_names <-c(
 		"stanley_acoustic_data","stanley_dead_tags","stanley_tags",
-		"stanley_fyke_net","stanley_antenna"
-	)
+		"stanley_fyke_net","stanley_antenna","stanley_cohorts")
 
 	csv_files <- c(paste0(file.path(original_data_dir, c(tag_data_names,"yoy_bins")), '.csv'),
 	               paste0(file.path(original_data_dir, stanley_data_names), '.txt'))

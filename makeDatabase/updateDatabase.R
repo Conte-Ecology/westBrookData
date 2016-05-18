@@ -20,15 +20,15 @@ do <- list(
     "form_table_season_map.R",
     "form_table_yoy_bins.R"
   ),
-  
+
   data_table_stage = c(
     "form_data_antenna.R",
     "form_data_boundary_detections.R",
     "form_data_family.R",
-    
+
     "form_data_seasonal_sampling.R",
     "form_data_yoy_bins.R",
-    
+
     "form_data_tagged_captures.R",
     "form_data_untagged_captures.R",
     "form_data_acoustic.R",
