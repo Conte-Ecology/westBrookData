@@ -29,8 +29,7 @@ getMinLength<-function(x){
   if(m!=Inf) return(m) else return(as.numeric(NA))
 }
 
-cohortBins<-data.table(dbGetQuery(con,"SELECT * FROM data_yoy_bins")) %>%
-  .[,drainage:="west"]
+cohortBins<-data.table(dbGetQuery(con,"SELECT * FROM data_yoy_bins"))
 
 seasonalSampling<-
   data.table(
@@ -77,9 +76,11 @@ getCohort<-function(cohort,species,length,sample,river,drainage){
       bins[,cohort_max_length:=(meanMax+shift(meanMin,1,type='lead'))/2]
       bins[age==max(age),cohort_max_length:=meanMax]
       bins[,cohort_min_length:=c(meanMin[1],cohort_max_length[1:(nrow(bins)-1)])]
-      bins[,cohort:=seasonalSampling[sample_name==sample&drainage=="west",year]-age]
+      bins[,cohort:=seasonalSampling[sample_name==sample&
+                                       drainage==get('drainage',execEnv),year]-age]
+      bins[,cohort_min_length:=cohort_min_length+0.01]
     }
-    if(minLength>max(bins$cohort_max_length)){
+    if(minLength>max(bins$cohort_max_length)&drainage=="west"){
       #if first length is bigger than the bins assigned for that stream, it probably came from west brook
       river<-"west brook"
       bins<-cohortBins[species==get('species',envir=execEnv)&

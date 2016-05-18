@@ -1,4 +1,5 @@
 column_code <- list(
+  drainage=function(drainage) return(drainage),
   river=function(river) return(river),
   species=function(species) return(species),
   sample_name=function(sample) return(as.character(sample)),
@@ -24,6 +25,10 @@ setkey(samples,sample_name)
 source_data<-samples[source_data]
 # source_data[,cohort:=year-age] 
 source_data[,year:=NULL]
+
+#weird extra cohort bin that needs to be removed
+source_data<-source_data[sample_name!="3.00"|cohort_min_length!=132|
+                           cohort_max_length!=500]
 
 dbWriteTable(con, 'data_yoy_bins', data.frame(source_data), row.names=FALSE,
              overwrite=TRUE, append=FALSE)

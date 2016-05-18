@@ -56,8 +56,7 @@ source_data <- dbGetQuery(con, "SELECT * FROM raw_captures WHERE tag is NULL;")
 untaggedCaptures <- pipeline_data_transformation(
 	data=source_data, pipeline=column_code) %>% data.table()
 
-cohortBins<-data.table(dbGetQuery(con,"SELECT * FROM data_yoy_bins")) %>%
-  .[,drainage:="west"]
+cohortBins<-data.table(dbGetQuery(con,"SELECT * FROM data_yoy_bins"))
 
 seasonalSampling<-
   data.table(
@@ -83,7 +82,8 @@ getCohort<-function(species,length,sample,river,drainage){
                           cohort)]
     if(nrow(bins)==0){
       thisSeason<-unique(seasonalSampling[sample_name==as.numeric(sample)&
-                                            drainage=="west",season])
+                                            drainage==get("drainage",execEnv),
+                                          season])
       bins<-cohortBins[species==get('species',envir=execEnv)&
                          river==get('river',envir=execEnv)&
                          season==thisSeason&
@@ -98,6 +98,7 @@ getCohort<-function(species,length,sample,river,drainage){
       bins[,cohort:=seasonalSampling[sample_name==as.numeric(sample)&
                                        drainage==get('drainage',envir=execEnv),
                                      unique(year)]-age]
+      bins[,cohort_min_length:=cohort_min_length+0.01]
     }
     if(length>max(bins$cohort_max_length) & drainage=="west"){
       #if first length is bigger than the bins assigned for that stream, it probably came from west brook
@@ -110,7 +111,8 @@ getCohort<-function(species,length,sample,river,drainage){
                             cohort)]
     }
     cohort<-bins$cohort[intersect(which(length>=bins$cohort_min_length),
-                                  which(length<bins$cohort_max_length))]
+                                  which(length<=bins$cohort_max_length))]
+    
     
     return(cohort)
 }
