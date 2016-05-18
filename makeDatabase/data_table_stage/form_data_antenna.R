@@ -2,16 +2,19 @@ source_data <- dbGetQuery(con, "SELECT * FROM tags_antenna;")
 
 column_code_portable <- list(
   tag = function(tag) {
-	#	    return(paste(tag, species, sep='-'))
 		return(tag)
   },
 	detection_date = function(earliest_detection_date_time) {
-		require(lubridate)
 		detection_date <- parse_date_time(x=earliest_detection_date_time, orders=date.format)
 		detection_date[detection_date > now()] <- 
 			detection_date[detection_date > now()] - years(100)
 		return(detection_date)
 	},
+  drainage = function(drainage,river){
+    drainage[river %in% c("west brook","wb jimmy","wb mitchell","wb obear")]<-
+      "west"
+    return(drainage)
+  },
 	river = function(river) return(river),
 	area = function(area) return(area),
 	section = function(section) return(section),
@@ -30,7 +33,8 @@ column_code_portable <- list(
   comment = function(comment) return(comment)
 )
 
-portableData<-source_data[grep("able",source_data$sample_type),]
+portableData<-source_data[grepl("able",source_data$sample_type)|
+                            grepl("wand",source_data$sample_type),]
 
 portableData <- pipeline_data_transformation(
 	data=portableData, pipeline=column_code_portable)
@@ -40,7 +44,6 @@ dbWriteTable(con, 'data_portable_antenna', portableData, row.names=FALSE,
 
 column_code_stationary <- list(
   tag = function(tag) {
-    #	    return(paste(tag, species, sep='-'))
     return(tag)
   },
   detection_date = function(earliest_detection_date_time) {
@@ -49,6 +52,11 @@ column_code_stationary <- list(
     detection_date[detection_date > now()] <- 
       detection_date[detection_date > now()] - years(100)
     return(detection_date)
+  },
+  drainage = function(drainage,river){
+    drainage[river %in% c("west brook","wb jimmy","wb mitchell","wb obear")]<-
+      "west"
+    return(drainage)
   },
   river = function(river) return(river),
   area = function(area) return(area),

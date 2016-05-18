@@ -10,9 +10,9 @@ column_code <- list(
 	cohort = function(cohort, tag) {  ## cohort is not well defined.
 		return(cohort)
 	},
-	sample_number = function(sample_name) {
-		sample_number <- sample_name_to_sample_number(sample_name)
-		return(sample_number)
+	sample_number = function(sample_name,drainage) {
+	  	sample_number<-sample_name_to_sample_number(sample_name,drainage)
+	  	return(sample_number)
 	},
 	detection_date = function(date) {
 		require(lubridate)
@@ -26,6 +26,11 @@ column_code <- list(
 		season <- day_of_year_to_season(yday(detection_date), output='season_number')
 		return(season)
 	},
+  drainage = function(drainage,river){
+    drainage[river %in% c("west brook","wb jimmy","wb mitchell","wb obear")]<-
+      "west"
+    return(drainage)
+  },
 	river = function(river) return(river),
 	area = function(area){
 	          area[area=="aboveabove"]<-"above above"

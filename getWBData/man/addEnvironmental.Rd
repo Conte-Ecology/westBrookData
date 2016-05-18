@@ -4,12 +4,14 @@
 \alias{addEnvironmental}
 \title{Add environmental data to core westbrook data}
 \usage{
-addEnvironmental(coreData, sampleFlow = F)
+addEnvironmental(coreData, sampleFlow = F, funName = "mean")
 }
 \arguments{
 \item{coreData}{a data.frame created using createCoreData}
 
 \item{sampleFlow}{Logical indicating whether to add the discharge on detectionDate to the output}
+
+\item{fun}{A quoted name of a function used to characterize the environmental data between samples (e.g., mean, median, min, max). Custom functions can be used but must have two arguments: x and na.rm.}
 }
 \value{
 Environmental data added to a coreData

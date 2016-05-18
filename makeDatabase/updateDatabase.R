@@ -1,13 +1,19 @@
+importAll<-F #if false only updates files that have date modified>last update
+
 do <- list(
   import_stage = c(
     "import_to_sql.R",
     "import_temps_from_sheds.R",
     "import_depths.R",
+    "import_stanley_environmental.R",
+    "import_family.R",
     
     "form_table_dead.R",
     "form_table_antenna.R",
     "form_table_captures.R",
     "form_table_untagged_captures.R",
+    "form_table_family.R",
+    "form_table_acoustic.R",
     
     "form_table_seasonal_sampling.R",
     "calculate_season_breaks.R",
@@ -18,29 +24,31 @@ do <- list(
   data_table_stage = c(
     "form_data_antenna.R",
     "form_data_boundary_detections.R",
+    "form_data_family.R",
     
     "form_data_seasonal_sampling.R",
     "form_data_yoy_bins.R",
     
     "form_data_tagged_captures.R",
     "form_data_untagged_captures.R",
+    "form_data_acoustic.R",
     "declare_data_errors.R",
     "fix_data_errors.R",
-    
+
     "fix_tag_properties.R",
-    
-    
+
+
     "form_data_trap_captures.R",
     "form_data_smolts.R"
   ),
   environmental_data_stage = c(
     "form_data_hourly_temps.R",
     "form_data_daily_temps.R",
-    
+
     "form_data_flow_extension.R",
     "form_data_daily_discharge.R"
   ),
-  
+
   processing_stage = c(
     "form_data_by_tag.R"
     # 		#"form_occasion_points.R",
@@ -72,6 +80,3 @@ for (stage in names(do)) {
     rm(temp)
   }
 }
-
-
-

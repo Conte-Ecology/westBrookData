@@ -75,7 +75,7 @@ tag_history[,sex:=fixSex(sex,tag),by=tag]
 checkLength<-function(length,date,tag){
   whichHaveLength<-which(!is.na(length))
   if(length(whichHaveLength)>1){
-    growthRate<-diff(length[whichHaveLength])/(as.numeric(diff(date[whichHaveLength])))
+    growthRate<-diff(length[whichHaveLength])/max((as.numeric(diff(date[whichHaveLength]))),1)
     realisticGrowth<-growthRate>-0.1&growthRate<1
     if(any(!realisticGrowth)){
       tagIssues$weirdGrowth<<-c(tagIssues$weirdGrowth,tag[1])

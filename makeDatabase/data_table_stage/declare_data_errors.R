@@ -5,6 +5,10 @@ assign(
 		section = '0', 
 		fixThis = list(observed_length = as.numeric(220))
 	),
+	list(tag = '1bf18b9cf9', fish_number = '12', sample_name = '56',
+	     section = '0', 
+	     fixThis = list(observed_weight = as.numeric(106.0))
+	),
 	list(tag = '1bf20e833c', fish_number = '6', sample_name = '67',
 		section = '7',
 		fixThis = list(species = 'bnt')
@@ -157,6 +161,10 @@ assign(
 		section = '100', 
 		fixThis = list(observed_length = 196)
 	),
+	list(tag = '00088cbfc6', sample_name = '94',
+	     section = '13',observed_length = 286, 
+	     fixThis = list(observed_length = NA)
+	),
 	list(tag = '41354e085e', fish_number = '11', sample_name = '25',
 		section = '23',
 		fixThis = list(DROP = TRUE)
@@ -165,5 +173,23 @@ assign(
 	     fixThis=list(survey="shock"))
 ), envir=shared_data)
 
+assign("crossDrainageDuplicates",
+       list(
+         list(tag="0009f6f836",drainage="stanley",
+              fixThis=list(tag="0009f6f836.1")
+              ),
+         list(tag="00088cee00",drainage="stanley",
+              fixThis=list(tag="00088cee00.1")
+              ),
+         list(tag="0009f6f86f",drainage="stanley",
+              fixThis=list(tag="0009f6f86f.1")
+              ),
+         list(tag="00088d2e32",drainage="stanley",
+              fixThis=list(tag="00088d2e32.1"))
+       ),envir=shared_data)
 
-
+assign("deadErrors",
+       list(
+         list(tag="00088d2e32",date_known_dead="9/8/2012",
+              fixThis=list(tag="00088d2e32.1"))
+       ),envir=shared_data)

@@ -1,6 +1,7 @@
 sampling <- dbGetQuery(con, "SELECT * FROM data_seasonal_sampling WHERE seasonal IS TRUE;")
 #eliminate river specific data for determining seasons:
 sampling<-sampling %>%
+  filter(drainage=="west") %>%
   group_by(sample_name,sample_number,order,seasonal) %>%
   summarize(start_julian_day=yday(min(start_date)),
             end_julian_day=yday(max(end_date)),

@@ -12,7 +12,8 @@ captures_stub <- paste(
 	)
 
 electrofishing_samples <- c(
-	'raw_tags_salmon_wb', 'raw_tags_trout_wb', 'raw_tags_tribs_wb')
+	'raw_tags_salmon_wb', 'raw_tags_trout_wb', 'raw_tags_tribs_wb',
+	'raw_stanley_tags','raw_stanley_fyke_net')
 
 queries <- list()
 for ( nom in electrofishing_samples ) {
@@ -38,8 +39,13 @@ rawCaptures<-tbl(conDplyr,nom) %>%
                       !is.na(measured_length)|
                       (!is.na(comments) & !grepl(" log",comments))|
                       as.numeric(sample_name)<=16) %>%
+             mutate(drainage=ifelse(
+               river %in% c("west brook","wb jimmy","wb mitchell","wb obear"),
+               "west","stanley")) %>%
              bind_rows(rawCaptures)
 }
+
+
 
 dbWriteTable(con,"raw_captures",data.frame(rawCaptures),
              row.names=F,overwrite=T)

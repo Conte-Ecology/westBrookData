@@ -4,9 +4,12 @@ columns <- list(
 	how = c('justification')
 )
 
+
 select_stmt <- paste(
-		"SELECT", paste(unlist(columns), collapse=', '), 
-		"FROM", "raw_tags_dead"
+		"(SELECT", paste(unlist(columns), collapse=', '), 
+		"FROM", "raw_tags_dead) UNION (SELECT",
+		 paste(unlist(columns), collapse=', '),
+		"FROM raw_stanley_dead_tags)"
 	)
 dbDropTable("tags_dead")
 create_query <- paste0(

@@ -1,6 +1,6 @@
 #use captures as the base
 captureQuery<-paste("SELECT tag,species,sample_name,cohort,",
-                      "observed_length,river,detection_date,sex",
+                      "observed_length,river,detection_date,sex,drainage",
                     "FROM data_tagged_captures")
 captures<-data.table(dbGetQuery(con,captureQuery))
 setkey(captures,tag)
@@ -29,18 +29,19 @@ getMinLength<-function(x){
   if(m!=Inf) return(m) else return(as.numeric(NA))
 }
 
-cohortBins<-data.table(dbGetQuery(con,"SELECT * FROM data_yoy_bins"))
+cohortBins<-data.table(dbGetQuery(con,"SELECT * FROM data_yoy_bins")) %>%
+  .[,drainage:="west"]
 
 seasonalSampling<-
   data.table(
-   dbGetQuery(con,"SELECT distinct sample_name,season,year FROM data_seasonal_sampling")
+    dbGetQuery(con,"SELECT distinct sample_name,season,year,drainage FROM data_seasonal_sampling")
   )
- 
-setkey(cohortBins,sample_name)
-setkey(seasonalSampling,sample_name)
+
+setkey(cohortBins,sample_name,drainage)
+setkey(seasonalSampling,sample_name,drainage)
 cohortBins<-seasonalSampling[cohortBins]
 
-getCohort<-function(cohort,species,length,sample,river){
+getCohort<-function(cohort,species,length,sample,river,drainage){
   execEnv<-environment()
   species<-unique(na.omit(species))
   if(length(species)>1) stop("cannot assign cohort for multiple species tag")
@@ -48,6 +49,7 @@ getCohort<-function(cohort,species,length,sample,river){
   cohort<-as.numeric(unique(na.omit(cohort)))
   if(length(cohort)==1) return(cohort)
   if(length(cohort)==0){
+    if("stanley" %in% drainage){return(as.numeric(NA))}
     minLength<-suppressWarnings(min(length,na.rm=T))
     if(minLength==Inf) return(as.numeric(NA))
     sample<-min(sample[which(length==minLength)])
@@ -60,7 +62,8 @@ getCohort<-function(cohort,species,length,sample,river){
                                cohort_max_length,
                                cohort)]
     if(nrow(bins)==0){
-      thisSeason<-seasonalSampling[sample_name==sample,season]
+      thisSeason<-seasonalSampling[sample_name==sample&
+                                     drainage=="west",season]
       bins<-cohortBins[species==get('species',envir=execEnv)&
                          river==get('river',envir=execEnv)&
                          season==thisSeason,
@@ -71,7 +74,7 @@ getCohort<-function(cohort,species,length,sample,river){
       bins[,cohort_max_length:=(meanMax+shift(meanMin,1,type='lead'))/2]
       bins[age==max(age),cohort_max_length:=meanMax]
       bins[,cohort_min_length:=c(meanMin[1],cohort_max_length[1:(nrow(bins)-1)])]
-      bins[,cohort:=seasonalSampling[sample_name==sample,year]-age]
+      bins[,cohort:=seasonalSampling[sample_name==sample&drainage=="west",year]-age]
     }
     if(minLength>max(bins$cohort_max_length)){
       #if first length is bigger than the bins assigned for that stream, it probably came from west brook
@@ -95,12 +98,27 @@ getCohort<-function(cohort,species,length,sample,river){
   }
 }
 
+#started adding acoustic tag, but it shouldn't be necessary because pit is in acoustic data
+# acousticTags<-tbl(conDplyr,"raw_stanley_acoustic_data") %>%
+#               select(tag,acoustic_tag) %>%
+#               distinct() %>%
+#               collect() %>%
+#               data.table()
+# 
+# getAcoustic<-function(tag,drainage){
+#   if("west" %in% drainage){return(as.character(NA))}
+#   
+# }
+getFirstLastSample<-function(sample,fun){
+  return(as.character(fun(as.numeric(sample))))
+}
+
 #get data from from seasonal sampling by tag
 dataByTag<-captures[,list(species=getSpecies(species,tag),
-                          first_capture_sample=min(sample_name),
-                          last_capture_sample=max(sample_name),
+                          first_capture_sample=getFirstLastSample(sample_name,min),
+                          last_capture_sample=getFirstLastSample(sample_name,max),
                           last_capture_date=max(detection_date),
-                          cohort=getCohort(cohort,species,observed_length,sample_name,river),
+                          cohort=getCohort(cohort,species,observed_length,sample_name,river,drainage),
                           sex=getSex(sex,tag)
                           ),by=tag]
 
@@ -143,6 +161,13 @@ dead[,date_known_dead:=as.Date(date_known_dead,format="%m/%d/%Y")]
 dead<-dead[,list(date_known_dead=min(date_known_dead)),by=tag]
 
 dataByTag<-dead[dataByTag]
+
+family<-dbGetQuery(con,"SELECT tag, family_id FROM data_family") %>%
+  data.table() %>%
+  setkey(tag)
+
+dataByTag<-family[dataByTag]
+
 
 dbDropTable("data_by_tag")
 dbWriteTable(con, 'data_by_tag', dataByTag, row.names=FALSE)
