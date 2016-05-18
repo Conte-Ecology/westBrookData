@@ -17,7 +17,7 @@ fillSizeLocation<-function(data,size=T,location=T){
     }
     return(location)
   }
-  
+
   #means to fill after last observations
   lengthByAge<-data %>%
                filter(!is.na(river)) %>%
@@ -42,7 +42,7 @@ fillSizeLocation<-function(data,size=T,location=T){
     }
     return(length)
   }
-  
+
   #fill river, section, and interpolated lengths
 
   if(location){
@@ -52,7 +52,7 @@ fillSizeLocation<-function(data,size=T,location=T){
   mutate(section=fillLocation(section)) %>%
   ungroup()
   }
-  
+
   if(size){
   data<-data %>%
   group_by(tag) %>%
@@ -61,21 +61,21 @@ fillSizeLocation<-function(data,size=T,location=T){
   left_join(lengthByAge,by=c('ageInSamples','river','species')) %>%
   left_join(overallLengthByAge,by=c('ageInSamples','species')) %>%
   left_join(oldFishLength,by='species')
-  
+
   #fill non-interpolatable lengths with means preferentially by river, overall mean, or average of old fish
   data[is.na(data$observedLength),"observedLength"]<-
     data[is.na(data$observedLength),"meanLengthRiver"]
-  
+
   data[is.na(data$observedLength),"observedLength"]<-
     data[is.na(data$observedLength),"meanLength"]
-  
+
   data[is.na(data$observedLength)&data$ageInSamples>=15,"observedLength"]<-
     data[is.na(data$observedLength)&data$ageInSamples>=15,"oldLength"]
-  
+
   data<-data %>% select(-meanLengthRiver,-meanLength,-oldLength)
   }
-  
-#tried briefly to correct for fish getting smaller after they got the mean, but gave up  
+
+#tried briefly to correct for fish getting smaller after they got the mean, but gave up
 #   makeLengthMonotonic<-function(length,enc,tag){
 #     print(tag[1])
 #     lastObs<-max(which(enc==1))
@@ -87,15 +87,15 @@ fillSizeLocation<-function(data,size=T,location=T){
 #         length[b]<-length[lastObs]
 #       }
 #       deltaLength<-diff(length)
-#       badFills<-intersect(which(deltaLength<0),which(enc==0)) 
+#       badFills<-intersect(which(deltaLength<0),which(enc==0))
 #     }
 #     return(length)
 #   }
-#   
+#
 #   data<-data %>%
 #         group_by(tag) %>%
 #         mutate(length=makeLengthMonotonic(observedLength,enc,tag)) %>%
 #         ungroup()
-  
+
   return(data)
 }
