@@ -13,7 +13,7 @@ fixErrors<-function(e,data){
 	
 	fixThisRow<-data[e,,which=T]
 	
-	naFix<-suppressWarnings(is.na(fixThisRow))
+	naFix<-suppressWarnings(is.na(fixThisRow[1]))
 	
 	if(naFix) {
 		couldNotFind[[length(couldNotFind)+1]]<<-e	
