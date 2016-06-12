@@ -6,6 +6,11 @@
 addKnownZ<-function(cmrData,knownDead=T){
   reconnect()
   
+  if(any(c("west brook","wb jimmy","wb mitchell","wb obear") %in%
+         cmrData$river)) {drainage="west"} else {
+           drainage="stanley"
+         }
+  
   getKnown<-function(x){
     firstObs<-min(which(x==1))
     lastObs<-max(which(x==1))
@@ -27,9 +32,10 @@ addKnownZ<-function(cmrData,knownDead=T){
                                "WHERE date_known_dead IS NOT NULL")
     )
     
-    samples<-dbGetQuery(con,paste("SELECT sample_number,start_date",
-                                  "FROM data_seasonal_sampling",
-                                  "WHERE seasonal='TRUE'")) %>%
+    samples<-dbGetQuery(con,paste0("SELECT sample_number,start_date ",
+                                  "FROM data_seasonal_sampling ",
+                                  "WHERE seasonal='TRUE' ",
+                                  "AND drainage='",drainage,"'")) %>%
       group_by(sample_number) %>%
         transmute(start_date=min(start_date)) %>%
           ungroup() %>%
