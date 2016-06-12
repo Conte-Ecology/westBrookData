@@ -104,8 +104,8 @@ with(data=shared_data, expr={
 	sample_name_to_sample_number <- function(sample_name,drainage) {
 	  sample_num<-rep(as.numeric(NA),length(sample_name))
 	  for(d in unique(drainage)){
-      changeThese<-which(drainage==d&sample_name %in% unlist(sample_number_map[[d]]))
-      sample_num[changeThese]<-unlist(sample_number_map[[d]][sample_name[changeThese]])
+      changeThese<-which(drainage==d&sample_name %in% names(sample_number_map[[d]]))
+      sample_num[changeThese]<-sample_number_map[[d]][sample_name[changeThese]]
 	  }
 		return(sample_num)
 	}

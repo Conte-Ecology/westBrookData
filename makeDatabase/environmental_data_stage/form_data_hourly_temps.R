@@ -3,6 +3,26 @@
 temps<-data.table(dbGetQuery(con,"SELECT * FROM raw_temps"))
 temps[,datetime:=as.POSIXct(round(datetime,"hours"))]
 
+
+badDates<-list("West Brook 30"=
+                 list(start=as.POSIXct(c("2001-10-17 12:00:00","2013-04-01 12:00:00")),
+                      stop=as.POSIXct(c("2001-10-22 12:00:00","2013-11-01 12:00:00"))),
+               "West Brook 45"=
+                 list(start=as.POSIXct(c("2007-06-11 11:00:00",
+                                         "2012-04-01 12:00:00",
+                                         "2013-04-01 12:00:00")),
+                     stop=as.POSIXct(c("2007-06-13 11:00:00",
+                                     "2012-04-26 12:00:00",
+                                     "2013-11-01 12:00:00"))))
+
+               
+for(l in names(badDates)){
+  for(b in 1:length(badDates[[l]]$start)){
+    temps<-temps[location!=l|datetime<=badDates[[l]]$start[b]|
+            datetime>=badDates[[l]]$stop[b]]
+  }
+}
+
 temps<-temps[,list(temperature=mean(temperature,na.rm=T)),
                        by=list(river,datetime)]
 
@@ -14,6 +34,7 @@ wb<-temps[river=="west brook"]
 allDateTime<-data.table(datetime=seq(min(temps$datetime),
                                      max(temps$datetime),
                                      "hour"))
+
 setkey(allDateTime,datetime)
 
 riverObjects<-c("jimmy","mitchell","obear","wb")

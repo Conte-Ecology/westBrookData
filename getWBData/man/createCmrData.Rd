@@ -7,7 +7,8 @@ Creates encounter histories for each individual and indices for reference within
 \usage{
 createCmrData(coreData, dateStart = as.POSIXct("1900-01-01"),
   dateEnd = as.POSIXct("2100-01-01"), maxAgeInSamples = 20,
-  censorDead = F, censorEmigrated = T, modelType = "CJS", inside = T)
+  censorDead = F, censorEmigrated = T, modelType = "CJS", inside = T,
+  whichDrainage = "west")
 }
 \arguments{
 \item{coreData}{A data.frame created with \code{createCoreData()}}

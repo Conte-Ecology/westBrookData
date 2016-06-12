@@ -5,7 +5,7 @@
 \title{Download data from West Brook database}
 \usage{
 createCoreData(sampleType = "electrofishing", baseColumns = T,
-  columnsToAdd = NULL, includeUntagged = F)
+  columnsToAdd = NULL, includeUntagged = F, whichDrainage = "west")
 }
 \arguments{
 \item{sampleType}{A character vector of sampling types to be included in output, options are: electrofishing,stationaryAntenna,portableAntenna,trap,seine,snorkel}
@@ -38,5 +38,9 @@ tag, detectionDate, river, area, section, survey, sampleName, readerId, sampleTy
 \emph{portableAntenna:}
 
 tag, detectionDate, river, area, section, survey, sampleName, readerId, sampleType, aliveOrDead, instance, pass, quarter, leftOrRight, habitat, cover, justification, comment
+
+\emph{acoustic:}
+
+tag, acousticTag, datetime, section, quarter
 }
 
