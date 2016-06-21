@@ -5,8 +5,6 @@ Authors@R: c(person("Evan", "Childress", email = "evan.childress@gmail.com", rol
            person("Ben","Letcher",email="bletcher@usgs.gov",role=c("aut","cre")))
 Description: Interfaces with West Brook database to create useful data outputs
 Depends: dplyr, RPostgreSQL, R (>= 3.2.0)
-Imports: 
-  integrator
 License: GNU
 LazyData: true
 RoxygenNote: 5.0.1
