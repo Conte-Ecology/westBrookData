@@ -1,8 +1,8 @@
-original_data_dir<-"C:/Users/Evan/Desktop/Conte/process-data/data_store/original_data"
-library(dplyr)
-library(data.table)
-library(lubridate)
-library(readxl)
+# original_data_dir<-"C:/Users/Evan/Desktop/Conte/process-data/data_store/original_data"
+# library(dplyr)
+# library(data.table)
+# library(lubridate)
+# library(readxl)
 
 allflexRiverM<-read_excel(paste0(original_data_dir,"/antenna/Table of Sites.xlsx")) %>%
   data.table() %>%
@@ -37,12 +37,12 @@ readAnt<-function(file){
   if(riverM=="allflex"){
     data<-withCallingHandlers(fread(paste0(antennaDir,"/",file)),
                               warning=wHandler)
-    setnames(data,c("reader","tag","datetime"))
-    #data[,datetime:=as.POSIXct(datetime,format="%m/%d/%y %H:%M:%S")]
-    data<-data[,":="(datetime=parse_date_time(datetime,orders=dateFormats),
+    setnames(data,c("reader","tag","detection_date"))
+    #data[,detection_date:=as.POSIXct(detection_date,format="%m/%d/%y %H:%M:%S")]
+    data<-data[,":="(detection_date=parse_date_time(detection_date,orders=dateFormats),
                      tag=tolower(tag))]
     riverM<-allflexRiverM[match(data$reader,allflexRiverM$reader),riverM]
-    data<-data[,datetime,tag]
+    data<-data[,.(detection_date,tag,reader_type="stationary 2001-allflex")]
   } else {
     data<-withCallingHandlers(fread(paste0(antennaDir,"/",file),header=F),
                               warning=wHandler)
@@ -51,9 +51,9 @@ readAnt<-function(file){
   } 
   setnames(data,c("date","time","tag"))
   data<-data %>%
-            #.[,datetime:=as.POSIXct(paste(date,time),format="%m/%d/%y %H:%M:%S")] %>%
-            .[,datetime:=parse_date_time(paste(date,time),orders=dateFormats)] %>%
-            .[,.(datetime,tag=tolower(tag))]
+            #.[,detection_date:=as.POSIXct(paste(date,time),format="%m/%d/%y %H:%M:%S")] %>%
+            .[,detection_date:=parse_date_time(paste(date,time),orders=dateFormats)] %>%
+            .[,.(detection_date,tag=tolower(tag),reader_type="stationary 2001-iso")]
   }
   splitTag<-function(x){
     tSplit<-strsplit(x,"[.]")[[1]]
@@ -71,7 +71,7 @@ badOnes<-NULL
 filesToRead<-list.files(antennaDir)
 for(file in filesToRead){
   assign(file,readAnt(file))
-  if(is.na(get(file)$datetime[1])){
+  if(is.na(get(file)$detection_date[1])){
     badOnes<-c(badOnes,file)
   }
 }
@@ -79,8 +79,7 @@ dataList<-lapply(filesToRead,get)
 antennaData<-do.call(rbind,dataList)
 antennaData<-antennaData[!duplicated(antennaData)]
 
-antennaData[,":="(drainage="west",
-                  area="antenna",
-                  sample_type="stationary 1001m",
-                  alive_or_dead="alive-stationary")]
+antennaData[,":="(drainage="west")]
 
+dbWriteTable(con, 'tags_antenna_2011_2015', antennaData, row.names=FALSE,
+             overwrite=TRUE, append=FALSE)
