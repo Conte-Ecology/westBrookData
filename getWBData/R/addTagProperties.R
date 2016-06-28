@@ -3,7 +3,7 @@
 #'@param coreData a data.frame created using createCoreData
 #'@param columnsToAdd A character vector of columns to inlcude; can replace or add to baseColumns
 #'@details \strong{Options of columns to add}
-#' dateKnownDead, lastAntennaDetection, species, firstCaptureSample, lastCaptureSample, cohort, sex, familyId
+#' dateKnownDead, lastAntennaDetection, species, firstCaptureSample, lastCaptureSample, cohort, sex, familyId, dateEmigrated
 #'@export
 
 addTagProperties<-function(coreData,
