@@ -31,6 +31,7 @@ addSampleProperties<-function(data,defaultColumns=T,columnsToAdd=NULL){
   
   if(fillMedianDate){
     newData<-tbl(conDplyr,'data_seasonal_sampling') %>%
+      filter(drainage==whichDrainage) %>%
       select(sample_name,median_date) %>%
       distinct() %>%
       collect()
@@ -43,7 +44,7 @@ addSampleProperties<-function(data,defaultColumns=T,columnsToAdd=NULL){
   }
   if(proportionSampled){
     newData<-tbl(conDplyr,'data_seasonal_sampling') %>%
-      dplyr::filter(seasonal==TRUE) %>%
+      dplyr::filter(seasonal==TRUE&drainage==whichDrainage) %>%
       select(sample_name,sample_number,river,proportion_sampled) %>%
       distinct() %>%
       collect()
