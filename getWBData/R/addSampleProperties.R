@@ -28,7 +28,7 @@ addSampleProperties<-function(data,defaultColumns=T,columnsToAdd=NULL){
     dplyr::filter(seasonal==TRUE&drainage==whichDrainage) %>%
     select(one_of(chosenColumns)) %>%
     distinct() %>%
-    collect()
+    collect(n=Inf)
   names(newData)<-camelCase(names(newData))
 
   data<-left_join(data,newData,by=c('sampleName','sampleNumber'))
@@ -38,7 +38,7 @@ addSampleProperties<-function(data,defaultColumns=T,columnsToAdd=NULL){
       filter(drainage==whichDrainage) %>%
       select(sample_name,median_date) %>%
       distinct() %>%
-      collect()
+      collect(n=Inf)
     names(newData)<-camelCase(names(newData))
     
     data<-left_join(data,newData,by='sampleName','sampleNumber')
@@ -51,7 +51,7 @@ addSampleProperties<-function(data,defaultColumns=T,columnsToAdd=NULL){
       dplyr::filter(seasonal==TRUE&drainage==whichDrainage) %>%
       select(sample_name,sample_number,river,proportion_sampled) %>%
       distinct() %>%
-      collect()
+      collect(n=Inf)
     names(newData)<-camelCase(names(newData))
     
     data<-left_join(data,newData,by=c('sampleName','sampleNumber','river'))

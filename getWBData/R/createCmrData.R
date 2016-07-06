@@ -28,7 +28,7 @@ createCmrData<-function(coreData,
     filter(drainage==whichDrainage,seasonal==T) %>%
     select(sample_number,sample_name,season,end_date,year) %>%
     distinct() %>%
-    collect() %>%
+    collect(n=Inf) %>%
     arrange(sample_number)
   names(samples)<-camelCase(names(samples))
   

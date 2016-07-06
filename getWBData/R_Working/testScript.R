@@ -3,9 +3,9 @@ coreData<-createCoreData() %>%
           addTagProperties() %>%
           createCmrData() %>%
           addKnownZ() %>%
-          fillSizeLocation() #%>%
-#           addSampleProperties() %>%
-#           addEnvironmental(sampleFlow=T)
+          fillSizeLocation() %>%
+          addSampleProperties() %>%
+          addEnvironmental(sampleFlow=T)
   
 jagsData <- createJagsData(coreData)
 

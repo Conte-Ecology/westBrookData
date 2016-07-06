@@ -13,8 +13,8 @@ addEnvironmental <-function( coreData, sampleFlow=F , funName="mean"){
   func<-get(funName)
   # get temperature data from database
   envData<-tbl(conDplyr,"data_daily_temperature") %>%
-            collect() %>%
-            full_join(tbl(conDplyr,"data_flow_extension") %>% collect(),
+            collect(n=Inf) %>%
+            full_join(tbl(conDplyr,"data_flow_extension") %>% collect(n=Inf),
                       by=c("river","date")) %>%
             select(-source) %>%
             dplyr::filter(date <= max(coreData$detectionDate),
