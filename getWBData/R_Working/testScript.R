@@ -1,7 +1,7 @@
 library(getWBData)
-coreData<-createCoreData(includeUntagged = F,whichDrainage="stanley") %>% 
-          addTagProperties(columnsToAdd=c("species","cohort")) %>%
-          createCmrData(whichDrainage="stanley") %>%
+coreData<-createCoreData() %>% 
+          addTagProperties() %>%
+          createCmrData() %>%
           addKnownZ() %>%
           fillSizeLocation() %>%
           addSampleProperties() %>%

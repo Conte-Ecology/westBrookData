@@ -28,7 +28,7 @@ createCmrData<-function(coreData,
     filter(drainage==whichDrainage,seasonal==T) %>%
     select(sample_number,sample_name,season,end_date,year) %>%
     distinct() %>%
-    collect() %>%
+    collect(n=Inf) %>%
     arrange(sample_number)
   names(samples)<-camelCase(names(samples))
   
@@ -41,7 +41,7 @@ createCmrData<-function(coreData,
   
   ###pad with samples where individual was unobserved
   tagProperties<-c('dateKnownDead','lastAntennaDetection','cohort','familyId',
-                  'species','firstCaptureSample','lastCaptureSample','sex')
+                  'species','firstCaptureSample','lastCaptureSample','sex','dateEmigrated')
   tagProperties<-tagProperties[tagProperties %in% names(coreData)]
 
   allSamples<-unique(samplesToInclude) %>% .[order(.)]
@@ -105,7 +105,9 @@ createCmrData<-function(coreData,
     expr<-paste0("as.POSIXct(min(",paste(dateNames,collapse=","),",na.rm=T))")
     toCensor<-toCensor %>% group_by(tag) %>% transmute_(censorDate=expr) %>% ungroup()
     
-    samples<-dbGetQuery(con,"SELECT sample_number,start_date FROM data_seasonal_sampling WHERE sample_number is not NULL")
+    sampleQuery<-(paste0("SELECT sample_number,start_date FROM data_seasonal_sampling WHERE sample_number is not NULL AND ",
+                      "drainage = '",whichDrainage,"'"))
+    samples<-dbGetQuery(con,sampleQuery)
     firstCensoredSample<-function(date){
       sample<-samples %>% 
         dplyr::filter(start_date>date) %>% 

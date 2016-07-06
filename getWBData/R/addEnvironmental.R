@@ -13,8 +13,8 @@ addEnvironmental <-function( coreData, sampleFlow=F , funName="mean"){
   func<-get(funName)
   # get temperature data from database
   envData<-tbl(conDplyr,"data_daily_temperature") %>%
-            collect() %>%
-            full_join(tbl(conDplyr,"data_flow_extension") %>% collect(),
+            collect(n=Inf) %>%
+            full_join(tbl(conDplyr,"data_flow_extension") %>% collect(n=Inf),
                       by=c("river","date")) %>%
             select(-source) %>%
             dplyr::filter(date <= max(coreData$detectionDate),
@@ -58,21 +58,32 @@ addEnvironmental <-function( coreData, sampleFlow=F , funName="mean"){
   coreData <- left_join( coreData,coreDataUniqueDates,
                          by=c("detectionDate","river","lagDetectionDate"))
   
-#   i=495
-#   getIntervalMean( coreData$detectionDate[i],coreData$lagDetectionDate[i],coreData$river[i],"Temperature" )
-#   
-#    for(i in 1:20){
-#       print(  c(i,coreDataUniqueDates$detectionDate[i],coreDataUniqueDates$lagDetectionDate[i],coreDataUniqueDates$river[i],
-#                 getIntervalMean( coreDataUniqueDates$detectionDate[i],coreDataUniqueDates$lagDetectionDate[i],coreDataUniqueDates$river[i], "Temperature" )) )
-#     }
   if(sampleFlow){
-  coreData <- envData %>%
-              filter(!is.na(qPredicted)) %>%
-              select(date,qPredicted) %>%
-              rename(flowForP=qPredicted) %>%
-              unique() %>%
-              right_join (coreData,by=c("date"="detectionDate")) %>%
-              rename(detectionDate=date)
+  coreData<-coreData %>%
+               filter(enc==1) %>%
+               select(sampleName,detectionDate) %>%
+               group_by(sampleName,detectionDate) %>%
+               summarize(n=n()) %>%
+               ungroup() %>%
+               left_join(envData %>%
+                           filter(!is.na(qPredicted)) %>%
+                           select(date,qPredicted) %>%
+                           rename(flowForP=qPredicted) %>%
+                           unique(),
+                         by=c("detectionDate"="date")) %>%
+               group_by(sampleName) %>%
+               summarize(flowForP=sum(flowForP*n)/(sum(n))) %>%
+               ungroup() %>%
+               right_join(coreData,by="sampleName")
+  
+  
+#   coreData <- envData %>%
+#               filter(!is.na(qPredicted)) %>%
+#               select(date,qPredicted) %>%
+#               rename(flowForP=qPredicted) %>%
+#               unique() %>%
+#               right_join (coreData,by=c("date"="detectionDate")) %>%
+#               rename(detectionDate=date)
   }
   
   names(coreData)[which(names(coreData)=="meanTemperature")]<-paste0(funName,"Temperature")

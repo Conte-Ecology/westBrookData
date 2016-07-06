@@ -92,7 +92,7 @@ createCoreData<-function(sampleType="electrofishing",
         newData<-newData %>% dplyr::filter(survey %in% captureTypes)
         } else {newData<-newData %>% dplyr::filter(survey==captureTypes)}
     }
-    newData<-collect(newData)
+    newData<-collect(newData,n=Inf)
     
     dataOut<-bind_rows(dataOut,newData)
   }

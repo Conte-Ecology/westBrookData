@@ -8,6 +8,10 @@
 #could pull sample_name through, but need to deal with the multiple names per number before that
 addSampleProperties<-function(data,defaultColumns=T,columnsToAdd=NULL){
   reconnect()
+  whichDrainage<-"west"
+  if(all(!unique(data$river) %in% c("west brook","wb jimmy","wb mitchell","wb obear"))){
+    drainage<-"stanley"
+  }
   
   if(defaultColumns==T){
     chosenColumns<-c("year","season","median_date","proportion_sampled")
@@ -21,19 +25,20 @@ addSampleProperties<-function(data,defaultColumns=T,columnsToAdd=NULL){
                    "sample_name","sample_number") %>% unique()
   
   newData<-tbl(conDplyr,'data_seasonal_sampling') %>%
-    dplyr::filter(seasonal==TRUE) %>%
+    dplyr::filter(seasonal==TRUE&drainage==whichDrainage) %>%
     select(one_of(chosenColumns)) %>%
     distinct() %>%
-    collect()
+    collect(n=Inf)
   names(newData)<-camelCase(names(newData))
 
   data<-left_join(data,newData,by=c('sampleName','sampleNumber'))
   
   if(fillMedianDate){
     newData<-tbl(conDplyr,'data_seasonal_sampling') %>%
+      filter(drainage==whichDrainage) %>%
       select(sample_name,median_date) %>%
       distinct() %>%
-      collect()
+      collect(n=Inf)
     names(newData)<-camelCase(names(newData))
     
     data<-left_join(data,newData,by='sampleName','sampleNumber')
@@ -43,10 +48,10 @@ addSampleProperties<-function(data,defaultColumns=T,columnsToAdd=NULL){
   }
   if(proportionSampled){
     newData<-tbl(conDplyr,'data_seasonal_sampling') %>%
-      dplyr::filter(seasonal==TRUE) %>%
+      dplyr::filter(seasonal==TRUE&drainage==whichDrainage) %>%
       select(sample_name,sample_number,river,proportion_sampled) %>%
       distinct() %>%
-      collect()
+      collect(n=Inf)
     names(newData)<-camelCase(names(newData))
     
     data<-left_join(data,newData,by=c('sampleName','sampleNumber','river'))
