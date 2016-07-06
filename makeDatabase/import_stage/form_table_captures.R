@@ -31,7 +31,7 @@ rawCaptures<-NULL
 for(nom in electrofishing_samples){
 rawCaptures<-tbl(conDplyr,nom) %>%
              select(one_of(unlist(columns))) %>%
-             collect() %>%
+             collect(n=Inf) %>%
              filter(!grepl(paste(rowsToExclude,collapse="|"),comments)) %>%
              filter(species!="nobntp2") %>%
              filter(!is.na(tag)|
@@ -42,7 +42,8 @@ rawCaptures<-tbl(conDplyr,nom) %>%
              mutate(drainage=ifelse(
                river %in% c("west brook","wb jimmy","wb mitchell","wb obear"),
                "west","stanley")) %>%
-             bind_rows(rawCaptures)
+             bind_rows(rawCaptures) %>%
+             mutate(sample_name=as.character(as.numeric(sample_name)))
 }
 
 

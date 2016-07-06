@@ -1,5 +1,5 @@
 files<-c(tag_data_names,"yoy_bins",stanley_data_names)
-imports<-tbl(conDplyr,"import_dates") %>% collect() %>% data.frame
+imports<-tbl(conDplyr,"import_dates") %>% collect(n=Inf) %>% data.frame
 
 for(name in files){
   if(!importAll){

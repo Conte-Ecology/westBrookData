@@ -1,6 +1,6 @@
 dailyTemps<-tbl(conDplyr,'data_hourly_temperature') %>%
             filter(river %in% c("wb jimmy","wb mitchell","wb obear","west brook")) %>%
-            collect() %>%
+            collect(n=Inf) %>%
             mutate(date=as.Date(datetime)) %>%
             group_by(river,date) %>%
             summarize(daily_mean_temp=mean(temperature),

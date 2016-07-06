@@ -1,9 +1,3 @@
-# original_data_dir<-"C:/Users/Evan/Desktop/Conte/process-data/data_store/original_data"
-# library(dplyr)
-# library(data.table)
-# library(lubridate)
-# library(readxl)
-
 allflexRiverM<-read_excel(paste0(original_data_dir,"/antenna/Table of Sites.xlsx")) %>%
   data.table() %>%
   setnames(c("index","section","location","riverM")) %>%
@@ -11,9 +5,27 @@ allflexRiverM<-read_excel(paste0(original_data_dir,"/antenna/Table of Sites.xlsx
   .[,reader:=strsplit(location,"-")[[1]][3],by=location]
 
 antennaDir<-paste0(original_data_dir,"/antenna/compiledDataToImport")
-dateFormats<-c("mdY HMS","dmY HMS","mdy HMS")
+dateFormats<-c("dmY HMS","mdY HMS","mdy HMS")
 
+deployed<-NULL
 myWarnings<-NULL
+weirdDates<-NULL
+
+getDateTime<-function(dateTime,formats=c("%m/%d/%y %H:%M:%S",
+                                         "%m/%d/%Y %H:%M:%S",
+                                         "%d-%m-%Y %H:%M:%S")){
+  for(f in formats){
+    suppressWarnings(datetime<-as.POSIXct(dateTime,format=f,tz="UTC"))
+    if(!any(is.na(datetime)|datetime>Sys.time()|datetime<as.POSIXct("01-01-1950 12:00:00"))){
+      break
+    }
+  }
+  if(any(is.na(datetime)|datetime>Sys.time()|datetime<as.POSIXct("01-01-1950 12:00:00"))){
+    stop(paste("weird dates produced from this format:",dateTime[1],"-->",datetime[1]))
+  }
+  return(datetime)
+}
+
 readAnt<-function(file){
   #get overall details
   fileDetails<-strsplit(file,"_")[[1]]
@@ -22,10 +34,19 @@ readAnt<-function(file){
   startDate<-as.Date(substr(fileDetails[4],1,8),format="%m%d%Y")
   endDate<-as.Date(substr(fileDetails[4],10,17),format="%m%d%Y")
   
+  
   river<-c("west brook","wb jimmy","wb mitchell","wb obear")[
             grepl(substr(location,1,8),c("wb above","wb jimmy","wb mitch","wb obear")) %>% which()
             ]
 
+  #combine details into deployment info
+  deployed<<-rbind(deployed,
+                  data.table(river=river,
+                             location=location,
+                             river_meter=riverM,
+                             start_date=startDate,
+                             end_date=endDate))
+  
   #read in the data but add warnings to a list rather than printing
   wHandler<-function(w){
     myWarnings<<-c(myWarnings,list(w))
@@ -39,7 +60,7 @@ readAnt<-function(file){
                               warning=wHandler)
     setnames(data,c("reader","tag","detection_date"))
     #data[,detection_date:=as.POSIXct(detection_date,format="%m/%d/%y %H:%M:%S")]
-    data<-data[,":="(detection_date=parse_date_time(detection_date,orders=dateFormats),
+    data<-data[,":="(detection_date=getDateTime(detection_date),
                      tag=tolower(tag))]
     riverM<-allflexRiverM[match(data$reader,allflexRiverM$reader),riverM]
     data<-data[,.(detection_date,tag,reader_type="stationary 2001-allflex")]
@@ -52,7 +73,7 @@ readAnt<-function(file){
   setnames(data,c("date","time","tag"))
   data<-data %>%
             #.[,detection_date:=as.POSIXct(paste(date,time),format="%m/%d/%y %H:%M:%S")] %>%
-            .[,detection_date:=parse_date_time(paste(date,time),orders=dateFormats)] %>%
+            .[,detection_date:=getDateTime(paste(date,time))] %>%
             .[,.(detection_date,tag=tolower(tag),reader_type="stationary 2001-iso")]
   }
   splitTag<-function(x){
@@ -64,6 +85,9 @@ readAnt<-function(file){
             .[,":="(location=location,
                     river=river,
                     river_meter=as.numeric(riverM))]
+  if(any(!as.Date(data$detection_date) %in% seq.Date(startDate,endDate,1))){
+    weirdDates<<-c(weirdDates,file)
+  }
   
   return(data)
 }
@@ -75,7 +99,9 @@ for(file in filesToRead){
     badOnes<-c(badOnes,file)
   }
 }
-dataList<-lapply(filesToRead,get)
+dataList<-lapply(filesToRead,get,envir=temp)
+# dataList<-lapply(filesToRead,get)
+
 antennaData<-do.call(rbind,dataList)
 antennaData<-antennaData[!duplicated(antennaData)]
 
@@ -83,3 +109,30 @@ antennaData[,":="(drainage="west")]
 
 dbWriteTable(con, 'tags_antenna_2011_2015', antennaData, row.names=FALSE,
              overwrite=TRUE, append=FALSE)
+
+deployed<-deployed[river_meter=="allflex"] %>%
+  .[,merger:=1] %>%
+  right_join(.,allflexRiverM[,.(riverM,merger=1)],by="merger") %>%
+  data.table() %>%
+  .[,":="(merger=NULL,
+          river_meter=riverM,
+          riverM=NULL)] %>%
+  rbind(.,deployed[river_meter!="allflex"]) %>%
+  .[,river_meter:=as.numeric(river_meter)] %>%
+  setkey(river,river_meter)
+
+antennaLocations<-fread(paste0(processed_data_dir,"/antenna_locations.csv")) %>%
+  setkey(river,river_meter)
+
+deployed<-antennaLocations[deployed] %>%
+  .[is.na(new_river_meter),new_river_meter:=river_meter] %>%
+  .[,river_meter:=new_river_meter] %>%
+  .[,":="(new_river_meter=NULL)]
+deployed<-rbind(deployed,
+                data.table(river="wb mitchell",river_meter=4797,location="wb mitchBelow",
+                           start_date=as.Date("2015-02-04"),end_date=as.Date("2015-04-08")))
+
+dbWriteTable(con, 'antenna_deployment', deployed, row.names=FALSE,
+             overwrite=TRUE, append=FALSE)
+
+

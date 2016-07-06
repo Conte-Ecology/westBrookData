@@ -80,7 +80,7 @@ getCohort<-function(species,length,sample,river,drainage){
                      list(cohort_min_length,
                           cohort_max_length,
                           cohort)]
-    if(nrow(bins)==0){
+    if(nrow(bins)<=1){
       thisSeason<-unique(seasonalSampling[sample_name==as.numeric(sample)&
                                             drainage==get("drainage",execEnv),
                                           season])
@@ -98,7 +98,7 @@ getCohort<-function(species,length,sample,river,drainage){
       bins[,cohort:=seasonalSampling[sample_name==as.numeric(sample)&
                                        drainage==get('drainage',envir=execEnv),
                                      unique(year)]-age]
-      bins[,cohort_min_length:=cohort_min_length+0.01]
+      bins[,cohort_min_length:=cohort_min_length+0.0001]
     }
     if(length>max(bins$cohort_max_length) & drainage=="west"){
       #if first length is bigger than the bins assigned for that stream, it probably came from west brook
