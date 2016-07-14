@@ -23,7 +23,7 @@ createCmrData<-function(coreData,
   reconnect()
   
   whichDrainage<-"west"
-  if(all(!unique(data$river) %in% c("west brook","wb jimmy","wb mitchell","wb obear"))){
+  if(all(!unique(coreData$river) %in% c("west brook","wb jimmy","wb mitchell","wb obear"))){
     whichDrainage<-"stanley"
   }
   
