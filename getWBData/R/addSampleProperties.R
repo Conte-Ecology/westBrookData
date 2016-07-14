@@ -10,7 +10,7 @@ addSampleProperties<-function(data,defaultColumns=T,columnsToAdd=NULL){
   reconnect()
   whichDrainage<-"west"
   if(all(!unique(data$river) %in% c("west brook","wb jimmy","wb mitchell","wb obear"))){
-    drainage<-"stanley"
+    whichDrainage<-"stanley"
   }
   
   if(defaultColumns==T){
