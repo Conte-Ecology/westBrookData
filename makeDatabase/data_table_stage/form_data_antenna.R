@@ -1,4 +1,5 @@
-source_data <- dbGetQuery(con, "SELECT * FROM tags_antenna WHERE alive_or_dead != 'dead';")
+source_data <- dbGetQuery(con, "SELECT * FROM tags_antenna;") %>%
+               filter(is.na(alive_or_dead)|alive_or_dead!="dead")
 source_data2<- dbGetQuery(con,"SELECT * FROM tags_antenna_2011_2015")
 
 column_code_portable <- list(

@@ -19,6 +19,6 @@ Add immutable tag properties to core westbrook data
 }
 \details{
 \strong{Options of columns to add}
-dateKnownDead, lastAntennaDetection, species, firstCaptureSample, lastCaptureSample, cohort, sex, familyId
+dateKnownDead, lastAntennaDetection, species, firstCaptureSample, lastCaptureSample, cohort, sex, familyId, dateEmigrated
 }
 
