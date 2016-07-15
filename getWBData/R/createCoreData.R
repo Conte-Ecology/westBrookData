@@ -95,6 +95,10 @@ createCoreData<-function(sampleType="electrofishing",
     }
     newData<-collect(newData,n=Inf)
     
+    if(t=="data_acoustic"){
+      newData$survey<-"acoustic"
+    }
+    
     dataOut<-bind_rows(dataOut,newData)
   }
   
