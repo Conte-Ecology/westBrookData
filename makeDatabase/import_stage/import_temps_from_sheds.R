@@ -11,7 +11,7 @@ temps <- tbl(conSheds, "values") %>%
   left_join(agencies, by="agency_id") %>%
   filter(agency_name=="USGS_Conte") %>%
   select(location=location_name,datetime,temperature=value) %>%
-  collect()
+  collect(n=Inf)
 
 riverSection<-data.frame(location=c("Jimmy Nolan Brook sec 15",
                                     "Jimmy Nolan Brook (Onset)",

@@ -13,7 +13,8 @@ column_code <- list(
 		return(detection_date)
 	},
 	section = function(section) return(section),
-	quarter = function(quarter) return(as.numeric(quarter))
+	quarter = function(quarter) return(as.numeric(quarter)),
+  drainage = function() return("stanley")
 )
 
 acoustic <- pipeline_data_transformation(

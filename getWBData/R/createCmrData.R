@@ -19,16 +19,20 @@ createCmrData<-function(coreData,
                         censorDead=F,
                         censorEmigrated=T,
                         modelType="CJS",
-                        inside=T,
-                        whichDrainage="west"){
+                        inside=T){
   reconnect()
+  
+  whichDrainage<-"west"
+  if(all(!unique(coreData$river) %in% c("west brook","wb jimmy","wb mitchell","wb obear"))){
+    whichDrainage<-"stanley"
+  }
   
   #get the sample data
   samples<-tbl(conDplyr,"data_seasonal_sampling") %>%
     filter(drainage==whichDrainage,seasonal==T) %>%
     select(sample_number,sample_name,season,end_date,year) %>%
     distinct() %>%
-    collect() %>%
+    collect(n=Inf) %>%
     arrange(sample_number)
   names(samples)<-camelCase(names(samples))
   

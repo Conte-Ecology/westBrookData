@@ -4,7 +4,7 @@
 sampling<-tbl(conDplyr,"tags_captures") %>%
             # filter(drainage=="west") %>%
             select(sample_name,river,date,drainage) %>%
-            collect()
+            collect(n=Inf)
 
 sampling<-sampling %>%
             mutate(date=parse_date_time(x=date, orders=date.format)) %>%
@@ -74,7 +74,8 @@ sample_number_map <-list(west=list(
   "80" = 69, "81" = 70,                 "82" = 71, "83" = 72,
   "84" = 73, "85" = 74,                 "86" = 75, "87" = 76,
   "88" = 77, "89" = 78,                 "90" = 79, "91" = 80,
-	"92" = 81, "93" = 82,                 "94" = 83
+	"92" = 81, "93" = 82,                 "94" = 83,
+	           "95" = 84
  ),
  stanley=list("1"=1,            "2"=2,
               "2.5"=2.5,"3"=3,  "4"=4,

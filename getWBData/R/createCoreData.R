@@ -10,7 +10,7 @@
 #'@details \emph{captures:}
 #'@details tag, fishNumber, species, cohort, sampleNumber, detectionDate, seasonNumber, river, area, section, observedLength, observedWeight, survey, sampleName
 #'@details \emph{stationaryAntenna:}
-#'@details tag, detectionDate, river, area, section, survey, sampleName, readerId, sampleType, aliveOrDead, instance, arrival, departure, comment
+#'@details tag, detectionDate, river, riverMeter, survey, readerId, departure, comment
 #'@details \emph{portableAntenna:}
 #'@details tag, detectionDate, river, area, section, survey, sampleName, readerId, sampleType, aliveOrDead, instance, pass, quarter, leftOrRight, habitat, cover, justification, comment
 #'@details \emph{acoustic:}
@@ -44,7 +44,8 @@ createCoreData<-function(sampleType="electrofishing",
     captureTypes<-possibleCaptureTypes[captureTypes] %>% unlist()
     names(captureTypes)<-NULL
   }
-  tables<-c(tables,sampleType[!sampleType %in% c("trap","electrofishing","seine","snorkel")])
+  tables<-c(tables,sampleType[!sampleType %in% c("trap","electrofishing","seine","snorkel")]) %>%
+          unique()
   
   st<-list(captures="data_tagged_captures",
            stationaryAntenna="data_stationary_antenna",
@@ -92,7 +93,11 @@ createCoreData<-function(sampleType="electrofishing",
         newData<-newData %>% dplyr::filter(survey %in% captureTypes)
         } else {newData<-newData %>% dplyr::filter(survey==captureTypes)}
     }
-    newData<-collect(newData)
+    newData<-collect(newData,n=Inf)
+    
+    if(t=="data_acoustic"){
+      newData$survey<-"acoustic"
+    }
     
     dataOut<-bind_rows(dataOut,newData)
   }

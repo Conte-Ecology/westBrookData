@@ -3,7 +3,7 @@
 #'@param knownDead Logical indicating whether to set known state based on tags known to be dead
 #'@return A data.frame including \code{$knownZ} which is the known state (0=not born,1=alive,2=dead,NA=unknown)
 #'@export
-addKnownZ<-function(cmrData,knownDead=T){
+addKnownZ<-function(cmrData,knownDead=T,useAntenna=F){
   reconnect()
   
   if(any(c("west brook","wb jimmy","wb mitchell","wb obear") %in%
@@ -26,6 +26,33 @@ addKnownZ<-function(cmrData,knownDead=T){
              group_by(tag) %>%
                mutate(knownZ=getKnown(enc)) %>%
                  ungroup()
+  
+  
+  if(useAntenna){
+    lastAnt<-tbl(conDplyr,"data_by_tag") %>%
+             select(tag,last_antenna_detection) %>%
+             filter(!is.na(last_antenna_detection)) %>%
+             collect(n=Inf)
+    
+    fillUntilLastAntenna<-function(tag,detectionDates,z){
+      if(sum(tag[1]==lastAnt$tag)==0) return(z)
+      
+      last1<-max(detectionDates[which(z==1)])
+      lastAntDet<-lastAnt[lastAnt$tag==tag[1],][["last_antenna_detection"]]
+      lastAntDet<-max(detectionDates[which(detectionDates<lastAntDet)])
+    
+      if(last1>lastAntDet) return(z)
+      
+      z[detectionDates>last1 & detectionDates<=lastAntDet]<-1
+      return(z)
+    }
+    
+    cmrData<-cmrData %>%
+      group_by(tag) %>%
+      mutate(knownZ=fillUntilLastAntenna(tag,detectionDate,knownZ)) %>%
+      ungroup()
+  }
+  
   if(knownDead){
     dead<-dbGetQuery(con,paste("SELECT tag,date_known_dead",
                                "FROM data_by_tag",

@@ -50,6 +50,7 @@ fillSizeLocation<-function(data,size=T,location=T){
   group_by(tag) %>%
   mutate(river=fillLocation(river)) %>%
   mutate(section=fillLocation(section)) %>%
+  mutate(area=fillLocation(area)) %>%
   ungroup()
   }
 

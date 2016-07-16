@@ -157,6 +157,7 @@ dataByTag[!is.na(last_on_boundary),
                                     last_capture_date,
                                     last_on_boundary),
           by=tag]
+
 dataByTag[,':='(last_capture_date=NULL,
                 last_on_boundary=NULL)]
 

@@ -1,4 +1,5 @@
-source_data <- dbGetQuery(con, "SELECT * FROM tags_antenna WHERE alive_or_dead != 'dead';")
+source_data <- dbGetQuery(con, "SELECT * FROM tags_antenna;") %>%
+               filter(is.na(alive_or_dead)|alive_or_dead!="dead")
 source_data2<- dbGetQuery(con,"SELECT * FROM tags_antenna_2011_2015")
 
 column_code_portable <- list(
@@ -60,7 +61,7 @@ column_code_stationary <- list(
     return(drainage)
   },
   river = function(river) return(river),
-  river_meter = function(distance_upriver_m) return(distance_upriver_m),
+  river_meter = function(distance_upriver_m) return(as.numeric(distance_upriver_m)),
   survey = function() return("stationaryAntenna"),
   reader_type = function(sample_type) return(sample_type),
   reader_id = function(reader_id) return(reader_id),
@@ -80,7 +81,7 @@ column_code_new_stationary <- list(
     return(drainage)
   },
   river = function(river) return(river),
-  river_meter = function(river_meter) return(river_meter),
+  river_meter = function(river_meter) return(as.numeric(river_meter)),
   survey = function() return("stationaryAntenna"),
   reader_type = function(reader_type) return(reader_type),
   reader_id = function(location) return(location),
@@ -132,8 +133,19 @@ newStationaryData<-data.table(newStationaryData) %>%
   .[!is.na(goodTimes)] %>%
   .[,goodTimes:=NULL]
 
-stationaryData<-rbind(stationaryData,data.frame(newStationaryData))
+stationaryData<-rbind(stationaryData,newStationaryData) %>%
+  data.table() %>%
+  setkey(river,river_meter)
 
-dbWriteTable(con, 'data_stationary_antenna', stationaryData, row.names=FALSE,
+antennaLocations<-fread(paste0(processed_data_dir,"/antenna_locations.csv")) %>%
+  setkey(river,river_meter)
+
+stationaryData<-antennaLocations[stationaryData] %>%
+  .[is.na(new_river_meter),new_river_meter:=river_meter] %>%
+  .[,river_meter:=new_river_meter] %>%
+  .[,":="(new_river_meter=NULL)]
+
+
+dbWriteTable(con, 'data_stationary_antenna', data.frame(stationaryData), row.names=FALSE,
              overwrite=TRUE, append=FALSE)
 

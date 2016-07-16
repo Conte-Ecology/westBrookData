@@ -2,7 +2,7 @@
 #it also fills all of the mainstem daily values, prioritizing depth measurements, then filling with flow extension
 
 highResEnv<-tbl(conDplyr,"raw_depth") %>%
-            collect() %>%
+            collect(n=Inf) %>%
             data.table()
 
 wb<-highResEnv[river=="west brook",.(depth=mean(depth)),by=as.Date(datetime)] %>%
@@ -50,7 +50,7 @@ allDates<-data.table(date=seq(as.Date("1997-05-27"),Sys.Date(),"day")) %>%
           setkey(date)
 
 daily<-tbl(conDplyr,"raw_depth") %>%
-       collect() %>%
+       collect(n=Inf) %>%
        data.table() %>%
        .[river=="west brook",depth:=rescaleWb(depth,as.Date(datetime))] %>%
        .[,.(depth=mean(depth,na.rm=T)),by=list(as.Date(datetime),river)] %>%
@@ -106,7 +106,7 @@ for(code in riverCodes){
 }
 # wb<-wb[!is.na(q1)&!is.na(q2)&!is.na(q3)]
 
-wbLm<-lm(log(discharge)~q1*q2*q3,data=wb)
+
 
 # wb[is.na(discharge),
 #    discharge:=exp(predict(wbLm,data.frame(q1=q1,q2=q2,q3=q3)))]
@@ -124,8 +124,13 @@ badDates<-list("wb jimmy"=
                "wb obear"=
                  c(seq(as.Date("2009-07-30"),as.Date("2009-12-27"),"day")),
                "west brook"=
-                 c(seq(as.Date("2008-02-26"),as.Date("2010-02-26"),"day"))
+                 c(seq(as.Date("2008-02-26"),as.Date("2010-02-26"),"day"),
+                   seq(as.Date("2004-06-15"),as.Date("2004-10-20"),"day"))
 )
+
+wb[date %in% badDates$`west brook`,discharge:=NA]
+wbLm<-lm(log(discharge)~log(q2+200),data=wb[!date %in% badDates$`west brook`])
+
 for(r in unique(daily$river)){
   daily[river==r & 
           date %in% badDates[[r]],depth:=NA]
@@ -139,21 +144,21 @@ depthLm<-lm(log(discharge)~logDepth,data=wb)
 setkey(wb,river,date)
 setkey(daily,river,date)
 
-daily<-wb[,list(river,date,q1,q2,q3,discharge)][daily]
+daily<-wb[,list(river,date,q2,discharge)][daily]
 daily[!is.na(depth),source:="measuredDepth"]
 #first estimate discharge from measured depths
 daily[river=="west brook"&is.na(discharge),
       discharge:=exp(predict(depthLm,data.frame(logDepth=log(depth+200))))]
 #then fill with flow extension when depth was not measured
 daily[river=="west brook"&is.na(discharge),
-      discharge:=exp(predict(wbLm,data.frame(q1=q1,q2=q2,q3=q3)))]
+      discharge:=exp(predict(wbLm,data.frame(q2=q2)))]
 
 
 #####################################################################
 #fill in missing depth data in tribs using regression with mainstem
 setkey(daily,date)
 wb<-daily %>%
-  .[river=="west brook",list(date,discharge,q1,q2,q3)] %>%
+  .[river=="west brook",list(date,discharge,q2)] %>%
   setnames("discharge","wbDischarge")
 
 k<-data.table(river=c("west brook","wb jimmy","wb mitchell","wb obear"),

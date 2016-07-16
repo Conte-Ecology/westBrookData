@@ -4,7 +4,7 @@
 \alias{addKnownZ}
 \title{Adds known state to data.frame created with createCmrData()}
 \usage{
-addKnownZ(cmrData, knownDead = T)
+addKnownZ(cmrData, knownDead = T, useAntenna = F)
 }
 \arguments{
 \item{cmrData}{A data.frame created using createCmrData()}
