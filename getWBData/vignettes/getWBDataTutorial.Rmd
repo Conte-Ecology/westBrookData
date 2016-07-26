@@ -1,0 +1,128 @@
+---
+title: "getWBData tutorial"
+output: pdf_document
+vignette: >
+  %\VignetteIndexEntry{getWBData tutorial}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+#Overview
+
+The code{getWBData} package is a set of functions meant to make downloading and processing data from the westbrook database faster and easier. The functions are not comprehensive; you will still need to manipulate data for your particular application. The most complete data pipeline that the functions facilitate is the downloading and formatting of data to run CJS models in jags using electrofishing data. If the functions are not behaving as you wish, there is also the option of just downloading the data tables directly from the database and doing the data manipulation and joining yourself.
+
+#Connecting to the database
+
+Load the package
+```{r,results="hide"}
+library(getWBData)
+```
+
+To create a connection to the database:
+```{r,eval=F}
+reconnect()
+```
+
+This will ask for your postgres username and password, and it will clear the console and create two objects that are connections to the database. If you use the built-in functions to get data, you won't need reconnect() or the objects it creates directly, but they will be called internally. However, understanding how to view and download data from the database is certain to be useful for understanding what data are availabe and what the tables and columns are named called. If you ever get an error relating to a postgres connections, rerunning reconnect() should fix it. Sourcing an entire script will not cause problems because the code will pause while you put in credentials, but it you source a chunk (i.e., using ctr + enter) when there is no connection it will enter subsequent lines as the username and password and cause an error. Manually reconnecting before running a chunk will avoid this issue.
+
+conDplyr is a connection made using the Dplyr package, which can be used as follows:
+```{r,echo=F,results="hide"}
+source("C:/Users/Evan/Desktop/Conte/westBrookData/getWBData/R_working/manualCon.R")
+```
+
+
+```{r}
+#view the tables in the database
+conDplyr
+
+#connect to a table and then download it
+data<-tbl(conDplyr,"data_tagged_captures") %>% #dplyr piping sends the output of this to the first argument of the next line
+        filter(river=="wb jimmy") %>% #option to filter to the rows desired
+        select(detection_date,tag) %>% #or select particular columns
+        collect(n=Inf) #download the data into R and closes the connection
+print(data)
+
+#figure out what columns are in a table
+tbl(conDplyr,"data_tagged_captures")
+```
+
+Any functions that are placed after tbl and before collect are carried out in postgres, so it is wise to trim the data using these functions if the tables of interest are very large to minimize download times. A more thorough introduction to using this connection can be found in the [dplyr database connection vignette](https://cran.r-project.org/web/packages/dplyr/vignettes/databases.html).
+
+'con' is an object that is used by the RPostgreSQL package. The dplyr connection is more user-friendly, but if details on how to use this connection are of interest, they can be found through the RPostgreSQL documentation.
+
+
+#Database structure
+
+The database is relational, so not all of the information that you will need is going to be stored in a single table. For example the electrofishing data stored in the table data_tagged_captures only has data unique to a particular capture event reliably; the species, cohort, and other constant information associated with a tag number is stored in the table data_by_tag. Thus, a join of these two will be necessary to make the capture data useful.
+
+Tables names that start with data_ are the ones that are meant for use. raw_ files are just imported with all columns as character and stored. tags_ files represent and intermediate stage at which columns are transformed to appropriate types but not yet filtered and organized for easy access.
+
+#Obtaining data using the built-in functions
+
+There are a number of functions that grab, join, and manipulate data to try to reduce some of the data wrangling burden for common tasks. Postgres does not like capital letters in table or column names, so underscores are used on the database side; however, these functions convert those names to camelCase. Any column specification can be done using either under_scores or camelCase, which are converted with a helper function convertCase().
+
+##Creating a basic data.frame
+
+The following code downloads data from the database and joins it to individual and sample specific tables to create a reasonable working data.frame. The defaults for functions in general tend to be designed to facilitate the creation of data for CJS models; for example, the default columns for createCoreData() do not include riverMeter, which would be absolutely necessary to make sense of stationaryAntenna data. 
+
+```{r}
+createCoreData(sampleType=c("electrofishing","stationaryAntenna"),
+               columnsToAdd=c("observed_weight","riverMeter"),
+               whichDrainage="west") %>% #downloads all data meeting the sample type and drainage specifications
+  addTagProperties() %>% #joins with data_by_tag
+  filter(species=="bkt") %>% #filtering rows is just done manually
+  addSampleProperties() #joins with data_seasonal_sampling
+```
+
+##Creating data for a CJS model in JAGS
+
+The most complete data pipeline is the preparation of data to run CJS models in JAGS. The order here is important. createCmrData() filters to only include seasonal samples and then fills in times when a fish was not observed. It is therefore important to addSampleProperties() after this because there will be new rows added. The same goes for addEnvironmental(). createJagsData() turns the data.frame into a list of the data components that are likely to be used in a JAGS model and adds control structures (e.g., nEvalRows) designed for long format models (vectors rather than matrices of observations).
+
+```{r}
+coreData<-createCoreData(sampleType="electrofishing") %>% 
+  addTagProperties() %>%
+  dplyr::filter(species=="bkt") %>%
+  createCmrData() %>%
+  fillSizeLocation() %>% #assume fish grow linearly and stay put until they are found elsewhere
+  addSampleProperties() %>%
+  addEnvironmental(sampleFlow=T) %>%
+  addKnownZ()
+str(coreData)
+
+jagsData<-createJagsData(coreData)
+str(jagsData)
+```
+
+##Getting data for non-CJS applications
+
+For the moment, the best way to get data for other applications is to just use the first few functions in the pipeline and trudge on manually from there.
+```{r,fig.height=5,fig.width=6.5}
+library(lubridate)
+antenna<-createCoreData(sampleType="stationaryAntenna",whichDrainage="stanley",
+                         columnsToAdd="riverMeter") %>%
+          addTagProperties() %>%
+          filter(!is.na(riverMeter)) %>%
+          mutate(month=month(detectionDate),
+                 year=year(detectionDate)) %>%
+          group_by(month,year,riverMeter) %>%
+          summarize(nFish=length(unique(tag))) %>%
+          ungroup() %>%
+          group_by(month,riverMeter) %>%
+          summarize(nFish=sum(nFish)) %>%
+          ungroup() %>%
+          arrange(riverMeter,month)
+
+plot(NA,xlim=c(1,12),ylim=c(0,max(antenna$nFish)),
+     xlab="month",ylab="unique antenna hits")
+for(s in unique(antenna$riverMeter)){
+  points(nFish~month,data=antenna[antenna$riverMeter==s,],type='l',
+       col=palette()[which(s==unique(antenna$riverMeter))])
+  legend(2,950,unique(antenna$riverMeter),
+         col=palette()[1:length(unique(antenna$riverMeter))],
+         lty=1,bty='n',title="river meter")
+}
+          
+```
+
+##New functions
+
+There will be many applications, including most applications using antenna and acoustic data, where these functions will not suffice. Functional solutions to common problems would be useful additions to this package. We have tried to follow the basic form of having the first argument of each function be the output of the function before it in the pipeline. This facilitates the use of the %>% to pass data through. 
