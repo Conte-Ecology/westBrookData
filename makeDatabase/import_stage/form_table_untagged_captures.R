@@ -1,6 +1,6 @@
 columns <- list(
   who = c('fish_number'),
-  when = c('date','sample_name'),
+  when = c('date','sample_name','time_of_capture'),
   where = c('river','area','section'),
   how = c('sample_type','survey','comments'),
   stable_trait = c('species','cohort'),

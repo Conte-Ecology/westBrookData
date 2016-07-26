@@ -14,9 +14,15 @@ column_code <- list(
 	  	sample_number<-sample_name_to_sample_number(sample_name,drainage)
 	  	return(sample_number)
 	},
-	detection_date = function(date) {
+	detection_date = function(date,time_of_capture) {
 		require(lubridate)
-		detection_date <- parse_date_time(x=date, orders=date.format)
+	  date<-data.frame(strsplit(date," "))[1,]
+	  time<-data.frame(strsplit(time_of_capture," "))[2,]
+	  
+	  datetime<-paste(date,time,sep=" ")
+	  
+		detection_date <- parse_date_time(x=datetime, orders=date.format)
+		
 		detection_date[year(detection_date)<100]<-detection_date[year(detection_date)<100]+years(2000)
 		detection_date[detection_date > now()] <- 
 			detection_date[detection_date > now()] - years(100)
