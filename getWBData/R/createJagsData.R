@@ -181,7 +181,7 @@ if(modelType == 'JS'){
       firstObsRows = firstObsRows$firstObsRows
 
       nOcc = length(unique(coreData$sampleNumber))
-      occ = coreData$sampleNum-min(coreData$sampleNumber)-1
+      occ = coreData$sampleNumber-min(coreData$sampleNumber)-1
 
       nEvalRows = nEvalRows
       evalRows = evalRows$evalRows
