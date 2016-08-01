@@ -60,17 +60,19 @@ addEnvironmental <-function( coreData, sampleFlow=F , funName="mean"){
   
   if(sampleFlow){
   coreData<-coreData %>%
+               mutate(date=as.Date(detectionDate)) %>%
                filter(enc==1) %>%
-               select(sampleName,detectionDate) %>%
-               group_by(sampleName,detectionDate) %>%
+               select(sampleName,date) %>%
+               group_by(sampleName,date) %>%
                summarize(n=n()) %>%
                ungroup() %>%
                left_join(envData %>%
                            filter(!is.na(qPredicted)) %>%
+                           mutate(date=as.Date(date)) %>%
                            select(date,qPredicted) %>%
                            rename(flowForP=qPredicted) %>%
                            unique(),
-                         by=c("detectionDate"="date")) %>%
+                         by=c("date")) %>%
                group_by(sampleName) %>%
                summarize(flowForP=sum(flowForP*n)/(sum(n))) %>%
                ungroup() %>%
