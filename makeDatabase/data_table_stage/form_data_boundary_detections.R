@@ -8,7 +8,7 @@ wb_boundary_detections <- tbl(conDplyr,"data_stationary_antenna") %>%
 # boundary_detections <- data[data[['river']] %in% boundary_antennas,]
 
 stanley_boundary_detections<-tbl(conDplyr,"data_stationary_antenna") %>%
-                              filter(!is.na(detection_date),river=="mainstem") %>%
+                              filter(!is.na(detection_date),river=="mainstem",river_meter<=10) %>%
                               collect(n=Inf)
 boundary_detections<-bind_rows(wb_boundary_detections,stanley_boundary_detections)
 
