@@ -130,19 +130,32 @@ dataByTag<-captures[,list(species=getSpecies(species,tag),
 
 #add in lastAntennaDetection from antenna data
 antenna<-NULL
-boundary_antennas <- c('a1','a2','03','04','05','06','wb above')
-antennaStub<-"SELECT tag,detection_date,reader_id FROM"
-for(nom in c("data_stationary_antenna","data_portable_antenna")){
-  antenna<-rbind(antenna,
-                 data.table(dbGetQuery(con,paste(antennaStub,nom)))
-  )
-}
-setkey(antenna,tag)
-antenna<-antenna[,list(last_antenna_detection=max(detection_date),
-                       last_on_boundary=any(reader_id[which(detection_date==max(detection_date))]
-                                               %in% boundary_antennas)
-                      ),
-                       by=tag]
+stationaryAntenna<-tbl(conDplyr,"data_stationary_antenna") %>%
+                   select(river,river_meter,tag,detection_date) %>%
+                   collect(n=Inf) %>%
+                   data.table() %>%
+                   setkey(tag) %>%
+                   .[,last_detection:=detection_date==max(detection_date),by=tag] %>%
+                   .[last_detection==TRUE]
+portableAntenna<-tbl(conDplyr,"data_portable_antenna") %>%
+                 filter(!is.na(tag)) %>%
+                 select(river,tag,detection_date) %>%
+                 collect(n=Inf) %>%
+                 data.table() %>%
+                 setkey(tag) %>%
+                 .[,last_detection:=detection_date==max(detection_date),by=tag] %>%
+                 .[last_detection==TRUE]
+
+antenna<-bind_rows(stationaryAntenna,portableAntenna) %>%
+         setkey(tag) %>%
+         .[,last_detection:=detection_date==max(detection_date),by=tag] %>%
+         .[last_detection==TRUE] %>%
+         .[,last_detection:=NULL] %>%
+         .[,last_on_boundary:=(river=="west brook" & (river_meter<=4264|river_meter>=5524.25))|
+                               (river=="mainstem"&river_meter<=10)] %>%
+         setnames(c("detection_date"),c("last_antenna_detection")) %>%
+         .[,.(tag,last_antenna_detection,last_on_boundary)] %>%
+         unique()
 
 dataByTag<-antenna[dataByTag]
 

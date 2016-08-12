@@ -33,7 +33,7 @@ tag, fishNumber, species, cohort, sampleNumber, detectionDate, seasonNumber, riv
 
 \emph{stationaryAntenna:}
 
-tag, detectionDate, river, area, section, survey, sampleName, readerId, sampleType, aliveOrDead, instance, arrival, departure, comment
+tag, detectionDate, river, riverMeter, survey, readerId, departure, comment
 
 \emph{portableAntenna:}
 
