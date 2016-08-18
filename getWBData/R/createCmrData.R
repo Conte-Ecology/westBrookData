@@ -63,6 +63,12 @@ createCmrData<-function(coreData,
   coreData<-coreData %>% 
               mutate(enc=as.numeric(!is.na(detectionDate)))# create encounter history
   
+  if(whichDrainage=="stanley"){
+    samples<-bind_rows(samples,
+                       data.frame(sampleNumber=c(-1,-3,-5,-7,-9),
+                                  season=2,
+                                  year=c(2005,2004,2003,2002,2001)))
+  }
   #calculate ageInSamples
   coreData<-samples %>%
               dplyr::filter(season==2) %>%
@@ -73,10 +79,10 @@ createCmrData<-function(coreData,
                         rename(cohort=year) %>%
                           mutate(ageInSamples=sampleNumber-sampleBorn) %>%
                             select(-sampleBorn)
+
   #censor individuals when they get too old
   coreData<-coreData %>%
               dplyr::filter(ageInSamples<=maxAgeInSamples)
-  
   
   if(modelType=="CJS"){ #remove occasions prior to the first capture
     coreData<-coreData %>%

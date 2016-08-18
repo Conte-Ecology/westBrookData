@@ -11,7 +11,13 @@
 
 addEnvironmental <-function( coreData, sampleFlow=F , funName="mean"){
   func<-get(funName)
-  # get temperature data from database
+  
+  # get env data from database
+  whichDrainage<-"west"
+  if(all(!unique(coreData$river) %in% c("west brook","wb jimmy","wb mitchell","wb obear"))){
+    whichDrainage<-"stanley"
+  }
+  if(whichDrainage=="west"){
   envData<-tbl(conDplyr,"data_daily_temperature") %>%
             collect(n=Inf) %>%
             full_join(tbl(conDplyr,"data_flow_extension") %>% collect(n=Inf),
@@ -19,7 +25,18 @@ addEnvironmental <-function( coreData, sampleFlow=F , funName="mean"){
             select(-source) %>%
             dplyr::filter(date <= max(coreData$detectionDate),
                           date >= min(coreData$detectionDate)) %>%
+            rename(temperature = daily_mean_temp,
+                   flow = qPredicted) %>%
             data.frame()
+  } else {
+    envData<-tbl(conDplyr,"stanley_environmental") %>%
+             filter(section==11) %>%
+             select(datetime,temperature,depth) %>%
+             collect(n=Inf) %>%
+             rename(flow = depth) %>%
+             data.frame()
+    warning("Depth was inserted into flow column because that is what is available in Stanley")
+  }
   
   ###########################################################################
   # set up table of intervals based on date for each capture interval by fish
@@ -28,18 +45,19 @@ addEnvironmental <-function( coreData, sampleFlow=F , funName="mean"){
                 mutate( lagDetectionDate = lead( detectionDate ) ) %>%
                 ungroup()
   
+  if(whichDrainage=="west"){ #splitting by drainage here because river isn't required for Stanley, not a good way to achieve this :/
   # function to get mean environmental data for each row of coreData
   getIntervalMean <- function( start,end,r,e ,fun=func){
     d <- envData$date
 
     if( e == "Temperature" ) {
-      envCol <- "daily_mean_temp"
+      envCol <- "temperature"
       if ( is.na( r ) )  meanTemp <- fun( envData[ d >= start & d <= end , envCol ], na.rm = T ) #use data from all rivers
       if ( !is.na( r ) ) meanTemp <- fun( envData[ d >= start & d <= end & envData$river == r, envCol ], na.rm = T ) 
     }
     
     if( e == "Flow" ) {
-      envCol <- "qPredicted"
+      envCol <- "flow"
       meanTemp <- fun( envData[ d >= start & d <= end , envCol ], na.rm = T )
     }
     
@@ -57,6 +75,28 @@ addEnvironmental <-function( coreData, sampleFlow=F , funName="mean"){
   
   coreData <- left_join( coreData,coreDataUniqueDates,
                          by=c("detectionDate","river","lagDetectionDate"))
+  } else {
+    # function to get mean environmental data for each row of coreData
+    getIntervalMean <- function( start,end,e ,fun=func){
+      d <- envData$date
+      meanEnv <- fun( envData[ d >= start & d <= end , tolower(e) ], na.rm = T )
+      return( meanEnv )
+    }
+    
+    # get unique start and end dates from coreData and calc env means for the intervals
+    coreDataUniqueDates <- coreData %>%
+      select( detectionDate, lagDetectionDate ) %>%
+      unique() %>%
+      group_by( detectionDate, lagDetectionDate ) %>% #just a loop, probably a better way to do this.
+      mutate( meanTemperature = getIntervalMean( detectionDate, lagDetectionDate, "Temperature" ),
+              meanFlow =        getIntervalMean( detectionDate, lagDetectionDate, "Flow" )) %>%
+      ungroup()
+    
+    coreData <- left_join( coreData,coreDataUniqueDates,
+                           by=c("detectionDate","lagDetectionDate"))
+  }
+  
+  
   
   if(sampleFlow){
   coreData<-coreData %>%
@@ -67,10 +107,10 @@ addEnvironmental <-function( coreData, sampleFlow=F , funName="mean"){
                summarize(n=n()) %>%
                ungroup() %>%
                left_join(envData %>%
-                           filter(!is.na(qPredicted)) %>%
+                           filter(!is.na(flow)) %>%
                            mutate(date=as.Date(date)) %>%
-                           select(date,qPredicted) %>%
-                           rename(flowForP=qPredicted) %>%
+                           select(date,flow) %>%
+                           rename(flowForP=flow) %>%
                            unique(),
                          by=c("date")) %>%
                group_by(sampleName) %>%
@@ -80,9 +120,9 @@ addEnvironmental <-function( coreData, sampleFlow=F , funName="mean"){
   
   
 #   coreData <- envData %>%
-#               filter(!is.na(qPredicted)) %>%
-#               select(date,qPredicted) %>%
-#               rename(flowForP=qPredicted) %>%
+#               filter(!is.na(flow)) %>%
+#               select(date,flow) %>%
+#               rename(flowForP=flow) %>%
 #               unique() %>%
 #               right_join (coreData,by=c("date"="detectionDate")) %>%
 #               rename(detectionDate=date)
