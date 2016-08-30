@@ -33,7 +33,7 @@ addEnvironmental <-function( coreData, sampleFlow=F , funName="mean"){
              filter(section==11) %>%
              select(datetime,temperature,depth) %>%
              collect(n=Inf) %>%
-             rename(flow = depth) %>%
+             rename(flow = depth,date = datetime) %>%
              data.frame()
     warning("Depth was inserted into flow column because that is what is available in Stanley")
   }
