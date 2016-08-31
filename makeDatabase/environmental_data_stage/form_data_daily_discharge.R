@@ -124,7 +124,8 @@ badDates<-list("wb jimmy"=
                "wb obear"=
                  c(seq(as.Date("2009-07-30"),as.Date("2009-12-27"),"day")),
                "west brook"=
-                 c(seq(as.Date("2008-02-26"),as.Date("2010-02-26"),"day"),
+                 c(seq(as.Date("2003-01-08"),as.Date("2003-01-10"),"day"),
+                   seq(as.Date("2008-02-26"),as.Date("2010-02-26"),"day"),
                    seq(as.Date("2004-06-15"),as.Date("2004-10-20"),"day"))
 )
 
