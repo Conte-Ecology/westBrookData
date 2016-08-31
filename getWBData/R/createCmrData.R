@@ -71,7 +71,7 @@ createCmrData<-function(coreData,
   }
   #calculate ageInSamples
   coreData<-samples %>%
-              dplyr::filter(season==2) %>%
+              dplyr::filter(season==2&sampleNumber!=2.5) %>%
                 select(year,sampleNumber) %>%
                   rename(sampleBorn=sampleNumber) %>%
                     unique() %>%
