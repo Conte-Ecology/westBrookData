@@ -138,12 +138,13 @@ stationaryData<-rbind(stationaryData,newStationaryData) %>%
   setkey(river,river_meter)
 
 antennaLocations<-fread(paste0(processed_data_dir,"/antenna_locations.csv")) %>%
+  setnames("old_river_meter","river_meter") %>%
   setkey(river,river_meter)
 
 stationaryData<-antennaLocations[stationaryData] %>%
-  .[is.na(new_river_meter),new_river_meter:=river_meter] %>%
-  .[,river_meter:=new_river_meter] %>%
-  .[,":="(new_river_meter=NULL)]
+  .[is.na(true_river_meter),true_river_meter:=river_meter] %>%
+  .[,river_meter:=true_river_meter] %>%
+  .[,":="(true_river_meter=NULL)]
 
 
 dbWriteTable(con, 'data_stationary_antenna', data.frame(stationaryData), row.names=FALSE,

@@ -5,6 +5,11 @@ assign(
 		section = '0', 
 		fixThis = list(observed_length = as.numeric(220))
 	),
+	list(tag = '257c689ade', fish_number = '12', sample_name = '14',
+	     section = '18', 
+	     fixThis = list(observed_length = as.numeric(NA),
+	                    observed_weight = as.numeric(NA))
+	),
 	list(tag = '1bf18b9cf9', fish_number = '12', sample_name = '56',
 	     section = '0', 
 	     fixThis = list(observed_weight = as.numeric(106.0))

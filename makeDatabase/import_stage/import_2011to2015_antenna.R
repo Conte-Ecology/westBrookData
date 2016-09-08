@@ -1,8 +1,16 @@
-allflexRiverM<-read_excel(paste0(original_data_dir,"/antenna/Table of Sites.xlsx")) %>%
-  data.table() %>%
-  setnames(c("index","section","location","riverM")) %>%
-  .[grep("llflex",location)] %>%
-  .[,reader:=strsplit(location,"-")[[1]][3],by=location]
+# allflexRiverM<-read_excel(paste0(original_data_dir,"/antenna/Table of Sites.xlsx")) %>%
+#   data.table() %>%
+#   setnames(c("index","section","location","riverM")) %>%
+#   .[grep("llflex",location)] %>%
+#   .[,reader:=strsplit(location,"-")[[1]][3],by=location]
+
+allflexRiverM<-tbl(conDplyr,"antenna_deployment") %>%
+               collect() %>%
+               filter(grepl("allflex",antenna_name)) %>%
+               data.table() %>%
+               .[,reader:=tstrsplit(antenna_name,"[(]")[2]] %>%
+               .[,reader:=substr(reader,1,1)]
+
 
 antennaDir<-paste0(original_data_dir,"/antenna/compiledDataToImport")
 dateFormats<-c("dmY HMS","mdY HMS","mdy HMS")
@@ -38,14 +46,6 @@ readAnt<-function(file){
   river<-c("west brook","wb jimmy","wb mitchell","wb obear")[
             grepl(substr(location,1,8),c("wb above","wb jimmy","wb mitch","wb obear")) %>% which()
             ]
-
-  #combine details into deployment info
-  deployed<<-rbind(deployed,
-                  data.table(river=river,
-                             location=location,
-                             river_meter=riverM,
-                             start_date=startDate,
-                             end_date=endDate))
   
   #read in the data but add warnings to a list rather than printing
   wHandler<-function(w){
@@ -62,7 +62,7 @@ readAnt<-function(file){
     #data[,detection_date:=as.POSIXct(detection_date,format="%m/%d/%y %H:%M:%S")]
     data<-data[,":="(detection_date=getDateTime(detection_date),
                      tag=tolower(tag))]
-    riverM<-allflexRiverM[match(data$reader,allflexRiverM$reader),riverM]
+    riverM<-allflexRiverM[match(data$reader,allflexRiverM$reader),river_meter]
     data<-data[,.(detection_date,tag,reader_type="stationary 2001-allflex")]
   } else {
     data<-withCallingHandlers(fread(paste0(antennaDir,"/",file),header=F),
