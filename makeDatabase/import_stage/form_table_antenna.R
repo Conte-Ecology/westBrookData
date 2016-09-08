@@ -12,7 +12,9 @@ select_stmt <- paste(
 )
 
 wb<-dbGetQuery(con,select_stmt)
-stanley<-dbGetQuery(con,"SELECT * FROM raw_stanley_antenna")
+stanley<-tbl(conDplyr,"raw_stanley_antenna") %>%
+         filter(!is.na(tag)) %>%
+         collect(n=Inf)
 
 tagsAntenna<-bind_rows(wb,stanley)[,unlist(columns)] %>% data.frame()
 

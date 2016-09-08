@@ -109,30 +109,3 @@ antennaData[,":="(drainage="west")]
 
 dbWriteTable(con, 'tags_antenna_2011_2015', antennaData, row.names=FALSE,
              overwrite=TRUE, append=FALSE)
-
-deployed<-deployed[river_meter=="allflex"] %>%
-  .[,merger:=1] %>%
-  right_join(.,allflexRiverM[,.(riverM,merger=1)],by="merger") %>%
-  data.table() %>%
-  .[,":="(merger=NULL,
-          river_meter=riverM,
-          riverM=NULL)] %>%
-  rbind(.,deployed[river_meter!="allflex"]) %>%
-  .[,river_meter:=as.numeric(river_meter)] %>%
-  setkey(river,river_meter)
-
-antennaLocations<-fread(paste0(processed_data_dir,"/antenna_locations.csv")) %>%
-  setkey(river,river_meter)
-
-deployed<-antennaLocations[deployed] %>%
-  .[is.na(new_river_meter),new_river_meter:=river_meter] %>%
-  .[,river_meter:=new_river_meter] %>%
-  .[,":="(new_river_meter=NULL)]
-deployed<-rbind(deployed,
-                data.table(river="wb mitchell",river_meter=4797,location="wb mitchBelow",
-                           start_date=as.Date("2015-02-04"),end_date=as.Date("2015-04-08")))
-
-dbWriteTable(con, 'antenna_deployment', deployed, row.names=FALSE,
-             overwrite=TRUE, append=FALSE)
-
-
