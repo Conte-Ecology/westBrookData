@@ -1,5 +1,10 @@
 habitat<-read_excel(file.path(original_data_dir,"Habitat West Brook.xlsx"),
-                    sheet=6,col_types=rep("text",9))
+                    sheet=1,skip=4,col_types=rep("text",14))
+habitat<-habitat[,-c(13,14)]
+
+tribHabitat<-read_excel(file.path(original_data_dir,"Habitat West Brook.xlsx"),
+                    sheet=2,col_types=rep("text",13))
+tribHabitat<-tribHabitat[,-13]
 
 stanleyHabitat<-read_excel(file.path(original_data_dir,"stanleyWetWidths.xls"),
                            col_types=rep("text",10))
@@ -21,12 +26,41 @@ nameMap<-c(source="Source",
            sample_name="Sample Num",
            area="Area",
            section="Section",
-           width_at_bottom = "Section Width",
-           width = "Average Section Width",
+           quarter="Location",
+           habitat_type = "Hab Type",
+           width = "Quart Width",
+           cover_type = "Quart Cover Type",
+           percent_cover = "Quart Perc Cover",
            comment="Comment")
 
 names(habitat)<-names(nameMap[match(names(habitat),nameMap)])
 habitat<-habitat[habitat$section !="braid"&!is.na(habitat$section),]
+
+####TRIB HABITAT
+for(nom in names(tribHabitat)){
+  tribHabitat[[nom]] <- pipeline_string_transformation(string=tribHabitat[[nom]],
+                                                   pipeline=standard_string_transformations[
+                                                     c('drop_leading_whitespace','drop_trailing_whitespace','to_lower_case')])
+  tribHabitat[[nom]][tribHabitat[[nom]] %in% unknowns]<-NA
+}
+
+nameMap<-c(source="Source",
+           drainage="Drainage",
+           river="River",
+           sample_name="Sample Num",
+           area="Area",
+           section="Section",
+           quarter="Quarter",
+           habitat_type="Hab Type",
+           width = "Quart Width",
+           cover_type = "Quart Cover Type",
+           percent_cover = "Quart Perc Cover",
+           comment="Comment")
+
+names(tribHabitat)<-names(nameMap[match(names(tribHabitat),nameMap)])
+
+habitat<-bind_rows(habitat,tribHabitat)
+
 dbWriteTable(con, 'raw_habitat_west_brook', habitat, row.names=FALSE,
              overwrite=TRUE, append=FALSE)
 

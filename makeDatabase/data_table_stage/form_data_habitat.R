@@ -12,7 +12,7 @@ column_code <- list(
   sample_name = function(sample_name){
     return(as.character(as.numeric(sample_name)))},
   section = function(section) return(as.numeric(section)),
-  width_at_bottom = function(width_at_bottom) return(as.numeric(width_at_bottom)),
+  quarter = function(quarter) return(as.numeric(quarter)),
   width = function(width) return(as.numeric(width)),
   maximum_depth = function(maximum_depth) return(as.numeric(maximum_depth)),
   distance_of_maximum_depth = function(distance_of_max_depth){

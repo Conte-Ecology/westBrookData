@@ -20,8 +20,11 @@ do <- list(
     "calculate_season_breaks.R",
     "form_table_season_map.R",
     "form_table_yoy_bins.R",
+    
     "import_habitat.R",
-    "import_sites.R"
+    "import_sites.R",
+    "import_antenna_deployment.R",
+    "import_antenna_log.R"
   ),
 
   data_table_stage = c(
