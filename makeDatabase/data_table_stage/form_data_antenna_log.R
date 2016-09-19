@@ -1,8 +1,16 @@
 column_code <- list(
   drainage = function() return("west"),
-  river = function(river) return(river),
+  river = function(river){
+    rivers<-c("wb jimmy"="jimmy",
+              "wb mitchell"="mitchell",
+              "wb obear"="obear",
+              "west brook"="west brook")
+    rivers<-names(rivers)[match(river,rivers)]
+    rivers[is.na(rivers)]<-river[is.na(rivers)]
+    return(rivers)},
   river_meter = function(river_meter) return(as.numeric(river_meter)),
   datetime = function(date,time) {
+    time[is.na(time)]<-0.5 #assignin noon to NA times for now
     return(as.POSIXct(as.numeric(date)*3600*24+as.numeric(time)*3600*24,origin=as.POSIXct("1899-12-30")))
   },
   section = function(section) return(section),
