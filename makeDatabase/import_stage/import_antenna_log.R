@@ -43,5 +43,7 @@ for(nom in names(logs)){
                                    c('drop_leading_whitespace','drop_trailing_whitespace','to_lower_case')])
 }
 
+
+
 dbWriteTable(con, 'raw_antenna_log', logs, row.names=FALSE,
              overwrite=TRUE, append=FALSE)

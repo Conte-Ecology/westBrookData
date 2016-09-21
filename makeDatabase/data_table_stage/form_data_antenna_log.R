@@ -31,9 +31,9 @@ column_code <- list(
   },
   stake_height = function(stake_height) return(as.numeric(stake_height)),
   actions = function(actions) return(actions),
-  rms = function(rms) return(rms),
-  ph = function(ph) return(ph),
-  signal = function(signal) return(signal),
+  rms = function(rms) return(as.numierc(rms)),
+  phase = function(ph) return(as.numeric(ph)),
+  signal = function(signal) return(as.numeric(signal)),
   current_on_arrival = function(current){
     curSplit<-unlist(strsplit(current,"/"))
     return(as.numeric(curSplit[1]))
