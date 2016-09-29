@@ -61,7 +61,8 @@ column_code_stationary <- list(
     return(drainage)
   },
   river = function(river) return(river),
-  river_meter = function(distance_upriver_m) return(as.numeric(distance_upriver_m)),
+  river_meter = function(distance_upriver_m,river){
+    return(as.numeric(distance_upriver_m))},
   survey = function() return("stationaryAntenna"),
   reader_type = function(sample_type) return(sample_type),
   reader_id = function(reader_id) return(reader_id),

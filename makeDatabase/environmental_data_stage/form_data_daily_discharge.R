@@ -193,11 +193,11 @@ fillDepth<-function(riverName){
 #   } else {
     
     fit<-lm(logDepth~logWbDischarge,data=data)
-    plot(logDepth~logWbDischarge,data=data)
-    par(new=T)
-    plot(NA,xlim=c(0,1),ylim=c(0,1),axes=F,xlab='',ylab='')
-    text(0.2,0.8,bquote(R^2~"="~.(round(summary(fit)$r.squared,2))))
-    text(0.2,0.7,riverName)
+    # plot(logDepth~logWbDischarge,data=data)
+    # par(new=T)
+    # plot(NA,xlim=c(0,1),ylim=c(0,1),axes=F,xlab='',ylab='')
+    # text(0.2,0.8,bquote(R^2~"="~.(round(summary(fit)$r.squared,2))))
+    # text(0.2,0.7,riverName)
     
     if(riverName %in% c('wb mitchell','wb obear')){
       fit<-lm(logDepth~q2,data=data)
@@ -238,12 +238,12 @@ predictDischarge<-function(riverName){
   data<-depth[q]
   
   fit<-lm(log(discharge)~logDepth,data=data)
-  plot(log(discharge)~logDepth,data=data)
-  abline(fit)
-  par(new=T)
-  plot(NA,xlim=c(0,1),ylim=c(0,1),axes=F,xlab='',ylab='')
-  text(0.2,0.8,bquote(R^2~"="~.(round(summary(fit)$r.squared,2))))
-  text(0.2,0.7,riverName)
+  # plot(log(discharge)~logDepth,data=data)
+  # abline(fit)
+  # par(new=T)
+  # plot(NA,xlim=c(0,1),ylim=c(0,1),axes=F,xlab='',ylab='')
+  # text(0.2,0.8,bquote(R^2~"="~.(round(summary(fit)$r.squared,2))))
+  # text(0.2,0.7,riverName)
   
   
   daily[river==riverName&!is.na(logDepth),

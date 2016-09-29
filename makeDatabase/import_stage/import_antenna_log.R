@@ -1,4 +1,5 @@
-sheets<-excel_sheets(file.path(original_data_dir,"antenna/logData.xlsx"))
+logFile<-file.path(original_data_dir,"antenna/Stationary Antenna Log Sheet FINAL postgres.xlsx")
+sheets<-excel_sheets(logFile)
 sheets<-grep("FINAL",sheets)
 
 nameMap<-c(date="Date",
@@ -27,10 +28,12 @@ nameMap<-c(date="Date",
            field_book="Field Book")
 
 logs<-NULL
+
 for(s in sheets){
-  sheetDims<-readxl:::xlsx_dim(path=file.path(original_data_dir,"antenna/logData.xlsx"),sheet=s-1)
-  log<-read_excel(file.path(original_data_dir,"antenna/logData.xlsx"),
-                  sheet=1,col_types=rep("text",sheetDims[2]))
+  sheetDims<-readxl:::xlsx_dim(path=logFile,sheet=s-1)
+  # cat(s,": ",sheetDims,"\n")
+  log<-read_excel(logFile,
+                  sheet=s,col_types=rep("text",sheetDims[2]))
   log<-log[,1:24]
   logs<-bind_rows(log,logs)
 }
@@ -42,7 +45,6 @@ for(nom in names(logs)){
                                  pipeline=standard_string_transformations[
                                    c('drop_leading_whitespace','drop_trailing_whitespace','to_lower_case')])
 }
-
 
 
 dbWriteTable(con, 'raw_antenna_log', logs, row.names=FALSE,

@@ -40,6 +40,7 @@ do <- list(
     "form_data_tagged_captures.R",
     "form_data_untagged_captures.R",
     "form_data_acoustic.R",
+    "form_data_antenna_log.R",
     "declare_data_errors.R",
     "fix_data_errors.R",
 
