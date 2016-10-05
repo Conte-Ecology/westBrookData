@@ -88,6 +88,7 @@ log <- pipeline_data_transformation(
   pipeline=column_code) %>%
   data.table()
 
+#river meters are backwards for these antennas in the log files
 log[river=="wb jimmy"&river_meter %in% c(5020,5024.1)&datetime<as.POSIXct("2007-01-01"),river_meter:=5020]
 log[river=="wb jimmy"&river_meter %in% c(5020,5024.1)&datetime>as.POSIXct("2007-01-01"),river_meter:=5024.1]
 
