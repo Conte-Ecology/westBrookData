@@ -1,6 +1,7 @@
 source_data <- dbGetQuery(con, "SELECT * FROM tags_antenna;") %>%
                filter(is.na(alive_or_dead)|alive_or_dead!="dead")
 source_data2<- dbGetQuery(con,"SELECT * FROM tags_antenna_2011_2015")
+source_data3<- dbGetQuery(con,"SELECT * FROM tags_allflex_to_2011")
 
 column_code_portable <- list(
   tag = function(tag) {
@@ -134,7 +135,16 @@ newStationaryData<-data.table(newStationaryData) %>%
   .[!is.na(goodTimes)] %>%
   .[,goodTimes:=NULL]
 
-stationaryData<-rbind(stationaryData,newStationaryData) %>%
+oldAllflexData<-pipeline_data_transformation(
+  data=source_data3,pipeline=column_code_new_stationary)
+oldAllflexData<-data.table(oldAllflexData) %>%
+  setkey(tag,detection_date) %>%
+  .[,goodTimes:=filter15Min(detection_date),by=tag] %>%
+  .[,departure:=getDeparture(detection_date,goodTimes),by=tag] %>%
+  .[!is.na(goodTimes)] %>%
+  .[,goodTimes:=NULL]
+
+stationaryData<-rbind(stationaryData,newStationaryData,oldAllflexData) %>%
   data.table() %>%
   setkey(river,river_meter)
 

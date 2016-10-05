@@ -8,6 +8,7 @@ do <- list(
     "import_stanley_environmental.R",
     "import_family.R",
     "import_2011to2015_antenna.R",
+    "import_old_allflex.R",
     
     "form_table_dead.R",
     "form_table_antenna.R",
