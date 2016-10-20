@@ -60,7 +60,8 @@ do <- list(
   ),
 
   processing_stage = c(
-    "form_data_by_tag.R"
+    "form_data_by_tag.R",
+    "form_antenna_status.R"
     # 		#"form_occasion_points.R",
     # 		#"form_occasion_rows.R",
     # 		#"form_sample_points.R",

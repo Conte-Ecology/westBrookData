@@ -109,7 +109,7 @@ write.csv(weirdos,file.path(processed_data_dir,"logLinesToCheck.csv"))
 #look for indicators of non-working antennas and adjust on_off accordingly
 log[grepl("rnl",comments_1)|grepl("rnl",comments_2),on_off:=0]
 log[signal>=75,on_off:=0]
-log[rms==0,on_off:=0]
+log[rms_on_arrival==0,on_off:=0]
 log[grepl("doa",actions)|grepl("doa",comments_1)|
       grepl("doa",comments_2),
     on_off:=0]

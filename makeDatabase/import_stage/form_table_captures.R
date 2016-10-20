@@ -1,6 +1,6 @@
 columns <- list(
 	who = c('tag','fish_number'),
-	when = c('date','sample_name','time_of_capture'),
+	when = c('date','sample_name','time_of_capture','pass'),
 	where = c('river','area','section'),
 	how = c('sample_type','survey','comments'),
 	stable_trait = c('species','cohort','sex'),
@@ -29,7 +29,7 @@ rowsToExclude<-c("no bn","no bk","no fish","no trout","no ats","nob",
 
 rawCaptures<-NULL
 for(nom in electrofishing_samples){
-rawCaptures<-tbl(conDplyr,nom) %>%
+rawCaptures<-suppressWarnings(tbl(conDplyr,nom) %>%
              select(one_of(unlist(columns))) %>%
              collect(n=Inf) %>%
              filter(!grepl(paste(rowsToExclude,collapse="|"),comments)) %>%
@@ -43,7 +43,7 @@ rawCaptures<-tbl(conDplyr,nom) %>%
                river %in% c("west brook","wb jimmy","wb mitchell","wb obear"),
                "west","stanley")) %>%
              bind_rows(rawCaptures) %>%
-             mutate(sample_name=as.character(as.numeric(sample_name)))
+             mutate(sample_name=as.character(as.numeric(sample_name))))
 }
 
 

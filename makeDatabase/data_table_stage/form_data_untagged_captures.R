@@ -37,6 +37,7 @@ column_code <- list(
 	          area[area=="aboveabove"]<-"above above"
 	          return(area)},
 	section = function(section) return(unlist(strsplit(section,"\\.00"))),
+	pass=function(pass) return(as.numeric(pass)),
 	observed_length = function(measured_length) {
 	  observed_length<-as.numeric(measured_length)
 		return(ifelse(observed_length==0,NA,observed_length))
