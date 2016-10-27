@@ -3,6 +3,11 @@ source_data <- dbGetQuery(con, "SELECT * FROM tags_antenna;") %>%
 source_data2<- dbGetQuery(con,"SELECT * FROM tags_antenna_2011_2015")
 source_data3<- dbGetQuery(con,"SELECT * FROM tags_allflex_to_2011")
 
+allTags<-tbl(conDplyr,"data_by_tag") %>%
+  select(tag) %>%
+  collect() %>%
+  data.table()
+
 column_code_portable <- list(
   tag = function(tag) {
     return(tag)
@@ -41,6 +46,8 @@ portableData<-source_data[grepl("able",source_data$sample_type)|
 
 portableData <- pipeline_data_transformation(
   data=portableData, pipeline=column_code_portable)
+
+portableData<-portableData[portableData$tag %in% allTags$tag,]
 
 dbWriteTable(con, 'data_portable_antenna', portableData, row.names=FALSE,
              overwrite=TRUE, append=FALSE)
@@ -157,6 +164,8 @@ stationaryData<-antennaLocations[stationaryData] %>%
   .[,river_meter:=true_river_meter] %>%
   .[,":="(true_river_meter=NULL)]
 
+
+stationaryData<-stationaryData[tag %in% allTags$tag] 
 
 dbWriteTable(con, 'data_stationary_antenna', data.frame(stationaryData), row.names=FALSE,
              overwrite=TRUE, append=FALSE)
