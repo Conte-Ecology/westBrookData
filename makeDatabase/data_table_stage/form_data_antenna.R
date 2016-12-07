@@ -98,11 +98,6 @@ column_code_new_stationary <- list(
   comment = function() return(as.character(NA))
 )
 
-stationaryData<-source_data[grep("stationary",source_data$sample_type),]
-
-stationaryData <- pipeline_data_transformation(
-  data=stationaryData, pipeline=column_code_stationary)
-
 filter15Min<-function(time){
   if(!all(difftime(time[2:length(time)],time[1:(length(time)-1)],
                    units="mins")>=15)&length(time)>1){
@@ -132,6 +127,16 @@ getDeparture<-function(time,goodTimes){
   
   return(departure)
 }
+
+stationaryData<-source_data[grep("stationary",source_data$sample_type),]
+
+stationaryData <- pipeline_data_transformation(
+  data=stationaryData, pipeline=column_code_stationary) %>%
+  data.table() %>%
+  setkey(tag,detection_date) %>%
+  .[,goodTimes:=filter15Min(detection_date),by=tag] %>%
+  .[!is.na(goodTimes)] %>%
+  .[,goodTimes:=NULL]
 
 newStationaryData<-pipeline_data_transformation(
   data=source_data2,pipeline=column_code_new_stationary)
@@ -164,8 +169,10 @@ stationaryData<-antennaLocations[stationaryData] %>%
   .[,river_meter:=true_river_meter] %>%
   .[,":="(true_river_meter=NULL)]
 
+stationaryData<-stationaryData[tag %in% allTags$tag]
 
-stationaryData<-stationaryData[tag %in% allTags$tag] 
+dups<-duplicated(stationaryData[,,.(tag,detection_date,river,river_meter)])
+stationaryData<-stationaryData[!dups]
 
 dbWriteTable(con, 'data_stationary_antenna', data.frame(stationaryData), row.names=FALSE,
              overwrite=TRUE, append=FALSE)

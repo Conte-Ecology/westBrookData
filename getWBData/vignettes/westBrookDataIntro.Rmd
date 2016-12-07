@@ -2,7 +2,7 @@
 title: "West Brook data intro"
 author: "Evan Childress"
 date: "10/27/2016"
-output: html_document
+output: pdf_document
 ---
 
 ##Overview
