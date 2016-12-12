@@ -6,7 +6,7 @@ output: pdf_document
 ---
 
 ##Overview
-The data are presented in the structure that we have used for CJS models. With so many individuals and observations, we have found that complete matrices by individual get unwieldy, so the data are in a long format. The data are padded out for samples when a fish could have been caught but was not; the column "enc" can be used to filter for only fish that were caught. Letcher et al 2015 J of Animal Ecology should give you the necessary details for the sampling procedures. This is a rather cursory explanation, so please ask for clarification where necessary.
+The data are presented in the structure that we have used for CJS models. With so many individuals and observations, we have found that complete matrices by individual get unwieldy, so the data are in a long format. The data are padded out for samples when a fish could have been caught but was not (between observations or after the last observation); the column "enc" can be used to filter for only fish that were caught. Letcher et al 2015 J of Animal Ecology should give you the necessary details for the sampling procedures. This is a rather cursory explanation, so please ask for clarification where necessary.
 
 I am assuming you are using R. If you are not familiar with .rds files, you can read it like this:
 
