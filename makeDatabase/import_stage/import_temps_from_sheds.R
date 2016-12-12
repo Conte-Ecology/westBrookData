@@ -5,7 +5,7 @@ locations <- tbl(conSheds, "locations") %>%
 series <- tbl(conSheds, "series") %>%
   select(series_id=id, variable_id, location_id, start_datetime, end_datetime, value_count)
 temps <- tbl(conSheds, "values") %>%
-  select(series_id, datetime, value, flagged) %>%
+  select(series_id, datetime, value) %>%
   left_join(series, by="series_id") %>%
   left_join(locations, by="location_id") %>%
   left_join(agencies, by="agency_id") %>%
