@@ -1,7 +1,8 @@
 antennaCheck<-function(river=NULL,riverMeter=NULL,timeWindow=90){
   require(data.table)
   require(getWBData)
-  
+
+    
   reconnect()
   
   ant<-tbl(conDplyr,"data_stationary_antenna") %>%
