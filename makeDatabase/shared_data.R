@@ -8,7 +8,7 @@ library(reshape2)
 library(ggplot2)
 library(data.table)
 library(readxl)
-library(waterData)
+library(xml2)
 library(tidyr)
 
 dbDropTable<-function(tableName){ #drops the table if it exists before writing the new version, really only matters for the first time the db is created
