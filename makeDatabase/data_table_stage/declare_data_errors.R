@@ -110,10 +110,7 @@ assign(
 		section = '27',
 		fixThis = list(species = 'bkt')
 	),
-	list(tag = '1bf20e8cce', fish_number = '8', sample_name = '66',
-		section = '29',
-		fixThis = list(species = 'bnt')
-	),
+
 	list(tag = '1bf20ea365', fish_number = '9', sample_name = '66',
 		section = '12',
 		fixThis = list(species = 'bkt')
@@ -154,10 +151,7 @@ assign(
 		section = '12',
 		fixThis = list(observed_length = 118)
 	),
-	list(tag = '257c67cfef', fish_number = '1', sample_name = '70',
-		section = '80',
-		fixThis = list(species = 'bkt')
-	),
+
 	list(tag = '257c67e972', fish_number = '2', sample_name = '68',
 		section = '39',
 		fixThis = list(species = 'bkt')

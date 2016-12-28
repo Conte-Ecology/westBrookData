@@ -6,10 +6,10 @@ getSeason<-function(sample_name,startDay,endDay,drain){
   } else {
     seasons<-season_map[day %in% c(startDay:365,1:endDay),season_number]
   }
-  if(length(unique(seasons))>1&drain=="west"){
-    warning(paste0("\nsample ",sample_name," crosses season boundary: ",
-                   round(sum(seasons==unique(seasons[1]))/length(seasons)*100),
-                         "% of days in one season"))}
+  # if(length(unique(seasons))>1&drain=="west"){
+  #   warning(paste0("\nsample ",sample_name," crosses season boundary: ",
+  #                  round(sum(seasons==unique(seasons[1]))/length(seasons)*100),
+  #                        "% of days in one season"))}
   season<-round(median(seasons))
   return(season)
 }

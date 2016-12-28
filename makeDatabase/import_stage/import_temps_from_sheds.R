@@ -2,8 +2,8 @@ agencies <- tbl(conSheds, "agencies") %>%
   select(agency_id=id, agency_name=name)
 locations <- tbl(conSheds, "locations") %>%
   select(location_id=id, location_name=name, location_description=description, latitude, longitude, agency_id)
-series <- tbl(conSheds, "series") %>%
-  select(series_id=id, variable_id, location_id, start_datetime, end_datetime, value_count)
+series <- suppressWarnings(tbl(conSheds, "series") %>%
+  select(series_id=id, variable_id, location_id, start_datetime, end_datetime, value_count))
 temps <- tbl(conSheds, "values") %>%
   select(series_id, datetime, value) %>%
   left_join(series, by="series_id") %>%
