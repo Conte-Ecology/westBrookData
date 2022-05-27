@@ -12,7 +12,7 @@ wbConnector<-function(){
   
   credentials<-list(drv="PostgreSQL",
                     host="osensei.cns.umass.edu",
-                    port=5433,
+                    port=5434,
                     user=usr,
                     password=pass,
                     dbname="westbrook")
