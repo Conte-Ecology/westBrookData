@@ -47,7 +47,7 @@ tbl(conDplyr,"data_tagged_captures")
 
 Any functions that are placed after tbl and before collect are carried out in postgres, so it is wise to trim the data using these functions if the tables of interest are very large to minimize download times. A more thorough introduction to using this connection can be found in the [dplyr database connection vignette](https://cran.r-project.org/web/packages/dplyr/vignettes/databases.html).
 
-'con' is an object that is used by the RPostgreSQL package. The dplyr connection is more user-friendly, but if details on how to use this connection are of interest, they can be found through the RPostgreSQL documentation.
+'con' is an object that is used by the DBI package with the RPostgres driver. The dplyr connection is more user-friendly, but if details on how to use this connection are of interest, they can be found through the DBI documentation.
 
 
 #Database structure

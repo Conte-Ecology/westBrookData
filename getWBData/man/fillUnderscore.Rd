@@ -15,4 +15,3 @@ A Character vector with underscore separated words
 \description{
 Convert camel-case string to underscore separated
 }
-

@@ -5,9 +5,16 @@
 \title{Create data strucuture for capture-mark-recapture analyses
 Creates encounter histories for each individual and indices for reference within jags}
 \usage{
-createCmrData(coreData, dateStart = as.POSIXct("1900-01-01"),
-  dateEnd = as.POSIXct("2100-01-01"), maxAgeInSamples = 20,
-  censorDead = F, censorEmigrated = T, modelType = "CJS", inside = T)
+createCmrData(
+  coreData,
+  dateStart = as.POSIXct("1900-01-01"),
+  dateEnd = as.POSIXct("2100-01-01"),
+  maxAgeInSamples = 20,
+  censorDead = F,
+  censorEmigrated = T,
+  modelType = "CJS",
+  inside = T
+)
 }
 \arguments{
 \item{coreData}{A data.frame created with \code{createCoreData()}}
@@ -27,4 +34,3 @@ A data.frame containing encounter histories (\code{$enc}) with all samples
 Create data strucuture for capture-mark-recapture analyses
 Creates encounter histories for each individual and indices for reference within jags
 }
-

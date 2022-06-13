@@ -17,4 +17,3 @@ Data for location and size even when fish are not observed.
 Fills in data for location and length when a fish was not observed using some simple assumptions
 For location, a fish is assumed to remain in the same location until it is observed elsewhere. For length, a linear interpolation is used to fill lengths between observations and the average by ageInSamples/river is used after the last observation.
 }
-

@@ -10,7 +10,7 @@ addTagProperties<-function(coreData,
   columnsToAdd=c("species","cohort")
   ){
   columnsToAdd<-fillUnderscore(columnsToAdd)
-  possibleColumns<-RPostgreSQL::dbGetQuery(con,
+  possibleColumns<-DBI::dbGetQuery(con,
                          paste0("SELECT column_name ",
                                 "FROM information_schema.columns ",
                                 "WHERE table_name = 'data_by_tag'")
@@ -26,7 +26,7 @@ addTagProperties<-function(coreData,
 
   columnQuery<-paste(unique(c(columnsToAdd,"tag")),collapse=", ")
   query<-paste("SELECT",columnQuery,"FROM data_by_tag")
-  tagProperties<-RPostgreSQL::dbGetQuery(con,query)
+  tagProperties<-DBI::dbGetQuery(con,query)
   
   if(coreData %>% filter(is.na(tag)) %>% nrow() >0){
     untagged<-coreData %>% filter(is.na(tag))

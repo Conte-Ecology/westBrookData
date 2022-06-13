@@ -12,4 +12,3 @@ A connection to the West Brook database
 \description{
 Tests the connection to the database and runs wbConnect() if the connection has not been established or has expired
 }
-
