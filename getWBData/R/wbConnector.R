@@ -12,7 +12,7 @@ wbConnector<-function(){
     port<-readline("Enter postgres port: ")
     dbname<-readline("Enter postgres database name: ")
     user<-readline("Enter postgres user: ")
-    pass<-readline("Enter postgres password: ")
+    password<-readline("Enter postgres password: ")
   } else {
     port <- Sys.getenv("WESTBROOK_PORT")
     dbname <- Sys.getenv("WESTBROOK_DBNAME")
