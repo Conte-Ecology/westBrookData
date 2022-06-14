@@ -75,11 +75,14 @@ createCoreData<-function(sampleType="electrofishing",
 #add data from each table
   for(t in tables){
     #select only columns that exist in each table
-    tableColumns<-DBI::dbGetQuery(con,
-                  paste0("SELECT column_name ",
-                        "FROM information_schema.columns ",
-                        "WHERE table_name = '",t,"'")
-                  )$column_name
+    # tableColumns<-DBI::dbGetQuery(con,
+    #               paste0("SELECT column_name ",
+    #                     "FROM information_schema.columns ",
+    #                     "WHERE table_name = '",t,"'")
+    #               )$column_name
+    tableColumns <- tbl(con, t) %>% 
+      collect(1) %>% 
+      names()
     if(t=="data_untagged_captures"){
       chosenTableColumns<-match(c(chosenColumns,"species","cohort"),
                                 tableColumns,nomatch=0) %>% .[.>0]
