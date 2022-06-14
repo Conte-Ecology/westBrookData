@@ -17,4 +17,3 @@ A data.frame including \code{$knownZ} which is the known state (0=not born,1=ali
 \description{
 Adds known state to data.frame created with createCmrData()
 }
-

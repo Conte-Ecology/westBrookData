@@ -9,4 +9,3 @@ batchRbind(x)
 \description{
 rbind large objects efficiently
 }
-

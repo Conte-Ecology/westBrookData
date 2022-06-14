@@ -20,4 +20,3 @@ Create data needed for JAGS runs
 \details{
 \strong{Options of columns to add}
 }
-

@@ -3,6 +3,7 @@
 export(addEnvironmental)
 export(addKnownZ)
 export(addSampleProperties)
+export(addSectionProperties)
 export(addTagProperties)
 export(batchRbind)
 export(camelCase)

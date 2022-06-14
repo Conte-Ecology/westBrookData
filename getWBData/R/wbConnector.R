@@ -1,23 +1,34 @@
 #'Connect to West Brook sql database
 #'
-#'Creates two links to the West Brook database one for RPostgreSQL and one for dplyr
-#'@return \code{con} A link to the database for use with RPostgreSQL functions
+#'Creates two links to the West Brook database one for DBI and one for dplyr
+#'@return \code{con} A link to the database for use with DBI functions
 #'@return \code{conDplyr} A link to the database for use with dplyr functions
 wbConnector<-function(){
   #!/usr/bin/r -vi  
-  #obtain credentials interactively from the user
-  usr<-readline("Enter postgres username: ")
-  # cat("\nEnter postgres password (not stored in history, console will be cleared upon entry)")
-  pass<-readline("Enter postgres password: ")
+
+  host <- Sys.getenv("WESTBROOK_HOST")
+  if (nchar(host) == 0) {
+    host<-readline("Enter postgres host: ")
+    port<-readline("Enter postgres port: ")
+    dbname<-readline("Enter postgres database name: ")
+    user<-readline("Enter postgres user: ")
+    pass<-readline("Enter postgres password: ")
+  } else {
+    port <- Sys.getenv("WESTBROOK_PORT")
+    dbname <- Sys.getenv("WESTBROOK_DBNAME")
+    user <- Sys.getenv("WESTBROOK_USER")
+    password <- Sys.getenv("WESTBROOK_PASSWORD")
+  }
   
-  credentials<-list(drv="PostgreSQL",
-                    host="osensei.cns.umass.edu",
-                    port=5434,
-                    user=usr,
-                    password=pass,
-                    dbname="westbrook")
-  con<<-do.call(RPostgreSQL::dbConnect,credentials)
-  conDplyr<<-do.call(src_postgres,credentials)
+  con <<- DBI::dbConnect(
+    drv=RPostgres::Postgres(),
+    host=host,
+    port=port,
+    user=user,
+    password=password,
+    dbname=dbname
+  )
+  conDplyr <<- con
   cat("\014")
 }
 
@@ -28,8 +39,8 @@ wbConnector<-function(){
 #'@export
 reconnect<-function(){
   if(!exists("con")){wbConnector()} else {
-    if(class(con)!="PostgreSQLConnection"){wbConnector()} else{
-      if(class(try(RPostgreSQL::dbGetQuery(con,""),silent=T))=="try-error"|
+    if(class(con)!="PqConnection"){wbConnector()} else{
+      if(class(try(DBI::dbGetQuery(con,""),silent=T))=="try-error"|
          any(suppressWarnings(class(try(tbl(conDplyr,"yoy_bins"),silent=T))=="try-error"))){
         wbConnector()
       }

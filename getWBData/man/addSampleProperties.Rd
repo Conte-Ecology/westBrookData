@@ -19,4 +19,3 @@ A data.frame appended with sample properties
 \description{
 Add immutable sample properties to a data frame
 }
-

@@ -17,4 +17,3 @@ Camel-case string(s)
 \description{
 Convert string of separated words to camel-case
 }
-

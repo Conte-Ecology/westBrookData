@@ -9,7 +9,7 @@
 
 # libraries -----------------------------------------
   #library(ecoPiffle) #is this necessary?
-  require(RPostgreSQL)
+  require(DBI)
   require(lubridate)
   require(integrator)
   require(parallel)

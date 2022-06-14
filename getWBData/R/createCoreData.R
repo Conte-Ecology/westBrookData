@@ -75,7 +75,7 @@ createCoreData<-function(sampleType="electrofishing",
 #add data from each table
   for(t in tables){
     #select only columns that exist in each table
-    tableColumns<-RPostgreSQL::dbGetQuery(con,
+    tableColumns<-DBI::dbGetQuery(con,
                   paste0("SELECT column_name ",
                         "FROM information_schema.columns ",
                         "WHERE table_name = '",t,"'")

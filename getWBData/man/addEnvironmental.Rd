@@ -24,4 +24,3 @@ View this function as a template to be altered to get different env variables or
 The internal function getIntervalMean returns means for the observed river or for all rivers if an individual was unobserved.
 Could alter getIntervalMean to return data for the mean daily min or max env data or for data from the last observed river, instead of all rivers.
 }
-
