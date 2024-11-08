@@ -81,7 +81,7 @@ createCoreData<-function(sampleType="electrofishing",
     #                     "WHERE table_name = '",t,"'")
     #               )$column_name
     tableColumns <- tbl(con, t) %>% 
-      collect(1) %>% 
+      collect() %>% 
       names()
     if(t=="data_untagged_captures"){
       chosenTableColumns<-match(c(chosenColumns,"species","cohort"),
@@ -90,13 +90,13 @@ createCoreData<-function(sampleType="electrofishing",
     
     newData<-tbl(conDplyr,t) %>%
               filter(drainage==whichDrainage) %>%
-              select(chosenTableColumns)
+              select(all_of(chosenTableColumns))
     if(t=="data_tagged_captures"){
       if(length(captureTypes)>1){
         newData<-newData %>% dplyr::filter(survey %in% captureTypes)
         } else {newData<-newData %>% dplyr::filter(survey==captureTypes)}
     }
-    newData<-collect(newData,n=Inf)
+    newData<-collect(newData) #removed the following to accomodate tidyverse updates ,n=Inf)
     
     if(t=="data_acoustic"){
       newData$survey<-"acoustic"
